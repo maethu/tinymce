@@ -511,14 +511,15 @@ tinymce.create('tinymce.util.Dispatcher', {
 				u = (s.base_uri.protocol || 'http') + '://mce_host' + t.toAbsPath(s.base_uri.path, u);
 
 			// Parse URL (Credits goes to Steave, http://blog.stevenlevithan.com/archives/parseuri)
-			u = u.replace(/@@/g, '(mce_at)'); // Zope 3 workaround, they use @@something
+			// Plone fix: #11047
+			u = u.replace(/@/g, '(mce_at)'); // Zope 3 workaround, they use @@something
 			u = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/.exec(u);
 			each(["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"], function(v, i) {
 				var s = u[i];
 
 				// Zope 3 workaround, they use @@something
 				if (s)
-					s = s.replace(/\(mce_at\)/g, '@@');
+					s = s.replace(/\(mce_at\)/g, '@');
 
 				t[v] = s;
 			});
@@ -612,6 +613,11 @@ tinymce.create('tinymce.util.Dispatcher', {
 						break;
 					}
 				}
+			}
+
+			// Plone fix:
+			if (bp == 0) {
+				return "./";
 			}
 
 			if (bp == 1)
@@ -5726,7 +5732,8 @@ window.tinymce.dom.Sizzle = Sizzle;
 				node_filter : 0,
 				attr_filter : 0,
 				invalid_attrs : /^(mce_|_moz_|sizset|sizcache)/,
-				closed : /^(br|hr|input|meta|img|link|param|area)$/,
+				// Plone fix:
+				closed : /(br|hr|input|meta|img|link|param|area)/,
 				entity_encoding : 'named',
 				entities : '160,nbsp,161,iexcl,162,cent,163,pound,164,curren,165,yen,166,brvbar,167,sect,168,uml,169,copy,170,ordf,171,laquo,172,not,173,shy,174,reg,175,macr,176,deg,177,plusmn,178,sup2,179,sup3,180,acute,181,micro,182,para,183,middot,184,cedil,185,sup1,186,ordm,187,raquo,188,frac14,189,frac12,190,frac34,191,iquest,192,Agrave,193,Aacute,194,Acirc,195,Atilde,196,Auml,197,Aring,198,AElig,199,Ccedil,200,Egrave,201,Eacute,202,Ecirc,203,Euml,204,Igrave,205,Iacute,206,Icirc,207,Iuml,208,ETH,209,Ntilde,210,Ograve,211,Oacute,212,Ocirc,213,Otilde,214,Ouml,215,times,216,Oslash,217,Ugrave,218,Uacute,219,Ucirc,220,Uuml,221,Yacute,222,THORN,223,szlig,224,agrave,225,aacute,226,acirc,227,atilde,228,auml,229,aring,230,aelig,231,ccedil,232,egrave,233,eacute,234,ecirc,235,euml,236,igrave,237,iacute,238,icirc,239,iuml,240,eth,241,ntilde,242,ograve,243,oacute,244,ocirc,245,otilde,246,ouml,247,divide,248,oslash,249,ugrave,250,uacute,251,ucirc,252,uuml,253,yacute,254,thorn,255,yuml,402,fnof,913,Alpha,914,Beta,915,Gamma,916,Delta,917,Epsilon,918,Zeta,919,Eta,920,Theta,921,Iota,922,Kappa,923,Lambda,924,Mu,925,Nu,926,Xi,927,Omicron,928,Pi,929,Rho,931,Sigma,932,Tau,933,Upsilon,934,Phi,935,Chi,936,Psi,937,Omega,945,alpha,946,beta,947,gamma,948,delta,949,epsilon,950,zeta,951,eta,952,theta,953,iota,954,kappa,955,lambda,956,mu,957,nu,958,xi,959,omicron,960,pi,961,rho,962,sigmaf,963,sigma,964,tau,965,upsilon,966,phi,967,chi,968,psi,969,omega,977,thetasym,978,upsih,982,piv,8226,bull,8230,hellip,8242,prime,8243,Prime,8254,oline,8260,frasl,8472,weierp,8465,image,8476,real,8482,trade,8501,alefsym,8592,larr,8593,uarr,8594,rarr,8595,darr,8596,harr,8629,crarr,8656,lArr,8657,uArr,8658,rArr,8659,dArr,8660,hArr,8704,forall,8706,part,8707,exist,8709,empty,8711,nabla,8712,isin,8713,notin,8715,ni,8719,prod,8721,sum,8722,minus,8727,lowast,8730,radic,8733,prop,8734,infin,8736,ang,8743,and,8744,or,8745,cap,8746,cup,8747,int,8756,there4,8764,sim,8773,cong,8776,asymp,8800,ne,8801,equiv,8804,le,8805,ge,8834,sub,8835,sup,8836,nsub,8838,sube,8839,supe,8853,oplus,8855,otimes,8869,perp,8901,sdot,8968,lceil,8969,rceil,8970,lfloor,8971,rfloor,9001,lang,9002,rang,9674,loz,9824,spades,9827,clubs,9829,hearts,9830,diams,338,OElig,339,oelig,352,Scaron,353,scaron,376,Yuml,710,circ,732,tilde,8194,ensp,8195,emsp,8201,thinsp,8204,zwnj,8205,zwj,8206,lrm,8207,rlm,8211,ndash,8212,mdash,8216,lsquo,8217,rsquo,8218,sbquo,8220,ldquo,8221,rdquo,8222,bdquo,8224,dagger,8225,Dagger,8240,permil,8249,lsaquo,8250,rsaquo,8364,euro',
 				valid_elements : '*[*]',
@@ -7393,7 +7400,12 @@ tinymce.create('tinymce.ui.Separator:tinymce.ui.Control', {
 		renderNode : function() {
 			var t = this, s = t.settings, n, tb, co, w;
 
-			w = DOM.create('div', {id : 'menu_' + t.id, 'class' : s['class'], 'style' : 'position:absolute;left:0;top:0;z-index:200000'});
+			// Plone fix: external toolbar support
+			if (s['class'].indexOf ('mceListBoxMenu') != -1 && tinymce.EditorManager.settings.theme_advanced_toolbar_location == 'external') {
+				w = DOM.create('div', {id : 'menu_' + t.id, 'class' : s['class'], 'style' : 'position:fixed;_position:absolute;left:0;top:0;z-index:200000'});
+			} else {
+				w = DOM.create('div', {id : 'menu_' + t.id, 'class' : s['class'], 'style' : 'position:absolute;left:0;top:0;z-index:200000'});
+			}
 			co = DOM.add(w, 'div', {id : 'menu_' + t.id + '_co', 'class' : t.classPrefix + (s['class'] ? ' ' + s['class'] : '')});
 			t.element = new Element('menu_' + t.id, {blocker : 1, container : s.container});
 
@@ -7689,7 +7701,7 @@ tinymce.create('tinymce.ui.Separator:tinymce.ui.Control', {
 				menu_line : 1,
 				'class' : t.classPrefix + 'Menu mceNoIcons',
 				max_width : 150,
-				max_height : 150
+				max_height : 150 // Plonefix:
 			});
 
 			m.onHideMenu.add(t.hideMenu, t);
@@ -8357,10 +8369,34 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 		preInit : function() {
 			var t = this, lo = window.location;
 
+            // Plone fix
+            var lo_array = lo.href.split('/');
+            if (lo.href.indexOf('portal_factory') != -1) {
+                while (lo_array[lo_array.length-1] != 'portal_factory') {
+                    lo_array.pop();
+                }
+                lo_array.pop();
+            } else {
+                if (lo_array.length > 4) {
+                    lo_array.pop();
+                }
+                if (lo_array.length > 4) {
+                    lo_array.pop();
+                }
+            }
+            tinymce.documentBaseURL = lo_array.join('/') + '/';
+
+            // Plone fix when editing contextual portlets
+            if (lo.href.indexOf('++contextportlets++') != -1) {
+                tinymce.documentBaseURL = tinymce.documentBaseURL.substr(0, lo.href.indexOf('++contextportlets++'));
+            }
+            
 			// Setup some URLs where the editor API is located and where the document is
+			/*
 			tinymce.documentBaseURL = lo.href.replace(/[\?#].*$/, '').replace(/[\/\\][^\/]+$/, '');
 			if (!/[\/\\]$/.test(tinymce.documentBaseURL))
 				tinymce.documentBaseURL += '/';
+			*/
 
 			tinymce.baseURL = new tinymce.util.URI(tinymce.documentBaseURL).toAbsolute(tinymce.baseURL);
 			tinymce.EditorManager.baseURI = new tinymce.util.URI(tinymce.baseURL);
@@ -9097,10 +9133,13 @@ var tinyMCE = window.tinyMCE = tinymce.EditorManager;
 				tinymce.relaxedDomain = document.domain;
 
 			// Resize editor
-			DOM.setStyles(o.sizeContainer || o.editorContainer, {
-				width : w,
-				height : h
-			});
+			// Plone fix: external toolbar support
+			if (s.theme_advanced_toolbar_location != 'external') {
+				DOM.setStyles(o.sizeContainer || o.editorContainer, {
+					width : w,
+					height : h
+				});
+			}
 
 			h = (o.iframeHeight || h) + (typeof(h) == 'number' ? (o.deltaHeight || 0) : '');
 			if (h < 100)
@@ -9110,8 +9149,8 @@ var tinyMCE = window.tinyMCE = tinymce.EditorManager;
 
 			// We only need to override paths if we have to
 			// IE has a bug where it remove site absolute urls to relative ones if this is specified
-			if (s.document_base_url != tinymce.documentBaseURL)
-				t.iframeHTML += '<base href="' + t.documentBaseURI.getURI() + '" />';
+			// Plone fix: if (s.document_base_url != tinymce.documentBaseURL)
+			t.iframeHTML += '<base href="' + t.documentBaseURI.getURI() + '" />';
 
 			t.iframeHTML += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
 
@@ -9457,7 +9496,15 @@ var tinyMCE = window.tinyMCE = tinymce.EditorManager;
 					}, 100);
 				}
 			}, 1);
-	
+
+			// Plone fix: Changed behavior of the blur and focus event so it matches the api docs :XXX doesn't fully work yet
+			Event.add(!isGecko ? t.getWin() : t.getDoc(), 'blur', function(e) {
+				t.onDeactivate.dispatch(t, e);
+			});
+			Event.add(!isGecko ? t.getWin() : t.getDoc(), 'focus', function(e) {
+				t.onActivate.dispatch(t, e);
+			});
+
 			e = null;
 		},
 
@@ -9474,12 +9521,15 @@ var tinyMCE = window.tinyMCE = tinymce.EditorManager;
 
 			}
 
+			// Plone fix: Changed behavior of the blur and focus event so it matches the api docs
+			/*
 			if (EditorManager.activeEditor != t) {
 				if ((oed = EditorManager.activeEditor) != null)
 					oed.onDeactivate.dispatch(oed, t);
 
 				t.onActivate.dispatch(t, oed);
 			}
+			*/
 
 			EditorManager._setActive(t);
 		},

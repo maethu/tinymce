@@ -1,5 +1,5 @@
 /**
- * $Id$
+ * $Id: editor_plugin_src.js 1209 2009-08-20 12:35:10Z spocke $
  *
  * @author Moxiecode
  * @copyright Copyright © 2004-2008, Moxiecode Systems AB, All rights reserved.
@@ -558,8 +558,8 @@
 					if (user_interface) {
 						inst.windowManager.open({
 							url : url + '/row.htm',
-							width : 400 + parseInt(inst.getLang('table.rowprops_delta_width', 0)),
-							height : 295 + parseInt(inst.getLang('table.rowprops_delta_height', 0)),
+							width : 293 + parseInt(inst.getLang('table.rowprops_delta_width', 0)),
+							height : 340 + parseInt(inst.getLang('table.rowprops_delta_height', 0)),
 							inline : 1
 						}, {
 							plugin_url : url
@@ -575,8 +575,8 @@
 					if (user_interface) {
 						inst.windowManager.open({
 							url : url + '/cell.htm',
-							width : 400 + parseInt(inst.getLang('table.cellprops_delta_width', 0)),
-							height : 295 + parseInt(inst.getLang('table.cellprops_delta_height', 0)),
+							width : 300 + parseInt(inst.getLang('table.cellprops_delta_width', 0)),
+							height : 380 + parseInt(inst.getLang('table.cellprops_delta_height', 0)),
 							inline : 1
 						}, {
 							plugin_url : url
@@ -589,8 +589,8 @@
 					if (user_interface) {
 						inst.windowManager.open({
 							url : url + '/table.htm',
-							width : 400 + parseInt(inst.getLang('table.table_delta_width', 0)),
-							height : 320 + parseInt(inst.getLang('table.table_delta_height', 0)),
+							width : 320 + parseInt(inst.getLang('table.table_delta_width', 0)),
+							height : 350 + parseInt(inst.getLang('table.table_delta_height', 0)),
 							inline : 1
 						}, {
 							plugin_url : url,
@@ -680,7 +680,7 @@
 								if (!trElm || !tdElm)
 									return true;
 
-								var grid = getTableGrid(tableElm);
+								var grid = getTableGrid(inst.dom.getParent(tableElm, "table"));
 								var cpos = getCellPos(grid, tdElm);
 								var newTR = doc.createElement("tr");
 								var lastTDElm = null;
@@ -718,7 +718,7 @@
 								if (!trElm || !tdElm)
 									return true;
 
-								var grid = getTableGrid(tableElm);
+								var grid = getTableGrid(inst.dom.getParent(tableElm, "table"));
 								var cpos = getCellPos(grid, tdElm);
 								var newTR = doc.createElement("tr");
 								var lastTDElm = null;
@@ -815,7 +815,7 @@
 								if (!trElm || !tdElm)
 									return true;
 
-								var grid = getTableGrid(inst.dom.getParent(tableElm, "table"));
+								var grid = getTableGrid(tableElm);
 								var cpos = getCellPos(grid, tdElm);
 								var lastTDElm = null;
 
@@ -846,7 +846,7 @@
 								if (!trElm || !tdElm)
 									return true;
 
-								var grid = getTableGrid(inst.dom.getParent(tableElm, "table"));
+								var grid = getTableGrid(tableElm);
 								var cpos = getCellPos(grid, tdElm);
 								var lastTDElm = null;
 
@@ -954,8 +954,8 @@
 
 									inst.windowManager.open({
 										url : url + '/merge_cells.htm',
-										width : 240 + parseInt(inst.getLang('table.merge_cells_delta_width', 0)),
-										height : 110 + parseInt(inst.getLang('table.merge_cells_delta_height', 0)),
+										width : 300 + parseInt(inst.getLang('table.merge_cells_delta_width', 0)),
+										height : 185 + parseInt(inst.getLang('table.merge_cells_delta_height', 0)),
 										inline : 1
 									}, {
 										action : "update",

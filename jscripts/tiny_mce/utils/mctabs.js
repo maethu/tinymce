@@ -1,5 +1,5 @@
 /**
- * $Id$
+ * $Id: mctabs.js 758 2008-03-30 13:53:29Z spocke $
  *
  * Moxiecode DHTML Tabs script.
  *
@@ -42,11 +42,11 @@ MCTabs.prototype.displayTab = function(tab_id, panel_id) {
 		// Hide all other tabs
 		for (i = 0; i < nodes.length; i++) {
 			if (nodes[i].nodeName == "LI")
-				nodes[i].className = '';
+				nodes[i].firstChild.className = '';
 		}
 
 		// Show selected tab
-		tabElm.className = 'current';
+		tabElm.firstChild.className = 'selected';
 	}
 
 	if (panelElm && panelContainerElm) {
@@ -54,12 +54,12 @@ MCTabs.prototype.displayTab = function(tab_id, panel_id) {
 
 		// Hide all other panels
 		for (i = 0; i < nodes.length; i++) {
-			if (nodes[i].nodeName == "DIV")
-				nodes[i].className = 'panel';
+			if (nodes[i].nodeName == "FIELDSET")
+				nodes[i].style.display = 'none';
 		}
 
 		// Show selected panel
-		panelElm.className = 'current';
+		panelElm.style.display = 'block';
 	}
 };
 

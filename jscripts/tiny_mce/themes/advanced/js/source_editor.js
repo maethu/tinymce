@@ -15,6 +15,7 @@ function onLoadInit() {
 
 	document.getElementById('htmlSource').value = tinyMCEPopup.editor.getContent({source_view : true});
 
+
 	if (tinyMCEPopup.editor.getParam("theme_advanced_source_editor_wrap", true)) {
 		setWrap('soft');
 		document.getElementById('wraped').checked = true;
@@ -50,13 +51,12 @@ function resizeInputs() {
 	var el = document.getElementById('htmlSource');
 
 	if (!tinymce.isIE) {
-		 wHeight = self.innerHeight - 65;
-		 wWidth = self.innerWidth - 16;
+		wHeight = self.innerHeight - 170;
+		wWidth = self.innerWidth - 48;
+		el.style.height = Math.abs(wHeight) + 'px';
+		el.style.width  = Math.abs(wWidth) + 'px';
 	} else {
-		 wHeight = document.body.clientHeight - 70;
-		 wWidth = document.body.clientWidth - 16;
+		wHeight = document.body.clientHeight - 170;
+		wWidth = document.body.clientWidth - 52;
 	}
-
-	el.style.height = Math.abs(wHeight) + 'px';
-	el.style.width  = Math.abs(wWidth) + 'px';
 }
