@@ -8,15 +8,21 @@
 	<script type="text/javascript" src="../../utils/validate.js"></script>
 	<script type="text/javascript" src="../../utils/editable_selects.js"></script>
 	<script type="text/javascript" src="js/table.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/table.css" />
+    <link href="css/table.css" rel="stylesheet" type="text/css" />
 
 </head>
-<body id="table" >
+<body id="table" role="application" aria-labelledby="app_title">
+	<span style="display:none;" id="app_title" i18n:translate="table_dlg_title"></span>
 	<div class="dialog-wrapper" id="content">
 		<form onsubmit="insertTable();return false;" action="#">
-			<ul class="formTabs"><li id="general_tab" class="formTab firstFormTab"><a href="javascript:mcTabs.displayTab('general_tab','general_panel');" onmousedown="return false;" class="selected"><span i18n:translate="table_dlg_general_tab"></span></a></li><li id="advanced_tab" class="formTab lastFormTab"><a href="javascript:mcTabs.displayTab('advanced_tab','advanced_panel');" onmousedown="return false;"><span i18n:translate="table_dlg_advanced_tab"></span></a></li></ul>
+            <ul class="formTabs">
+                <li id="general_tab"  aria-controls="general_panel" class="current formTab firstFormTab">
+                    <span i18n:translate="table_dlg_general_tab"><a href="javascript:mcTabs.displayTab('general_tab','general_panel');" onmousedown="return false;" class="selected"></a></span></li>
+                <li id="advanced_tab" aria-controls="advanced_panel" class="formTab lastFormTab">
+                    <span i18n:translate="table_dlg_advanced_tab"><a href="javascript:mcTabs.displayTab('advanced_tab','advanced_panel');" onmousedown="return false;"></a></span></li>
+            </ul>
 
-			<fieldset id="general_panel" class="formPanel">
+			<fieldset role="presentation" id="general_panel" class="panel current">
 				<div class="field">
 					<label id="classlabel" for="class" i18n:translate="common_class_name"></label>
 					<div class="widget">
@@ -75,6 +81,7 @@
 					</div>
 				</div>
 
+<<<<<<< .merge_file_NDi0fP
 				<div class="field">
 					<div class="widget">
 						<input id="caption" name="caption" type="checkbox" /> <label for="caption" i18n:translate="table_dlg_caption"></label>
@@ -102,11 +109,9 @@
 
 			<div class="visualClear"><!-- --></div>
 
-			<div class="mceActionPanel formControls">
-				<span class="actionButtons">
-					<input type="submit" class="context" id="insert" name="insert" i18n:attributes="value common_insert" />
-					<input type="button" class="context" id="cancel" name="cancel" i18n:attributes="value common_cancel" onclick="tinyMCEPopup.close();" />
-				</span>
+			<div class="mceActionPanel">
+                <input type="submit" class="context" id="insert" name="insert" i18n:attributes="value common_insert" />
+                <input type="button" class="context" id="cancel" name="cancel" i18n:attributes="value common_cancel" onclick="tinyMCEPopup.close();" />
 			</div>
 		</form>
 	</div>

@@ -1,8 +1,11 @@
 /**
- * $Id$
+ * URI.js
  *
- * @author Moxiecode
- * @copyright Copyright © 2004-2008, Moxiecode Systems AB, All rights reserved.
+ * Copyright 2009, Moxiecode Systems AB
+ * Released under LGPL License.
+ *
+ * License: http://tinymce.moxiecode.com/license
+ * Contributing: http://tinymce.moxiecode.com/contributing
  */
 
 (function() {
@@ -22,7 +25,7 @@
 		 * @param {Object} s Optional settings object.
 		 */
 		URI : function(u, s) {
-			var t = this, o, a, b;
+			var t = this, o, a, b, base_url;
 
 			// Trim whitespace
 			u = tinymce.trim(u);
@@ -41,18 +44,23 @@
 				u = (s.base_uri ? s.base_uri.protocol || 'http' : 'http') + '://mce_host' + u;
 
 			// Relative path http:// or protocol relative //path
-			if (!/^\w*:?\/\//.test(u))
-				u = (s.base_uri.protocol || 'http') + '://mce_host' + t.toAbsPath(s.base_uri.path, u);
+			if (!/^[\w-]*:?\/\//.test(u)) {
+				base_url = s.base_uri ? s.base_uri.path : new tinymce.util.URI(location.href).directory;
+				u = ((s.base_uri && s.base_uri.protocol) || 'http') + '://mce_host' + t.toAbsPath(base_url, u);
+			}
 
 			// Parse URL (Credits goes to Steave, http://blog.stevenlevithan.com/archives/parseuri)
-			u = u.replace(/@@/g, '(mce_at)'); // Zope 3 workaround, they use @@something
+ 			// Plone fix: #11047 URLS with @ break, disable username catching for the time being
+            // TinyMCE bug: http://tinymce.moxiecode.com/develop/bugtracker_view.php?id=2407
+
+			u = u.replace(/@/g, '(mce_at)');
 			u = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/.exec(u);
 			each(["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"], function(v, i) {
 				var s = u[i];
 
 				// Zope 3 workaround, they use @@something
 				if (s)
-					s = s.replace(/\(mce_at\)/g, '@@');
+					s = s.replace(/\(mce_at\)/g, '@');
 
 				t[v] = s;
 			});
@@ -103,6 +111,9 @@
 		 * @method toRelative
 		 * @param {String} u URI to convert into a relative path/URI.
 		 * @return {String} Relative URI from the point specified in the current URI instance.
+		 * @example
+		 * // Converts an absolute URL to an relative URL url will be somedir/somefile.htm
+		 * var url = new tinymce.util.URI('http://www.site.com/dir/').toRelative('http://www.site.com/dir/somedir/somefile.htm');
 		 */
 		toRelative : function(u) {
 			var t = this, o;
@@ -136,6 +147,9 @@
 		 * @param {String} u URI to convert into a relative path/URI.
 		 * @param {Boolean} nh No host and protocol prefix.
 		 * @return {String} Absolute URI from the point specified in the current URI instance.
+		 * @example
+		 * // Converts an relative URL to an absolute URL url will be http://www.site.com/dir/somedir/somefile.htm
+		 * var url = new tinymce.util.URI('http://www.site.com/dir/').toAbsolute('somedir/somefile.htm');
 		 */
 		toAbsolute : function(u, nh) {
 			var u = new tinymce.util.URI(u, {base_uri : this});
@@ -175,6 +189,11 @@
 					}
 				}
 			}
+
+ 			// Plone fix:
+ 			if (bp == 0) {
+ 				return "./";
+ 			}
 
 			if (bp == 1)
 				return path;
