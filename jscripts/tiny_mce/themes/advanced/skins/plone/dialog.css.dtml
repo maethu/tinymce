@@ -10,6 +10,9 @@ background: transparent;
 font-size: 110%;
 padding: 1em 1em 0em 1em;
 background: &dtml-backgroundColor;;
+margin: 0!important; /* override Plone css, we don't need additional margin */
+}
+
 }
 
 }
