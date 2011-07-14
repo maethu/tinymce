@@ -21,7 +21,8 @@
 		Dispatcher = tinymce.util.Dispatcher, undefined, instanceCounter = 0;
 
     // Plone fix
-    var lo_array = window.location.href.split('/');
+    var lo = window.location;
+    var lo_array = lo.href.split('/');
     if (lo.href.indexOf('portal_factory') != -1) {
         while (lo_array[lo_array.length-1] != 'portal_factory') {
             lo_array.pop();
