@@ -1,0 +1,9 @@
+=======
+HISTORY
+=======
+
+3.4.3-plone
+-----------
+
+- Fix transparent line appearing in popups near the title 
+  [iElectric]
