@@ -1927,7 +1927,7 @@
 				// #endif
 			}
 
-			// Plone fix: Changed behavior of the blur and focus event so it matches the api docs
+			// Plone fix: Changed behavior of the blur and focus event so it matches the api docs
             /*
 			if (tinymce.activeEditor != t) {
 				if ((oed = tinymce.activeEditor) != null)
@@ -3050,6 +3050,33 @@
 				if ((c >= 33 && c <= 36) || (c >= 37 && c <= 40) || c == 13 || c == 45 || c == 46 || c == 8 || (tinymce.isMac && (c == 91 || c == 93)) || e.ctrlKey)
 					t.nodeChanged();
 			});
+
+			// Add block quote deletion handler
+			t.onKeyDown.add(function(ed, e) {
+				// Was the BACKSPACE key pressed?
+				if (e.keyCode != 8)
+					return;
+
+				var n = ed.selection.getRng().startContainer;
+				var offset = ed.selection.getRng().startOffset;
+
+				while (n.nodeType != 1 && n.parentNode)
+					n = n.parentNode;
+					
+				// Is the cursor at the beginning of a blockquote?
+				if (n.parentNode && n.parentNode.tagName === 'BLOCKQUOTE' && n.parentNode.firstChild == n && offset == 0) {
+					// Remove the blockquote
+					ed.formatter.toggle('blockquote', null, n.parentNode);
+
+					// Move the caret to the beginning of n
+					var rng = ed.selection.getRng();
+					rng.setStart(n, 0);
+					rng.setEnd(n, 0);
+					ed.selection.setRng(rng);
+					ed.selection.collapse(false);
+				}
+			});
+ 
 
 			// Add block quote deletion handler
 			t.onKeyDown.add(function(ed, e) {
