@@ -1,12 +1,12 @@
-#internalpath { margin: 0 0 10px 10px; height: 2em; }
-.columnlibraries { width: 120px; }
-.searchButton, #upload { margin-top: 4px; }
-.subPanel { width: 296px; }
-.uponelevel { height: 22px; }
-#uponelevel { line-height: 1em; }
-#internal_details_panel { width: 190px; display: none; }
-#upload_panel { width: 190px; display: none; }
-#uploadfile { width: 100%; }
-#upload_iframe { display: none; }
-#internallinkcontainer { height: 240px; }
+#ploneimage .formHelp { height: 2em; }
+#addimage_panel, #browseimage_panel { height: 400px }
+#addimage_panel { width: 170px }
+#addimage_panel input, #addimage_panel textarea { width: 100%; }
+#addimage_panek #upload_iframe { display: none; }
+#browseimage_panel { width: 550px }
+#internallinkcontainer, #details_panel { width: 260px; height: 310px; border: 0.1em solid #CCC }
+.verticalborder { height: 420px; width: 0px; border-right: 0.1em solid #329FD7; margin: 0 20px 10px 20px }
 
+#internallinkcontainer { margin-right: 20px }
+.legend { margin: 5px 0 }
+.legend span { margin-right: 5px }

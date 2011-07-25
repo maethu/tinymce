@@ -11,6 +11,8 @@ font-size: 110%;
 padding: 1em 1em 0em 1em;
 background: &dtml-backgroundColor;;
 }
+
+}
 .dialog-wrapper table.listing {
 margin: 0em;
 }
@@ -80,5 +82,27 @@ overflow-x: hidden;
 
 .radioscrolllist div {
 padding-left: 0.5em;
+}
+
+/* ActionPanel */
+.mceActionPanel {
+text-align: center;
+}
+.mceActionPanel input, .plonebutton {
+padding: 5px 20px;
+color: #305c95;
+background-color: #ededed;
+border: #B3B3B3 solid 1px;
+border-radius: 6px;
+-webkit-border-radius: 6px;
+-moz-border-radius: 6px;
+font-weight: bold;
+cursor: pointer;
+}
+.mceActionPanel #insert {
+width: 200px;
+}
+.mceActionPanel #cancel {
+color: inherit;
 }
 /* </dtml-with> */
