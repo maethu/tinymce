@@ -22,7 +22,7 @@
 			paste_convert_middot_lists : true,
 			paste_convert_headers_to_strong : false,
 			paste_dialog_width : "450",
-			paste_dialog_height : "400",
+			paste_dialog_height : "300",
 			paste_text_use_dialog : false,
 			paste_text_sticky : false,
 			paste_text_sticky_default : false,
