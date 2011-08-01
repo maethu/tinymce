@@ -3,6 +3,7 @@ var ImageDialog = {
     current_link : "",
     current_url : "",
     current_class : "",
+    is_search_activated : false,
     labels : "",
     thumb_url : null,
     
@@ -17,8 +18,6 @@ var ImageDialog = {
 
     init : function() {
         var f0 = document.forms[0];
-        var f1 = document.forms[1];
-        var f2 = document.forms[2];
         var ed = tinyMCEPopup.editor;
         var dom = ed.dom;
         var n = ed.selection.getNode();
@@ -39,8 +38,10 @@ var ImageDialog = {
             jq('#home', document).hide();
         }
 
-        if (n.nodeName == 'IMG') {
-            var href = dom.getAttrib(n, 'src');
+        // let's see if we are updating the image
+        var n = jq(n, document);
+        if (n.get(0).tagName == 'IMG') {
+            var href = n.attr('src');
             if (href.indexOf('/')) {
                 var href_array = href.split('/');
                 var last = href_array[href_array.length-1];
@@ -55,11 +56,11 @@ var ImageDialog = {
                     href = href.substring(0, pos - 1);
                 }
             }
-            var classnames = dom.getAttrib(n, 'class').split(' ');
+            var classnames = n.attr('class').split(' ');
             var classname = "";
             for (var i = 0; i < classnames.length; i++) {
                 if (classnames[i] == 'captioned') {
-                    if (tinyMCEPopup.editor.settings.allow_captioned_images) {
+                    if (ed.settings.allow_captioned_images) {
                         f0.caption.checked = true;
                     }
                 } else if ((classnames[i] == 'image-inline') ||
@@ -73,15 +74,14 @@ var ImageDialog = {
             selectByValue(f0, 'classes', classname, true);
             // TODO: nl2.insert.value = ed.getLang('update');
 
-
             if (href.indexOf('resolveuid') != -1) {
                 var current_uid = href.split('resolveuid/')[1];
                 tinymce.util.XHR.send({
-                    url : tinyMCEPopup.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
+                    url : ed.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
                     type : 'GET',
                     success : function(text) {
-                        ImageDialog.current_url = ImageDialog.getAbsoluteUrl(tinyMCEPopup.editor.settings.document_base_url, text);
-                        if (tinyMCEPopup.editor.settings.link_using_uids) {
+                        ImageDialog.current_url = ImageDialog.getAbsoluteUrl(ed.settings.document_base_url, text);
+                        if (ed.settings.link_using_uids) {
                             ImageDialog.current_link = href;
                         } else {
                             ImageDialog.current_link = ImageDialog.current_url;
@@ -90,13 +90,14 @@ var ImageDialog = {
                     }
                 });
             } else {
-                href = this.getAbsoluteUrl(tinyMCEPopup.editor.settings.document_base_url, href);
+                href = this.getAbsoluteUrl(ed.settings.document_base_url, href);
                 this.current_link = href;
                 this.getFolderListing(this.getParentUrl(href), 'tinymce-jsonimagefolderlisting');
             }
         } else {
             this.getCurrentFolderListing();
         }
+
     },
 
     getSelectedImageUrl: function() {
@@ -119,7 +120,6 @@ var ImageDialog = {
 
     insert : function() {
         var ed = tinyMCEPopup.editor, t = this, f = document.forms[0];
-        // var href = this.getRadioValue('internallink', 0);
         var href = t.getSelectedImageUrl();
 
         if (href === '') {
@@ -138,8 +138,6 @@ var ImageDialog = {
     insertAndClose : function() {
         var ed = tinyMCEPopup.editor;
         var f0 = document.forms[0];
-        var f1 = document.forms[1];
-        var f2 = document.forms[2];
         var nl0 = f0.elements;
         var v;
         var args = {};
@@ -190,80 +188,20 @@ var ImageDialog = {
     checkSearch : function(e, force_end) {
         var el = jq('#searchtext', document);
         if (el.val().length >= 3 && (tinyMCEPopup.editor.settings.livesearch || e.keyCode == 13)) {
-            is_activated_search = true;
+            ImageDialog.is_activated_search = true;
             ImageDialog.getFolderListing(tinyMCEPopup.editor.settings.navigation_root_url, 'tinymce-jsonimagesearch');
             jq('#upload', document).attr('disabled', true);
             jq('#upload', document).fadeTo(1, 0.5);
-            jq('#internalpath', document).parent().css('visibility', 'hidden');
+            jq('#internalpath', document).prev().text(labels['label_search_results']);
         } 
-        if (el.val().length == 0 && is_activated_search || force_end) {
-            is_activated_search = false;
+        if (el.val().length == 0 && ImageDialog.is_activated_search || force_end) {
             el.val('');
+            ImageDialog.is_activated_search = false;
             ImageDialog.getCurrentFolderListing();
             jq('#upload', document).attr('disabled', false);
-            jq('#upload', document).fadeTo(1, 15);
-            jq('#internalpath', document).parent().css('visibility', 'visible');
+            jq('#upload', document).fadeTo(1, 1);
+            jq('#internalpath', document).prev().text(labels['label_internal_path']);
         }
-    },
-
-    getAttrib : function(e, at) {
-        var ed = tinyMCEPopup.editor, dom = ed.dom, v, v2;
-
-        if (ed.settings.inline_styles) {
-            switch (at) {
-                case 'align':
-                    if (v = dom.getStyle(e, 'float'))
-                        return v;
-
-                    if (v = dom.getStyle(e, 'vertical-align'))
-                        return v;
-
-                    break;
-
-                case 'hspace':
-                    v = dom.getStyle(e, 'margin-left')
-                    v2 = dom.getStyle(e, 'margin-right');
-
-                    if (v && v == v2)
-                        return parseInt(v.replace(/[^0-9]/g, ''));
-
-                    break;
-
-                case 'vspace':
-                    v = dom.getStyle(e, 'margin-top')
-                    v2 = dom.getStyle(e, 'margin-bottom');
-                    if (v && v == v2)
-                        return parseInt(v.replace(/[^0-9]/g, ''));
-
-                    break;
-
-                case 'border':
-                    v = 0;
-
-                    tinymce.each(['top', 'right', 'bottom', 'left'], function(sv) {
-                        sv = dom.getStyle(e, 'border-' + sv + '-width');
-
-                        // False or not the same as prev
-                        if (!sv || (sv != v && v !== 0)) {
-                            v = 0;
-                            return false;
-                        }
-
-                        if (sv)
-                            v = sv;
-                    });
-
-                    if (v)
-                        return parseInt(v.replace(/[^0-9]/g, ''));
-
-                    break;
-            }
-        }
-
-        if (v = dom.getAttrib(e, at))
-            return v;
-
-        return '';
     },
 
     setSwapImage : function(st) {
@@ -335,20 +273,6 @@ var ImageDialog = {
                 img.vspace = f.vspace.value;
             }
         }
-    },
-
-    changeHeight : function() {
-        var f = document.forms[0], tp, t = this;
-
-        if (!f.constrain.checked || !t.preloadImg) {
-            return;
-        }
-
-        if (f.width.value == "" || f.height.value == "")
-            return;
-
-        tp = (parseInt(f.width.value) / parseInt(t.preloadImg.width)) * t.preloadImg.height;
-        f.height.value = tp.toFixed(0);
     },
 
     changeWidth : function() {
@@ -452,14 +376,13 @@ var ImageDialog = {
                     dimension = elm.options[elm.selectedIndex].value;
                 }
 
-                if (data.thumb == "") {
-                    document.getElementById ('previewimagecontainer').innerHTML = data.description;
-                } else {
-                    ImageDialog.thumb_url = data.thumb;
+                if (data.thumb != "") {
                     document.getElementById ('previewimagecontainer').innerHTML = '<img src="' + data.thumb + '" border="0" />';
                 }
-                document.getElementById('description').value = data.description;
-                document.getElementById('description_href').value = path;
+
+                jq('#description', document).val(data.description);
+                jq('#description_href', document).val(path);
+
                 if (data.scales) {
                     var dimensions = document.getElementById('dimensions');
                     var newdimensions = [];
@@ -506,15 +429,14 @@ var ImageDialog = {
                             ImageDialog.current_link = 'resolveuid/' + data.items[i].uid;
                         }
                         if (data.items[i].is_folderish) {
-                            html += '<div class="folderish ' + (i % 2 == 0 ? 'even' : 'odd') + '">';
+                            html += '<div class="item folderish ' + (i % 2 == 0 ? 'even' : 'odd') + '">';
                             html += '<img src="img/arrow_right.png" border="0" /> ';
                             html += '<img src="' + data.items[i].icon + '" border="0" /> ';
                             html += '<a href="' + data.items[i].url + '" class="folderlink contenttype-' + data.items[i].normalized_type + '">';
-                            //html += 'onclick="ImageDialog.getFolderListing(\'' + data.items[i].url + '\',\'tinymce-jsonimagefolderlisting' + '\')">';
                             html += data.items[i].title;
                             html += '</a>';
                         } else {
-                            html += '<div class="' + (i % 2 == 0 ? 'even' : 'odd') + '">';
+                            html += '<div class="item ' + (i % 2 == 0 ? 'even' : 'odd') + '">';
                             html += '<input onclick="ImageDialog.setDetails(\'';
                             html += data.items[i].url + '\',\'' + data.items[i].title.replace(/'/g, "\\'") + '\');"';
                             html += ' type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="';
@@ -537,8 +459,10 @@ var ImageDialog = {
                     e.preventDefault();
                     e.stopPropagation()
                     ImageDialog.getFolderListing(jq(this).attr('href'), 'tinymce-jsonimagefolderlisting');
-                    
                 });
+
+                // disable insert until we have selected an item
+                jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
 
                 // make rows clickable
                 jq('#internallinkcontainer div', document).click(function() {
@@ -596,6 +520,19 @@ var ImageDialog = {
                     }
                 }
 
+                // shortcuts
+                if (method != 'tinymce-jsonimagesearch') {
+                    jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + labels['label_browser'] + '</strong></div>');
+                    var sh = tinyMCEPopup.editor.settings.shortcuts_html;
+                    for (var i = sh.length-1; i > -1; i--) {
+                        jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + sh[i] + '</div>');
+                    }
+                    jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + labels['label_shortcuts'] + '</strong></div>');
+                    jq('#shortcuts', document).click(function() {
+                        jq('#internallinkcontainer .shortcut', document).toggle();
+                    });
+                }
+
                 // Hide all panels
                 ImageDialog.hidePanels();
             }
@@ -638,18 +575,23 @@ var ImageDialog = {
         jq('#general_panel', document).width(530);
         jq('#addimage_panel', document).removeClass('hide');
         jq('#details_panel', document).addClass("hide");
-        // TODO: deselect radio list
+        jq('#internallinkcontainer input', document).attr('checked', false);
+        jq('#upload, #insert', document).attr('disabled', true).fadeTo(1, 0.5);
+        jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
     },
 
     displayPreviewPanel : function() {
         jq('#general_panel', document).width(530);
         jq('#addimage_panel', document).addClass('hide');
         jq('#details_panel', document).removeClass("hide");
+        jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
+        jq('#insert', document).attr('disabled', false).fadeTo(1, 1);
     },
     hidePanels: function() {
         jq('#general_panel', document).width(790);
         jq('#addimage_panel', document).addClass('hide');
         jq('#details_panel', document).addClass("hide");
+        jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
     }
 
 };
