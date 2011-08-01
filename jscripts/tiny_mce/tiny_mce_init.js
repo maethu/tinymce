@@ -87,7 +87,8 @@ function TinyMCEConfig(id) {
             allow_captioned_images : this.getAllowCaptionedImages(),
             rooted : this.getRooted(),
             force_span_wrappers : true,
-            fix_list_elements : false
+            fix_list_elements : false,
+            shortcuts_html : this.widget_config.shortcuts_html,
         };
 
         window.tinyMCE.init(init_dict);
