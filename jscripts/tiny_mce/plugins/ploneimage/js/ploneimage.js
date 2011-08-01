@@ -19,8 +19,6 @@ var ImageDialog = {
         var f0 = document.forms[0];
         var f1 = document.forms[1];
         var f2 = document.forms[2];
-        var nl0 = f0.elements;
-        var nl1 = f1.elements;
         var ed = tinyMCEPopup.editor;
         var dom = ed.dom;
         var n = ed.selection.getNode();
@@ -28,13 +26,17 @@ var ImageDialog = {
 
         tinyMCEPopup.resizeToInnerSize();
 
+        // stop search on esc key
+        jq('#searchtext', document).keyup(function(e) {
+          if (e.keyCode == 27) { ImageDialog.checkSearch(e, true); return false; }
+        });
+
         if (!ed.settings.allow_captioned_images) {
-            document.getElementById ('caption').parentNode.parentNode.style.display = 'none';
+            jq('#caption', document).parent().parent().hide();
         }
 
-        // Check if rooted
         if (ed.settings.rooted) {
-            document.getElementById('home').style.display = 'none';
+            jq('#home', document).hide();
         }
 
         if (n.nodeName == 'IMG') {
@@ -69,7 +71,7 @@ var ImageDialog = {
                 }
             }
             selectByValue(f0, 'classes', classname, true);
-            //nl2.insert.value = ed.getLang('update');
+            // TODO: nl2.insert.value = ed.getLang('update');
 
 
             if (href.indexOf('resolveuid') != -1) {
@@ -139,7 +141,6 @@ var ImageDialog = {
         var f1 = document.forms[1];
         var f2 = document.forms[2];
         var nl0 = f0.elements;
-        var nl1 = f1.elements;
         var v;
         var args = {};
         var el;
@@ -150,7 +151,6 @@ var ImageDialog = {
         if (tinymce.isWebKit)
             ed.getWin().focus();
             
-        // var href = this.getRadioValue('internallink', 0);
         var href = this.getSelectedImageUrl();
         var dimensions = this.getSelectValue(f0, 'dimensions');
         if (dimensions != "") {
@@ -174,8 +174,8 @@ var ImageDialog = {
             ed.undoManager.add();
         }
 
-        var description_href = nl0.description_href.value;
-        var description = nl0.description.value;
+        var description_href = jq('#description_href', document).val();
+        var description = jq('#description', document).val();
         var data = "description=" + encodeURIComponent(description);
         tinymce.util.XHR.send({
             url : description_href + '/tinymce-setDescription',
@@ -187,10 +187,23 @@ var ImageDialog = {
         tinyMCEPopup.close();
     },
 
-    checkSearch : function(e) {
-        if (document.getElementById('searchtext').value.length >= 3 && (tinyMCEPopup.editor.settings.livesearch || e.keyCode == 13)) {
+    checkSearch : function(e, force_end) {
+        var el = jq('#searchtext', document);
+        if (el.val().length >= 3 && (tinyMCEPopup.editor.settings.livesearch || e.keyCode == 13)) {
+            is_activated_search = true;
             ImageDialog.getFolderListing(tinyMCEPopup.editor.settings.navigation_root_url, 'tinymce-jsonimagesearch');
+            jq('#upload', document).attr('disabled', true);
+            jq('#upload', document).fadeTo(1, 0.5);
+            jq('#internalpath', document).parent().css('visibility', 'hidden');
         } 
+        if (el.val().length == 0 && is_activated_search || force_end) {
+            is_activated_search = false;
+            el.val('');
+            ImageDialog.getCurrentFolderListing();
+            jq('#upload', document).attr('disabled', false);
+            jq('#upload', document).fadeTo(1, 15);
+            jq('#internalpath', document).parent().css('visibility', 'visible');
+        }
     },
 
     getAttrib : function(e, at) {
@@ -466,8 +479,7 @@ var ImageDialog = {
                     }
                 }
                 this.current_path = path;
-                document.getElementById('internal_details_panel').style.display = 'block';
-                document.getElementById('upload_panel').style.display = 'none';
+                ImageDialog.displayPreviewPanel();
             }
         });
     },
@@ -482,7 +494,7 @@ var ImageDialog = {
             url : path + '/' + method,
             content_type : "application/x-www-form-urlencoded",
             type : 'POST',
-            data : "searchtext=" + document.getElementById('searchtext').value + "&rooted=" + (tinyMCEPopup.editor.settings.rooted ? "True" : "False") + "&document_base_url=" + encodeURIComponent(tinyMCEPopup.editor.settings.document_base_url),
+            data : "searchtext=" + jq('#searchtext', document).val() + "&rooted=" + (tinyMCEPopup.editor.settings.rooted ? "True" : "False") + "&document_base_url=" + encodeURIComponent(tinyMCEPopup.editor.settings.document_base_url),
             success : function(text) {
                 var html = "";
                 var data = eval('(' + text + ')');
@@ -493,47 +505,59 @@ var ImageDialog = {
                         if (data.items[i].url == ImageDialog.current_link && tinyMCEPopup.editor.settings.link_using_uids) {
                             ImageDialog.current_link = 'resolveuid/' + data.items[i].uid;
                         }
-                        html += '<div class="' + (i % 2 == 0 ? 'even' : 'odd') + '">';
                         if (data.items[i].is_folderish) {
-                            if (data.items[i].icon.length) {
-                                html += '<img src="' + data.items[i].icon + '" border="0" style="margin-left: 17px" /> ';
-                            }
-                            html += '<a class="contenttype-' + data.items[i].normalized_type + '" ';
-                            html += 'href="javascript:ImageDialog.getFolderListing(\'' + data.items[i].url + '\',\'tinymce-jsonimagefolderlisting' + '\')">';
+                            html += '<div class="folderish ' + (i % 2 == 0 ? 'even' : 'odd') + '">';
+                            html += '<img src="img/arrow_right.png" border="0" /> ';
+                            html += '<img src="' + data.items[i].icon + '" border="0" /> ';
+                            html += '<a href="' + data.items[i].url + '" class="folderlink contenttype-' + data.items[i].normalized_type + '">';
+                            //html += 'onclick="ImageDialog.getFolderListing(\'' + data.items[i].url + '\',\'tinymce-jsonimagefolderlisting' + '\')">';
                             html += data.items[i].title;
                             html += '</a>';
                         } else {
+                            html += '<div class="' + (i % 2 == 0 ? 'even' : 'odd') + '">';
                             html += '<input onclick="ImageDialog.setDetails(\'';
                             html += data.items[i].url + '\',\'' + data.items[i].title.replace(/'/g, "\\'") + '\');"';
-                            html += ' type="radio" class="noborder" name="internallink" value="';
+                            html += ' type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="';
                             if (tinyMCEPopup.editor.settings.link_using_uids) {
                                 html += "resolveuid/" + data.items[i].uid;
                             } else {
                                 html += data.items[i].url;
                             }
                             html += '"/> ';
-                            if (data.items[i].icon.length) {
-                                html += '<img src="' + data.items[i].icon + '" border="0"/> ';
-                            }
+                            html += '<img src="' + data.items[i].icon + '" border="0" /> ';
                             html += '<span class="contenttype-' + data.items[i].normalized_type + '">' + data.items[i].title + '</span>';
                         }
                         html += '</div>';
                     }
                 }
-                document.getElementById ('internallinkcontainer').innerHTML = html;
-                /*if (data.parent_url == "") {
-                    document.getElementById ('uponelevel').style.display = 'none';
-                    document.getElementById ('uponelevel').href = 'javascript:void(0)';
-                } else {
-                    document.getElementById ('uponelevel').style.display = 'block';
-                    document.getElementById ('uponelevel').href = 'javascript:ImageDialog.getFolderListing(\'' + data.parent_url + '\',\'tinymce-jsonimagefolderlisting' + '\')';
-                }*/
+                jq('#internallinkcontainer', document).html(html);
 
+                // folder link action
+                jq('#internallinkcontainer div a', document).click(function(e) {
+                    e.preventDefault();
+                    e.stopPropagation()
+                    ImageDialog.getFolderListing(jq(this).attr('href'), 'tinymce-jsonimagefolderlisting');
+                    
+                });
+
+                // make rows clickable
+                jq('#internallinkcontainer div', document).click(function() {
+                    var el = jq(this);
+                    var checkbox = el.find('input');
+                    if (checkbox.length) {
+                        checkbox[0].click();
+                    } else {
+                        el.find('a').click();
+                    }
+                });
+
+                // breadcrumbs
                 html = "";
                 for (var i = 0; i < data.path.length; i++) {
                     if (i != 0) {
                         html += " &rarr; ";
                     }
+                    html += '<img src="' + data.path[i].icon + '" border="0" /> ';
                     if (i == data.path.length - 1) {
                         html += data.path[i].title;
                     } else {
@@ -542,18 +566,18 @@ var ImageDialog = {
                         html += '</a>';
                     }
                 }
-                document.getElementById ('internalpath').innerHTML = html;
+                jq('#internalpath', document).html(html);
 
                 // Check if allowed to upload
                 if (data.upload_allowed) {
-                    document.getElementById ('upload').style.display = '';
+                    jq('#upload', document).show();
                 } else {
-                    document.getElementById ('upload').style.display = 'none';
+                    jq('#upload', document).hide();
                 }
 
                 // Set global path
                 ImageDialog.current_path = path;
-                document.forms[1].action = ImageDialog.current_path + '/tinymce-upload';
+                jq('#upload_form', document).attr('action', ImageDialog.current_path + '/tinymce-upload');
                 ImageDialog.setRadioValue('internallink', ImageDialog.current_link, 0);
 
                 if (ImageDialog.current_link != "") {
@@ -571,6 +595,9 @@ var ImageDialog = {
                         ImageDialog.setDetails(ImageDialog.current_link,'');
                     }
                 }
+
+                // Hide all panels
+                ImageDialog.hidePanels();
             }
         });
     },
@@ -607,16 +634,28 @@ var ImageDialog = {
         return (base_array.join('/'));
     },
 
-    displayPanel : function(elm_id) {
-        document.getElementById ('internal_panel').style.display = elm_id == 'internal_panel' || elm_id == 'upload_panel' ? 'block' : 'none';
-        document.getElementById ('internal_details_panel').style.display = elm_id == 'internal_panel' ? 'block' : 'none';
-        document.getElementById ('upload_panel').style.display = elm_id == 'upload_panel' ? 'block' : 'none';
+    displayUploadPanel : function() {
+        jq('#general_panel', document).width(530);
+        jq('#addimage_panel', document).removeClass('hide');
+        jq('#details_panel', document).addClass("hide");
+        // TODO: deselect radio list
+    },
+
+    displayPreviewPanel : function() {
+        jq('#general_panel', document).width(530);
+        jq('#addimage_panel', document).addClass('hide');
+        jq('#details_panel', document).removeClass("hide");
+    },
+    hidePanels: function() {
+        jq('#general_panel', document).width(790);
+        jq('#addimage_panel', document).addClass('hide');
+        jq('#details_panel', document).addClass("hide");
     }
+
 };
 
 function uploadOk(ok_msg) {
     ImageDialog.current_link = ok_msg;
-    ImageDialog.displayPanel('internal_panel');
     ImageDialog.getFolderListing(ImageDialog.current_path, 'tinymce-jsonimagefolderlisting');
 }
 
