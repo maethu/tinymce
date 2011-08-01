@@ -27,6 +27,8 @@ tinyMCEPopup = {
 	 */
 	init : function() {
 		var t = this, w, ti;
+        // Plone: pass jquery to iframe
+        jq = top.jq;
 
 		// Find window & API
 		w = t.getWin();
