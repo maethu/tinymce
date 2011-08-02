@@ -10,10 +10,15 @@ var ImageDialog = function (mcePopup) {
     this.tinyMCEPopup = mcePopup;
     this.editor = mcePopup.editor;
 
-    this.current_path = "";
-    /* Absolute base URL to an image (without scaling path components) */
+    /* In case of UID linked images maintains a relative "resolveuid/<UUID>"
+       fragment otherwise contains a full URL to the image. */
     this.current_link = "";
+
+    /* Absolute base URL to an image (without scaling path components)
+       regardless whether the image was referenced using an UID or a direct
+       link. */
     this.current_url = "";
+
     /* List of additional CSS classes set on the <img/> element which have no
        special meaning for TinyMCE. */
     this.current_classes = [];
@@ -82,7 +87,8 @@ ImageDialog.prototype.init = function () {
         //   - image-left
         //   - image-right
         // and pass all other classes through as-is.
-        jq.each(selected_node.attr('class').split(/\s+/), function (i, classname) {
+        jq.each(selected_node.attr('class').split(/\s+/), function () {
+            var classname = this.toString();
             switch (classname) {
                 case 'captioned':
                     if (self.editor.settings.allow_captioned_images) {
@@ -344,10 +350,7 @@ ImageDialog.prototype.setDetails = function (path) {
         'dataType': 'json',
         'success': function (data) {
             var dimension = jq('#dimensions', document).val(),
-                dimensions,
-                option,
-                i,
-                len;
+                dimensions;
 
             // Add the thumbnail image to the details pane.
             if (data.thumb !== "") {
@@ -365,18 +368,18 @@ ImageDialog.prototype.setDetails = function (path) {
             if (data.scales) {
                 dimensions = jq('#dimensions', document).empty();
 
-                for (i = 0, len = data.scales.length; i < len; i++) {
-                    option = jq('<option/>')
-                        .attr({'value': scale_form_key(data.scales[i].value)})
-                        .text(scale_title(data.scales[i]));
+                jq.each(data.scales, function () {
+                    var scale = this,
+                        option = jq('<option/>')
+                            .attr({'value': scale_form_key(scale.value)})
+                            .text(scale_title(scale));
 
                     if (option.val() === dimension) {
                         option.attr({'selected': 'selected'});
                     }
                     option.appendTo(dimensions);
-                }
+                });
             }
-            self.current_path = path;
             self.displayPreviewPanel();
         }
     });
@@ -400,50 +403,49 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
             },
         'success': function (data) {
             var html = [],
-                sh,
-                i,
                 len,
                 current_uid;
+
             if (data.items.length === 0) {
                 html.push(self.labels.label_no_items);
             } else {
-                for (i = 0, len = data.items.length; i < len; i++) {
-                    if (data.items[i].url === self.current_link && self.editor.settings.link_using_uids) {
-                        self.current_link = 'resolveuid/' + data.items[i].uid;
+                jq.each(data.items, function (i, item) {
+                    if (item.url === self.current_link && self.editor.settings.link_using_uids) {
+                        self.current_link = 'resolveuid/' + item.uid;
                     }
-                    if (data.items[i].is_folderish) {
+                    if (item.is_folderish) {
                         jq.merge(html, [
                             '<div class="item folderish ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
                                 '<img src="img/arrow_right.png" />',
-                                '<img src="' + data.items[i].icon + '" />',
-                                '<a href="' + data.items[i].url + '" class="folderlink contenttype-' + data.items[i].normalized_type + '">',
-                                    data.items[i].title,
+                                '<img src="' + item.icon + '" />',
+                                '<a href="' + item.url + '" class="folderlink contenttype-' + item.normalized_type + '">',
+                                    item.title,
                                 '</a>',
                             '</div>'
                         ]);
                     } else {
                         jq.merge(html, [
                             '<div class="item ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
-                                '<input href="' + data.items[i].url + '" ',
+                                '<input href="' + item.url + '" ',
                                     'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
-                                    self.editor.settings.link_using_uids ? 'resolveuid/' + data.items[i].uid : data.items[i].url,
+                                    self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
                                     '"/> ',
-                                '<img src="' + data.items[i].icon + '" /> ',
-                                '<span class="contenttype-' + data.items[i].normalized_type + '">' + data.items[i].title + '</span>',
+                                '<img src="' + item.icon + '" /> ',
+                                '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
                             '</div>'
                         ]);
                     }
-                }
+
+                });
             }
             jq('#internallinkcontainer', document).html(html.join(''));
 
             // shortcuts
             if (method !== 'tinymce-jsonimagesearch' && self.editor.settings.image_shortcuts_html.length) {
                 jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_browser + '</strong></div>');
-                sh = self.editor.settings.image_shortcuts_html;
-                for (i = sh.length - 1; i > -1; i--) {
-                    jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + sh[i] + '</div>');
-                }
+                jq.each(self.editor.settings.image_shortcuts_html, function () {
+                    jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + this + '</div>');
+                });
                 jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_shortcuts + '</strong></div>');
                 jq('#shortcuts', document).click(function() {
                     jq('#internallinkcontainer .shortcut', document).toggle();
@@ -468,21 +470,19 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
 
             // breadcrumbs
             html = [];
-            for (i = 0, len = data.path.length; i < len; i++) {
+            len = data.path.length;
+            jq.each(data.path, function (i, item) {
                 if (i > 0) {
                     html.push(" &rarr; ");
                 }
-                html.push('<img src="' + data.path[i].icon + '" /> ');
+                html.push('<img src="' + item.icon + '" /> ');
                 if (i === len - 1) {
-                    html.push(data.path[i].title);
+                    html.push(item.title);
                 } else {
-                    jq.merge(html, [
-                        '<a href="' + data.path[i].url + '">',
-                            data.path[i].title,
-                        '</a>'
-                        ]);
+                    html.push('<a href="' + item.url + '">' + item.title + '</a>');
                 }
-            }
+
+            });
             jq('#internalpath', document).html(html.join(''));
 
             // folder link action
@@ -506,17 +506,16 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
                 jq('#upload', document).hide();
             }
 
-            // Set global path
-            self.current_path = path;
-
-            jq('#upload_form', document).attr('action', self.current_path + '/tinymce-upload');
-            if (self.current_link !== '') {
-                jq('input:radio[name=internallink][value=' + self.current_link + ']', document)
-                    .attr('checked', 'checked');
-            }
+            // Make the image upload form upload the image into the current container.
+            jq('#upload_form', document).attr('action', path + '/tinymce-upload');
 
             if (self.current_link !== "") {
-                if (self.current_link.indexOf('resolveuid') > -1) {
+                // In case the current folder listing contains the currently
+                // chosen image make sure that the checkbox is checked.
+                jq('input:radio[name=internallink][value=' + self.current_link + ']', document)
+                    .attr('checked', 'checked');
+
+                if (self.current_link.indexOf('resolveuid/') > -1) {
                     current_uid = self.current_link.split('resolveuid/')[1];
                     jq.ajax({
                         'url': self.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
