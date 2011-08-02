@@ -498,14 +498,6 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
                 self.setDetails(jq(this).attr('href'));
             });
 
-
-            // Check if allowed to upload
-            if (data.upload_allowed) {
-                jq('#upload', document).show();
-            } else {
-                jq('#upload', document).hide();
-            }
-
             // Make the image upload form upload the image into the current container.
             jq('#upload_form', document).attr('action', path + '/tinymce-upload');
 
@@ -531,6 +523,14 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
             }
 
             self.hidePanels();
+
+            // Check if allowed to upload
+            if (data.upload_allowed) {
+                jq('#upload', document).show();
+            } else {
+                jq('#upload', document).hide();
+            }
+
         }
     });
 };
