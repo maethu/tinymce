@@ -10,6 +10,7 @@ var ImageDialog2 = function (mcePopup) {
     this.editor = mcePopup.editor;
 
     this.current_path = "";
+    /* Absolute base URL to an image (without scaling path components) */
     this.current_link = "";
     this.current_url = "";
     /* List of additional CSS classes set on the <img/> element which have no
@@ -567,11 +568,12 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
 
             // Set global path
             self.current_path = path;
+
             jq('#upload_form', document).attr('action', self.current_path + '/tinymce-upload');
-//            jq('input:radio[name=internallink][value=' + self.current_link + ']').
-            jq('input:radio[name=internallink]')
-                .val(self.current_link)
-                .attr('checked', 'checked');
+            if (self.current_link !== '') {
+                jq('input:radio[name=internallink][value=' + self.current_link + ']', document)
+                    .attr('checked', 'checked');
+            }
 
             if (self.current_link !== "") {
                 if (self.current_link.indexOf('resolveuid') > -1) {
