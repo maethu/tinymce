@@ -81,7 +81,7 @@ ImageDialog.prototype.init = function () {
     }
 
     // let's see if we are updating the image
-    if (selected_node.get(0).tagName.toUpperCase() === 'IMG') {
+    if (selected_node.get(0).tagName && selected_node.get(0).tagName.toUpperCase() === 'IMG') {
         // We are working on an image.
 
         image_scale = this.parseImageScale(selected_node.attr("src"));
