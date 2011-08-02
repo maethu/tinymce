@@ -58,7 +58,7 @@ ImageDialog.prototype.init = function () {
         e.preventDefault();
         self.displayUploadPanel();
     });
-    jq('#close', document).click(function (e) {
+    jq('#cancel', document).click(function (e) {
         e.preventDefault();
         self.tinyMCEPopup.close();
     });
