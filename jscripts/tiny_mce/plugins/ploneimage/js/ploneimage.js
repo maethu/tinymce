@@ -1,3 +1,4 @@
+/*jslint browser: true, sloppy: true, white: true, plusplus: true, maxerr: 500, indent: 4 */
 /**
  * Image selection dialog.
  *
@@ -22,10 +23,11 @@ var ImageDialog = function (mcePopup) {
 
     this.tinyMCEPopup.requireLangPack();
 
-    if (image_list_url = this.tinyMCEPopup.getParam("external_image_list_url")) {
-        document.write('<script language="javascript" type="text/javascript" src="' + this.editor.documentBaseURI.toAbsolute(image_list_url) + '"></script>');
+    // TODO: WTF?
+    image_list_url = this.tinyMCEPopup.getParam("external_image_list_url");
+    if (image_list_url) {
+        jq.getScript(this.editor.documentBaseURI.toAbsolute(image_list_url));
     }
-
 };
 
 
@@ -33,12 +35,18 @@ var ImageDialog = function (mcePopup) {
  * Dialog initialization.
  *
  * This will be called when the dialog is activated by pressing the
- * corresponding toolbar icon. (TODO: confirm this!)
+ * corresponding toolbar icon.
  */
 ImageDialog.prototype.init = function () {
     var self = this,
-        dom = this.editor.dom,
-        selected_node = jq(this.editor.selection.getNode(), document);
+        selected_node = jq(this.editor.selection.getNode(), document),
+        classnames,
+        classname,
+        i,
+        len,
+        image_scale,
+        href,
+        current_uid;
 
     jq('#action-form', document).submit(function (e) {
         e.preventDefault();
@@ -54,12 +62,11 @@ ImageDialog.prototype.init = function () {
     });
 
 
-    // TODO: What is this and why do we eval it?
-    this.labels = eval(this.editor.getParam("labels"));
+    this.labels = this.editor.getParam("labels");
 
     this.tinyMCEPopup.resizeToInnerSize();
 
-    jq('#searchtext', document).keyup(function(e) {
+    jq('#searchtext', document).keyup(function (e) {
         e.preventDefault();
         e.stopPropagation();
         self.checkSearch(e);
@@ -77,13 +84,13 @@ ImageDialog.prototype.init = function () {
     if (selected_node.get(0).tagName.toUpperCase() === 'IMG') {
         // We are working on an image.
 
-        var image_scale = this.parseImageScale(selected_node.attr("src"));
+        image_scale = this.parseImageScale(selected_node.attr("src"));
 
         jq('#dimensions', document).val(image_scale.value);
 
-        var classnames = selected_node.attr('class').split(' ');
-        var classname = "";
-        for (var i = 0, len = classnames.length; i < len; i++) {
+        classnames = selected_node.attr('class').split(' ');
+        classname = "";
+        for (i = 0, len = classnames.length; i < len; i++) {
             if (classnames[i] === 'captioned') {
                 if (this.editor.settings.allow_captioned_images) {
                     jq('#caption', document).attr('checked', 'checked');
@@ -105,13 +112,13 @@ ImageDialog.prototype.init = function () {
         // TODO: nl2.insert.value = ed.getLang('update');
 
         if (image_scale.url.indexOf('resolveuid') > -1) {
-            var current_uid = image_scale.url.split('resolveuid/')[1];
+            current_uid = image_scale.url.split('resolveuid/')[1];
 
             jq.ajax({
                 'url': this.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
                 'dataType': 'text',
                 'type': 'GET',
-                'success': function(text) {
+                'success': function (text) {
                     self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
                     if (self.editor.settings.link_using_uids) {
                         self.current_link = image_scale.url;
@@ -122,7 +129,7 @@ ImageDialog.prototype.init = function () {
                 }
             });
         } else {
-            var href = this.getAbsoluteUrl(this.editor.settings.document_base_url, image_scale.url);
+            href = this.getAbsoluteUrl(this.editor.settings.document_base_url, image_scale.url);
             this.current_link = href;
             this.getFolderListing(this.getParentUrl(href), 'tinymce-jsonimagefolderlisting');
         }
@@ -159,7 +166,8 @@ ImageDialog.prototype.parseImageScale = function (url) {
         parsed = {
             "url": url,
             "scale": "",
-            "value": ""};
+            "value": ""
+        };
 
     if (url.indexOf('/') > -1) {
         parts = url.split('/');
@@ -259,7 +267,7 @@ ImageDialog.prototype.insertAndClose = function () {
     } else {
         this.editor.execCommand('mceInsertContent', false, '<img id="__mce_tmp" />', {skip_undo : 1});
         this.editor.dom.setAttribs('__mce_tmp', args);
-        this.editor.dom.setAttrib('__mce_tmp', 'id','');
+        this.editor.dom.setAttrib('__mce_tmp', 'id', '');
         this.editor.undoManager.add();
     }
 
@@ -274,7 +282,7 @@ ImageDialog.prototype.insertAndClose = function () {
     this.tinyMCEPopup.close();
 };
 
-ImageDialog.prototype.checkSearch = function(e) {
+ImageDialog.prototype.checkSearch = function (e) {
     var el = jq('#searchtext', document);
     if (el.val().length >= 3 && (this.tinyMCEPopup.editor.settings.livesearch || e.keyCode === 13)) {
         this.is_activated_search = true;
@@ -282,16 +290,16 @@ ImageDialog.prototype.checkSearch = function(e) {
         jq('#upload', document)
             .attr('disabled', true)
             .fadeTo(1, 0.5);
-        jq('#internalpath', document).prev().text(this.labels['label_search_results']);
+        jq('#internalpath', document).prev().text(this.labels.label_search_results);
     }
-    if (el.val().length === 0 && this.is_activated_search || e.keyCode === 27) {
+    if ((el.val().length === 0 && this.is_activated_search) || e.keyCode === 27) {
         el.val('');
         this.is_activated_search = false;
         this.getCurrentFolderListing();
         jq('#upload', document)
             .attr('disabled', false)
             .fadeTo(1, 1);
-        jq('#internalpath', document).prev().text(this.labels['label_internal_path']);
+        jq('#internalpath', document).prev().text(this.labels.label_internal_path);
     }
 };
 
@@ -310,20 +318,20 @@ ImageDialog.prototype.setDetails = function (path) {
     // We always try to use the image that the user selects in the center
     // pane first.  But as in the above case, if the user selects no image
     // in the center pane, we fall back to the thumbnailed image.
-    var self = this;
+    var self = this,
+        scale_form_key = function (path) {
+            var scale_name = path.split('/').pop();
+            return scale_name ? 'image_' + scale_name : '';
+        },
+        scale_title = function (scale) {
+            if (scale.size[0]) {
+                return scale.title + ' (' + scale.size[0] + 'x' + scale.size[1] + ')';
+            } else {
+                return scale.title;
+            }
+        };
     this.thumb_url = null;
 
-    var scale_form_key = function (path) {
-        var scale_name = path.split('/').pop();
-        return scale_name ? 'image_' + scale_name : '';
-    };
-    var scale_title = function (scale) {
-        if (scale.size[0]) {
-            return scale.title + ' (' + scale.size[0] + 'x' + scale.size[1] + ')';
-        } else {
-            return scale.title;
-        }
-    };
 
     jq.ajax({
         'url': path + '/tinymce-jsondetails',
@@ -332,13 +340,15 @@ ImageDialog.prototype.setDetails = function (path) {
         'success': function (data) {
             var dimension = jq('#dimensions', document).val(),
                 dimensions,
-                option;
+                option,
+                i,
+                len;
 
             // Add the thumbnail image to the details pane.
             if (data.thumb !== "") {
                 jq('#previewimagecontainer', document)
                     .empty()
-                    .append(jq('<img/>').attr({'src': data.thumb}))
+                    .append(jq('<img/>').attr({'src': data.thumb}));
                 // Save the thumbnail URL for later use.
                 self.thumb_url = data.thumb;
             }
@@ -350,7 +360,7 @@ ImageDialog.prototype.setDetails = function (path) {
             if (data.scales) {
                 dimensions = jq('#dimensions', document).empty();
 
-                for(var i = 0, len = data.scales.length; i < len; i++) {
+                for (i = 0, len = data.scales.length; i < len; i++) {
                     option = jq('<option/>')
                         .attr({'value': scale_form_key(data.scales[i].value)})
                         .text(scale_title(data.scales[i]));
@@ -383,13 +393,16 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
             'rooted': this.editor.settings.rooted ? 'True' : 'False',
             'document_base_url': encodeURIComponent(this.editor.settings.document_base_url)
             },
-        'success': function(data) {
+        'success': function (data) {
             var html = [],
-                sh;
+                sh,
+                i,
+                len,
+                current_uid;
             if (data.items.length === 0) {
-                html.push(self.labels['label_no_items']);
+                html.push(self.labels.label_no_items);
             } else {
-                for (var i = 0, len = data.items.length; i < len; i++) {
+                for (i = 0, len = data.items.length; i < len; i++) {
                     if (data.items[i].url === self.current_link && self.editor.settings.link_using_uids) {
                         self.current_link = 'resolveuid/' + data.items[i].uid;
                     }
@@ -405,7 +418,7 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
                         ]);
                     } else {
                         jq.merge(html, [
-                            '<div class="item ' + (i % 2 == 0 ? 'even' : 'odd') + '">',
+                            '<div class="item ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
                                 '<input href="' + data.items[i].url + '" ',
                                     'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
                                     self.editor.settings.link_using_uids ? 'resolveuid/' + data.items[i].uid : data.items[i].url,
@@ -421,12 +434,12 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
 
             // shortcuts
             if (method !== 'tinymce-jsonimagesearch' && self.editor.settings.image_shortcuts_html.length) {
-                jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels['label_browser'] + '</strong></div>');
+                jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_browser + '</strong></div>');
                 sh = self.editor.settings.image_shortcuts_html;
-                for (var i = sh.length - 1; i > -1; i--) {
+                for (i = sh.length - 1; i > -1; i--) {
                     jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + sh[i] + '</div>');
                 }
-                jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels['label_shortcuts'] + '</strong></div>');
+                jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_shortcuts + '</strong></div>');
                 jq('#shortcuts', document).click(function() {
                     jq('#internallinkcontainer .shortcut', document).toggle();
                 });
@@ -439,8 +452,8 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
 
             // make rows clickable
             jq('#internallinkcontainer div', document).click(function() {
-                var el = jq(this);
-                var checkbox = el.find('input');
+                var el = jq(this),
+                    checkbox = el.find('input');
                 if (checkbox.length) {
                     checkbox[0].click();
                 } else {
@@ -450,7 +463,7 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
 
             // breadcrumbs
             html = [];
-            for (var i = 0, len = data.path.length; i < len; i++) {
+            for (i = 0, len = data.path.length; i < len; i++) {
                 if (i > 0) {
                     html.push(" &rarr; ");
                 }
@@ -470,13 +483,13 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
             // folder link action
             jq('#internallinkcontainer a, #internalpath a', document).click(function(e) {
                 e.preventDefault();
-                e.stopPropagation()
+                e.stopPropagation();
                 self.getFolderListing(jq(this).attr('href'), 'tinymce-jsonimagefolderlisting');
             });
             // item link action
             jq('#internallinkcontainer input:radio', document).click(function (e) {
                 e.preventDefault();
-                e.stopPropagation()
+                e.stopPropagation();
                 self.setDetails(jq(this).attr('href'));
             });
 
@@ -513,7 +526,6 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
                 }
             }
 
-            // Hide all panels
             self.hidePanels();
         }
     });
@@ -527,7 +539,8 @@ ImageDialog.prototype.getParentUrl = function(url) {
 
 ImageDialog.prototype.getAbsoluteUrl = function (base, link) {
     var base_array,
-        link_array;
+        link_array,
+        item;
 
     if ((link.indexOf('http://') > -1) || (link.indexOf('https://') > -1) || (link.indexOf('ftp://') > -1)) {
         return link;
@@ -540,9 +553,10 @@ ImageDialog.prototype.getAbsoluteUrl = function (base, link) {
     base_array.pop();
 
     while (link_array.length > 0) {
-        var item = link_array.shift();
+        item = link_array.shift();
         if (item === ".") {
             // Do nothing
+            jq.noop();
         } else if (item === "..") {
             // Remove leave node from base
             base_array.pop();
