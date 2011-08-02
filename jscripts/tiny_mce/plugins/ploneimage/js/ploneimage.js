@@ -282,7 +282,7 @@ ImageDialog2.prototype.checkSearch = function(e, force_end) {
     }
 };
 
-ImageDialog2.prototype.setDetails = function (path, title) {
+ImageDialog2.prototype.setDetails = function (path) {
     // Sends a low level AJAX request.
 
     // If our AJAX call succeeds and we get a thumbnail image to display in
@@ -393,9 +393,8 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
                     } else {
                         jq.merge(html, [
                             '<div class="item ' + (i % 2 == 0 ? 'even' : 'odd') + '">',
-                                '<input onclick="ImageDialog.setDetails(\'',
-                                    data.items[i].url + '\',\'' + data.items[i].title.replace(/'/g, "\\'") + '\');"',
-                                    ' type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
+                                '<input href="' + data.items[i].url + '" ',
+                                    'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
                                     self.editor.settings.link_using_uids ? 'resolveuid/' + data.items[i].uid : data.items[i].url,
                                     '"/> ',
                                 '<img src="' + data.items[i].icon + '" /> ',
@@ -421,12 +420,6 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
             }
 
 
-            // folder link action
-            jq('#internallinkcontainer div a', document).click(function(e) {
-                e.preventDefault();
-                e.stopPropagation()
-                self.getFolderListing(jq(this).attr('href'), 'tinymce-jsonimagefolderlisting');
-            });
 
             // disable insert until we have selected an item
             jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
@@ -453,13 +446,27 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
                     html.push(data.path[i].title);
                 } else {
                     jq.merge(html, [
-                        '<a href="javascript:ImageDialog.getFolderListing(\'' + data.path[i].url + '\',\'tinymce-jsonimagefolderlisting' + '\')">',
+                        '<a href="' + data.path[i].url + '">',
                             data.path[i].title,
                         '</a>'
                         ]);
                 }
             }
             jq('#internalpath', document).html(html.join(''));
+
+            // folder link action
+            jq('#internallinkcontainer a, #internalpath a', document).click(function(e) {
+                e.preventDefault();
+                e.stopPropagation()
+                self.getFolderListing(jq(this).attr('href'), 'tinymce-jsonimagefolderlisting');
+            });
+            // item link action
+            jq('#internallinkcontainer input:radio', document).click(function (e) {
+                e.preventDefault();
+                e.stopPropagation()
+                self.setDetails(jq(this).attr('href'));
+            });
+
 
             // Check if allowed to upload
             if (data.upload_allowed) {
@@ -485,11 +492,11 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
                         'dataType': 'text',
                         'success': function(text) {
                             self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
-                            self.setDetails(self.current_url,'');
+                            self.setDetails(self.current_url);
                         }
                     });
                 } else {
-                    self.setDetails(self.current_link,'');
+                    self.setDetails(self.current_link);
                 }
             }
 
