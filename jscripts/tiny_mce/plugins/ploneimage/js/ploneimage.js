@@ -18,7 +18,7 @@ var ImageDialog = function (mcePopup) {
        special meaning for TinyMCE. */
     this.current_classes = [];
     this.is_search_activated = false;
-    this.labels = {};
+    this.labels = this.editor.getParam("labels");
     this.thumb_url = "";
 
     this.tinyMCEPopup.requireLangPack();
@@ -40,13 +40,10 @@ var ImageDialog = function (mcePopup) {
 ImageDialog.prototype.init = function () {
     var self = this,
         selected_node = jq(this.editor.selection.getNode(), document),
-        classnames,
-        classname,
-        i,
-        len,
         image_scale,
-        href,
         current_uid;
+
+    this.tinyMCEPopup.resizeToInnerSize();
 
     jq('#action-form', document).submit(function (e) {
         e.preventDefault();
@@ -60,14 +57,10 @@ ImageDialog.prototype.init = function () {
         e.preventDefault();
         self.tinyMCEPopup.close();
     });
-
-
-    this.labels = this.editor.getParam("labels");
-
-    this.tinyMCEPopup.resizeToInnerSize();
-
     jq('#searchtext', document).keyup(function (e) {
         e.preventDefault();
+        // We need to stop the event from propagating so the pressing Esc will
+        // only stop the search but not close the whole dialog.
         e.stopPropagation();
         self.checkSearch(e);
     });
@@ -75,51 +68,62 @@ ImageDialog.prototype.init = function () {
     if (!this.editor.settings.allow_captioned_images) {
         jq('#caption', document).parent().parent().hide();
     }
-
     if (this.editor.settings.rooted) {
         jq('#home', document).hide();
     }
 
-    // let's see if we are updating the image
     if (selected_node.get(0).tagName.toUpperCase() === 'IMG') {
-        // We are working on an image.
+        /** The image dialog was opened to edit an existing image element. **/
+
+        // Manage the CSS classes defined in the <img/> element. We handle the
+        // following classes as special cases:
+        //   - captioned
+        //   - image-inline
+        //   - image-left
+        //   - image-right
+        // and pass all other classes through as-is.
+        jq.each(selected_node.attr('class').split(/\s+/), function (i, classname) {
+            switch (classname) {
+                case 'captioned':
+                    if (self.editor.settings.allow_captioned_images) {
+                        // Check the caption checkbox
+                        jq('#caption', document).attr('checked', 'checked');
+                    }
+                    break;
+
+                case 'image-inline':
+                case 'image-left':
+                case 'image-right':
+                    // Select the corresponding option in the "Alignment" <select>.
+                    jq('#classes', document).val(classname);
+                    break;
+
+                default:
+                    // Keep track of custom CSS classes so we can inject them
+                    // back into the element later.
+                    self.current_classes.push(classname);
+                    break;
+            }
+        });
 
         image_scale = this.parseImageScale(selected_node.attr("src"));
 
+        // Update the dimensions <select> with the corresponding value.
         jq('#dimensions', document).val(image_scale.value);
 
-        classnames = selected_node.attr('class').split(' ');
-        classname = "";
-        for (i = 0, len = classnames.length; i < len; i++) {
-            if (classnames[i] === 'captioned') {
-                if (this.editor.settings.allow_captioned_images) {
-                    jq('#caption', document).attr('checked', 'checked');
-                }
-            } else if ((classnames[i] === 'image-inline') ||
-                       (classnames[i] === 'image-left') ||
-                       (classnames[i] === 'image-right')) {
-                classname = classnames[i];
-            } else {
-                // Keep track of CSS classes that have no special meaning for
-                // TinyMCE.
-                this.current_classes.push(classnames[i]);
-            }
-        }
+        if (image_scale.url.indexOf('resolveuid/') > -1) {
+            /** Handle UID linked image **/
 
-        // Pre-select the correct alignment based on the CSS class.
-        jq('#classes', document).val(classname);
-
-        // TODO: nl2.insert.value = ed.getLang('update');
-
-        if (image_scale.url.indexOf('resolveuid') > -1) {
             current_uid = image_scale.url.split('resolveuid/')[1];
 
+            // Fetch the information about the UID linked image.
             jq.ajax({
                 'url': this.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
                 'dataType': 'text',
                 'type': 'GET',
                 'success': function (text) {
                     self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
+
                     if (self.editor.settings.link_using_uids) {
                         self.current_link = image_scale.url;
                     } else {
@@ -129,11 +133,12 @@ ImageDialog.prototype.init = function () {
                 }
             });
         } else {
-            href = this.getAbsoluteUrl(this.editor.settings.document_base_url, image_scale.url);
-            this.current_link = href;
-            this.getFolderListing(this.getParentUrl(href), 'tinymce-jsonimagefolderlisting');
+            /** Handle directly linked image **/
+            this.current_link = this.getAbsoluteUrl(this.editor.settings.document_base_url, image_scale.url);
+            this.getFolderListing(this.getParentUrl(this.current_link), 'tinymce-jsonimagefolderlisting');
         }
     } else {
+        /** The image dialog was opened to add a new image. **/
         this.getCurrentFolderListing();
     }
 };
