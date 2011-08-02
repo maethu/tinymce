@@ -454,6 +454,20 @@ var ImageDialog = {
                 }
                 jq('#internallinkcontainer', document).html(html);
 
+                // shortcuts
+                if (method != 'tinymce-jsonimagesearch' && tinyMCEPopup.editor.settings.image_shortcuts_html.length) {
+                    jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + labels['label_browser'] + '</strong></div>');
+                    var sh = tinyMCEPopup.editor.settings.image_shortcuts_html;
+                    for (var i = sh.length-1; i > -1; i--) {
+                        jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + sh[i] + '</div>');
+                    }
+                    jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + labels['label_shortcuts'] + '</strong></div>');
+                    jq('#shortcuts', document).click(function() {
+                        jq('#internallinkcontainer .shortcut', document).toggle();
+                    });
+                }
+
+
                 // folder link action
                 jq('#internallinkcontainer div a', document).click(function(e) {
                     e.preventDefault();
@@ -518,19 +532,6 @@ var ImageDialog = {
                     } else {
                         ImageDialog.setDetails(ImageDialog.current_link,'');
                     }
-                }
-
-                // shortcuts
-                if (method != 'tinymce-jsonimagesearch') {
-                    jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + labels['label_browser'] + '</strong></div>');
-                    var sh = tinyMCEPopup.editor.settings.shortcuts_html;
-                    for (var i = sh.length-1; i > -1; i--) {
-                        jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + sh[i] + '</div>');
-                    }
-                    jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + labels['label_shortcuts'] + '</strong></div>');
-                    jq('#shortcuts', document).click(function() {
-                        jq('#internallinkcontainer .shortcut', document).toggle();
-                    });
                 }
 
                 // Hide all panels
