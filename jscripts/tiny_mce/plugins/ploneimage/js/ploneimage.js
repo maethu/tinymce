@@ -94,10 +94,11 @@ ImageDialog2.prototype.init = function () {
         if (image_scale.url.indexOf('resolveuid') > -1) {
             var current_uid = image_scale.url.split('resolveuid/')[1];
 
-            tinymce.util.XHR.send({
-                url : this.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
-                type : 'GET',
-                success : function(text) {
+            jq.ajax({
+                'url': this.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
+                'dataType': 'text',
+                'type': 'GET',
+                'success': function(text) {
                     self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
                     if (self.editor.settings.link_using_uids) {
                         self.current_link = image_scale.url;
@@ -249,11 +250,12 @@ ImageDialog2.prototype.insertAndClose = function () {
         this.editor.undoManager.add();
     }
 
-    tinymce.util.XHR.send({
-        url : jq('#description_href', document).val() + '/tinymce-setDescription',
-        content_type : "application/x-www-form-urlencoded",
-        type : "POST",
-        data : "description=" + encodeURIComponent(jq('#description', document).val())
+    jq.ajax({
+        'url': jq('#description_href', document).val() + '/tinymce-setDescription',
+        'type': 'POST',
+        'data': {
+            'description': encodeURIComponent(jq('#description', document).val())
+        }
     });
 
     this.tinyMCEPopup.close();
@@ -413,12 +415,12 @@ ImageDialog2.prototype.setDetails = function (path, title) {
         }
     };
 
-    tinymce.util.XHR.send({
-        url : path + '/tinymce-jsondetails',
-        type : 'POST',
-        success : function (text) {
-            var data = eval('(' + text + ')'),
-                dimension = jq('#dimensions', document).val(),
+    jq.ajax({
+        'url': path + '/tinymce-jsondetails',
+        'type': 'POST',
+        'dataType': 'json',
+        'success': function (data) {
+            var dimension = jq('#dimensions', document).val(),
                 dimensions,
                 option;
 
@@ -462,17 +464,20 @@ ImageDialog2.prototype.getCurrentFolderListing = function () {
 ImageDialog2.prototype.getFolderListing = function (path, method) {
     var self = this;
 
-    // Sends a low level Ajax request
-    tinymce.util.XHR.send({
-        url : path + '/' + method,
-        content_type : "application/x-www-form-urlencoded",
-        type : 'POST',
-        data : "searchtext=" + jq('#searchtext', document).val() + "&rooted=" + (this.editor.settings.rooted ? "True" : "False") + "&document_base_url=" + encodeURIComponent(this.editor.settings.document_base_url),
-        success : function(text) {
-            var html = [];
-            var data = eval('(' + text + ')');
+    jq.ajax({
+        'url': path + '/' + method,
+        'type': 'POST',
+        'dataType': 'json',
+        'data': {
+            'searchtext': encodeURIComponent(jq('#searchtext', document).val()),
+            'rooted': this.editor.settings.rooted ? 'True' : 'False',
+            'document_base_url': encodeURIComponent(this.editor.settings.document_base_url)
+            },
+        'success': function(data) {
+            var html = [],
+                sh;
             if (data.items.length === 0) {
-                html.push(labels['label_no_items']);
+                html.push(self.labels['label_no_items']);
             } else {
                 for (var i = 0, len = data.items.length; i < len; i++) {
                     if (data.items[i].url === self.current_link && self.editor.settings.link_using_uids) {
@@ -508,7 +513,7 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
             // shortcuts
             if (method !== 'tinymce-jsonimagesearch' && self.editor.settings.image_shortcuts_html.length) {
                 jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels['label_browser'] + '</strong></div>');
-                var sh = self.editor.settings.image_shortcuts_html;
+                sh = self.editor.settings.image_shortcuts_html;
                 for (var i = sh.length - 1; i > -1; i--) {
                     jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + sh[i] + '</div>');
                 }
@@ -578,10 +583,10 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
             if (self.current_link !== "") {
                 if (self.current_link.indexOf('resolveuid') > -1) {
                     current_uid = self.current_link.split('resolveuid/')[1];
-                    tinymce.util.XHR.send({
-                        url : self.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
-                        type : 'GET',
-                        success : function(text) {
+                    jq.ajax({
+                        'url': self.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
+                        'dataType': 'text',
+                        'success': function(text) {
                             self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
                             self.setDetails(self.current_url,'');
                         }
