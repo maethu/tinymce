@@ -3,7 +3,7 @@
  *
  * @param mcePopup Reference to a corresponding TinyMCE popup object.
  */
-var ImageDialog2 = function (mcePopup) {
+var ImageDialog = function (mcePopup) {
     var image_list_url;
 
     this.tinyMCEPopup = mcePopup;
@@ -25,6 +25,7 @@ var ImageDialog2 = function (mcePopup) {
     if (image_list_url = this.tinyMCEPopup.getParam("external_image_list_url")) {
         document.write('<script language="javascript" type="text/javascript" src="' + this.editor.documentBaseURI.toAbsolute(image_list_url) + '"></script>');
     }
+
 };
 
 
@@ -34,22 +35,34 @@ var ImageDialog2 = function (mcePopup) {
  * This will be called when the dialog is activated by pressing the
  * corresponding toolbar icon. (TODO: confirm this!)
  */
-ImageDialog2.prototype.init = function () {
+ImageDialog.prototype.init = function () {
     var self = this,
         dom = this.editor.dom,
         selected_node = jq(this.editor.selection.getNode(), document);
+
+    jq('#action-form', document).submit(function (e) {
+        e.preventDefault();
+        self.insert();
+    });
+    jq('#upload', document).click(function (e) {
+        e.preventDefault();
+        self.displayUploadPanel();
+    });
+    jq('#close', document).click(function (e) {
+        e.preventDefault();
+        self.tinyMCEPopup.close();
+    });
+
 
     // TODO: What is this and why do we eval it?
     this.labels = eval(this.editor.getParam("labels"));
 
     this.tinyMCEPopup.resizeToInnerSize();
 
-    // stop search on esc key
     jq('#searchtext', document).keyup(function(e) {
-        if (e.keyCode === 27) {
-            self.checkSearch(e, true);
-            return false;
-        }
+        e.preventDefault();
+        e.stopPropagation();
+        self.checkSearch(e);
     });
 
     if (!this.editor.settings.allow_captioned_images) {
@@ -139,7 +152,7 @@ ImageDialog2.prototype.init = function () {
  *
  * @param url URL to a possible scaled image.
  */
-ImageDialog2.prototype.parseImageScale = function (url) {
+ImageDialog.prototype.parseImageScale = function (url) {
     var parts,
         last_part,
         scale_pos,
@@ -169,7 +182,7 @@ ImageDialog2.prototype.parseImageScale = function (url) {
     return parsed;
 };
 
-ImageDialog2.prototype.getSelectedImageUrl = function () {
+ImageDialog.prototype.getSelectedImageUrl = function () {
     // This method provides a single entry point.
 
     // First, try to get the URL corresponding to the image that the user
@@ -194,7 +207,7 @@ ImageDialog2.prototype.getSelectedImageUrl = function () {
  * If the current selection does not have a proper URL to the image the empty
  * <img/> element will be removed from the DOM.
  */
-ImageDialog2.prototype.insert = function () {
+ImageDialog.prototype.insert = function () {
     var href = this.getSelectedImageUrl();
 
     if (href === '') {
@@ -209,7 +222,7 @@ ImageDialog2.prototype.insert = function () {
     }
 };
 
-ImageDialog2.prototype.insertAndClose = function () {
+ImageDialog.prototype.insertAndClose = function () {
     var args,
         el,
         href,
@@ -261,7 +274,7 @@ ImageDialog2.prototype.insertAndClose = function () {
     this.tinyMCEPopup.close();
 };
 
-ImageDialog2.prototype.checkSearch = function(e, force_end) {
+ImageDialog.prototype.checkSearch = function(e) {
     var el = jq('#searchtext', document);
     if (el.val().length >= 3 && (this.tinyMCEPopup.editor.settings.livesearch || e.keyCode === 13)) {
         this.is_activated_search = true;
@@ -271,7 +284,7 @@ ImageDialog2.prototype.checkSearch = function(e, force_end) {
             .fadeTo(1, 0.5);
         jq('#internalpath', document).prev().text(this.labels['label_search_results']);
     }
-    if (el.val().length === 0 && this.is_activated_search || force_end) {
+    if (el.val().length === 0 && this.is_activated_search || e.keyCode === 27) {
         el.val('');
         this.is_activated_search = false;
         this.getCurrentFolderListing();
@@ -282,7 +295,7 @@ ImageDialog2.prototype.checkSearch = function(e, force_end) {
     }
 };
 
-ImageDialog2.prototype.setDetails = function (path) {
+ImageDialog.prototype.setDetails = function (path) {
     // Sends a low level AJAX request.
 
     // If our AJAX call succeeds and we get a thumbnail image to display in
@@ -354,11 +367,11 @@ ImageDialog2.prototype.setDetails = function (path) {
     });
 };
 
-ImageDialog2.prototype.getCurrentFolderListing = function () {
+ImageDialog.prototype.getCurrentFolderListing = function () {
     this.getFolderListing(this.editor.settings.document_base_url, 'tinymce-jsonimagefolderlisting');
 };
 
-ImageDialog2.prototype.getFolderListing = function (path, method) {
+ImageDialog.prototype.getFolderListing = function (path, method) {
     var self = this;
 
     jq.ajax({
@@ -506,13 +519,13 @@ ImageDialog2.prototype.getFolderListing = function (path, method) {
     });
 };
 
-ImageDialog2.prototype.getParentUrl = function(url) {
+ImageDialog.prototype.getParentUrl = function(url) {
     var url_array = url.split('/');
     url_array.pop();
     return url_array.join('/');
 };
 
-ImageDialog2.prototype.getAbsoluteUrl = function (base, link) {
+ImageDialog.prototype.getAbsoluteUrl = function (base, link) {
     var base_array,
         link_array;
 
@@ -542,7 +555,7 @@ ImageDialog2.prototype.getAbsoluteUrl = function (base, link) {
     return base_array.join('/');
 };
 
-ImageDialog2.prototype.displayUploadPanel = function() {
+ImageDialog.prototype.displayUploadPanel = function() {
     jq('#general_panel', document).width(530);
     jq('#addimage_panel', document).removeClass('hide');
     jq('#details_panel', document).addClass("hide");
@@ -552,7 +565,7 @@ ImageDialog2.prototype.displayUploadPanel = function() {
     jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
 };
 
-ImageDialog2.prototype.displayPreviewPanel = function() {
+ImageDialog.prototype.displayPreviewPanel = function() {
     jq('#general_panel', document).width(530);
     jq('#addimage_panel', document).addClass('hide');
     jq('#details_panel', document).removeClass("hide");
@@ -560,22 +573,13 @@ ImageDialog2.prototype.displayPreviewPanel = function() {
     jq('#insert', document).attr('disabled', false).fadeTo(1, 1);
 };
 
-ImageDialog2.prototype.hidePanels = function() {
+ImageDialog.prototype.hidePanels = function() {
     jq('#general_panel', document).width(790);
     jq('#addimage_panel', document).addClass('hide');
     jq('#details_panel', document).addClass("hide");
     jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
 };
 
-function uploadOk(ok_msg) {
-    ImageDialog.current_link = ok_msg;
-    ImageDialog.getFolderListing(ImageDialog.current_path, 'tinymce-jsonimagefolderlisting');
-}
 
-function uploadError(error_msg) {
-    alert (error_msg);
-}
-
-
-var ImageDialog = new ImageDialog2(tinyMCEPopup);
-tinyMCEPopup.onInit.add(ImageDialog.init, ImageDialog);
+var imgdialog = new ImageDialog(tinyMCEPopup);
+tinyMCEPopup.onInit.add(imgdialog.init, imgdialog);
