@@ -535,12 +535,27 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
     });
 };
 
+/**
+ * Returns a URL to the parent (container) of the given URL.
+ *
+ * @param url URL with at least a single path component.
+ */
 ImageDialog.prototype.getParentUrl = function(url) {
     var url_array = url.split('/');
     url_array.pop();
     return url_array.join('/');
 };
 
+/**
+ * Returns an absolute URL based on a base url and a possibly relative link.
+ *
+ * If the given link is already an absolute URL it will be returned
+ * unmodified, otherwise it will be joined with the base URL with any parent
+ * references (..) factored out.
+ *
+ * @param base The base URL
+ * @param link The link to calculate an absolute URL for
+ */
 ImageDialog.prototype.getAbsoluteUrl = function (base, link) {
     var base_array,
         link_array,
