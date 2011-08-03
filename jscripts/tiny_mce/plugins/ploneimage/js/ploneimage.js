@@ -230,29 +230,13 @@ ImageDialog.prototype.getSelectedImageUrl = function () {
 /**
  * Handle inserting the selected image into the DOM of the editable area.
  *
- * If the current selection does not have a proper URL to the image the empty
- * <img/> element will be removed from the DOM.
  */
 ImageDialog.prototype.insert = function () {
-    var href = this.getSelectedImageUrl();
-
-    if (href === '') {
-        if (this.editor.selection.getNode().nodeName.toUpperCase() === 'IMG') {
-            this.editor.dom.remove(this.editor.selection.getNode());
-            this.editor.execCommand('mceRepaint');
-        }
-
-        this.tinyMCEPopup.close();
-    } else {
-        this.insertAndClose();
-    }
-};
-
-ImageDialog.prototype.insertAndClose = function () {
-    var args,
-        el,
-        href,
-        dimensions;
+    var attrs,
+        selected_node = this.editor.selection.getNode(),
+        href = this.getSelectedImageUrl(),
+        dimension,
+        classes;
 
     this.tinyMCEPopup.restoreSelection();
 
@@ -261,30 +245,38 @@ ImageDialog.prototype.insertAndClose = function () {
         this.editor.getWin().focus();
     }
 
-    href = this.getSelectedImageUrl();
-    dimensions = jq('#dimensions', document).val();
-    if (dimensions !== "") {
-        href += '/' + dimensions;
+    // Append the image scale to the URL if a valid selection exists.
+    dimension = jq('#dimensions', document).val();
+    if (dimension !== "") {
+        href += '/' + dimension;
     }
-    // TODO: Make this more verbose for readability!
-    args = {
-        src : href,
-        'class' : jq.trim(jq('#classes', document).val() +
-            ((this.editor.settings.allow_captioned_images && jq('#caption', document).get(0).checked) ? ' captioned' : '') +
-            " " + this.current_classes.join(" "))
+
+    // Pass-through classes
+    classes = [].concat(this.current_classes);
+    // Alignment class
+    classes.push(jq.trim(jq('#classes', document).val()));
+    // Image captioning
+    if (this.editor.settings.allow_captioned_images && jq('#caption', document).get(0).checked) {
+        classes.push('captioned');
+    }
+
+    attrs = {
+        'src' : href,
+        'class' : classes.join(' ')
     };
 
-    el = this.editor.selection.getNode();
-
-    if (el && el.nodeName.toUpperCase() === 'IMG') {
-        this.editor.dom.setAttribs(el, args);
+    if (selected_node && selected_node.nodeName.toUpperCase() === 'IMG') {
+        // Update an existing <img/> element
+        this.editor.dom.setAttribs(selected_node, attrs);
     } else {
+        // Create a new <img/> element.
         this.editor.execCommand('mceInsertContent', false, '<img id="__mce_tmp" />', {skip_undo : 1});
-        this.editor.dom.setAttribs('__mce_tmp', args);
+        this.editor.dom.setAttribs('__mce_tmp', attrs);
         this.editor.dom.setAttrib('__mce_tmp', 'id', '');
         this.editor.undoManager.add();
     }
 
+    // Update the Description of the image
     jq.ajax({
         'url': jq('#description_href', document).val() + '/tinymce-setDescription',
         'type': 'POST',
