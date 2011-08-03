@@ -264,10 +264,6 @@ ImageDialog.prototype.insertAndClose = function () {
     href = this.getSelectedImageUrl();
     dimensions = jq('#dimensions', document).val();
     if (dimensions !== "") {
-        // This makes the URLs use the old "image_<scale>" form instead of
-        // @@images/image/<scale>.
-        // TODO: How to best handle the image_<scale>/@@images/image/<scale>
-        // mismatch?
         href += '/' + dimensions;
     }
     // TODO: Make this more verbose for readability!
