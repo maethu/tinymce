@@ -115,7 +115,7 @@ ImageDialog.prototype.init = function () {
         image_scale = this.parseImageScale(selected_node.attr("src"));
 
         // Update the dimensions <select> with the corresponding value.
-        jq('#dimensions', document).val(image_scale.value);
+        jq('#dimensions', document).val(image_scale.scale);
 
         if (image_scale.url.indexOf('resolveuid/') > -1) {
             /** Handle UID linked image **/
@@ -152,21 +152,28 @@ ImageDialog.prototype.init = function () {
 /**
  * Parses the image scale (dimensions) from the given URL.
  *
- * Two types of URLs are supported:
+ * The scale URLs used by plone.app.imaging are of the form
+ *
+ *   http://server.com/some-image.png/@@images/<field>/<scale>
+ *
+ * where <field> denotes the particular field containing the image and <scale>
+ * identifies the particular image scale.
+ *
+ * For backward compatibility the previous form of image scale URLs is also
+ * supported, but only for the "image" field, e.g.
  *
  *   http://server.com/some-image/image_<scale>
  *
- * and
+ * where <scale> again denotes the particular image scale.
  *
- *   http://server.com/some-image/@@images/image/<scale>
- *
- * where <scale> denotes the particular scale for the image.
  * Returns an object with the base URL to the image and another relative URL
  * to the image scale, e.g.
  *
  * { 'url': 'http://server.com/some-image',
- *   'scale' : '@@images/image/thumb',
- *   'value': 'image_thumb' }
+ *   'scale' : '@@images/image/thumb' }
+ *
+ * The 'scale' key will always contain the plone.app.imaging type of scale
+ * regardless of the original form.
  *
  * @param url URL to a possible scaled image.
  */
@@ -176,25 +183,25 @@ ImageDialog.prototype.parseImageScale = function (url) {
         scale_pos,
         parsed = {
             "url": url,
-            "scale": "",
-            "value": ""
+            "scale": ""
         };
 
     if (url.indexOf('/') > -1) {
         parts = url.split('/');
         last_part = parts[parts.length - 1];
-        scale_pos = url.indexOf("@@images/image/");
 
         if (last_part.indexOf('image_') > -1) {
-            // This is an old-style scale URL
+            // This is an old-style scale URL. We'll translate the scale to
+            // the form used by plone.app.imaging.
             parsed.scale = "@@images/image/" + parts.pop().substring(6);
             parsed.url = parts.join("/");
-            parsed.value = last_part;
-        } else if (scale_pos > -1) {
-            // This is a new style URL
-            parsed.url = url.substring(0, scale_pos - 1);
-            parsed.scale = url.substring(scale_pos);
-            parsed.value = 'image_' + last_part;
+        } else {
+            scale_pos = url.search(/@@images\/[^/]+\/.+/);
+            if (scale_pos > -1) {
+                // This is a new style URL
+                parsed.url = url.substring(0, scale_pos - 1);
+                parsed.scale = url.substring(scale_pos);
+            }
         }
     }
 
@@ -330,10 +337,6 @@ ImageDialog.prototype.setDetails = function (path) {
     // pane first.  But as in the above case, if the user selects no image
     // in the center pane, we fall back to the thumbnailed image.
     var self = this,
-        scale_form_key = function (path) {
-            var scale_name = path.split('/').pop();
-            return scale_name ? 'image_' + scale_name : '';
-        },
         scale_title = function (scale) {
             if (scale.size[0]) {
                 return scale.title + ' (' + scale.size[0] + 'x' + scale.size[1] + ')';
@@ -371,7 +374,7 @@ ImageDialog.prototype.setDetails = function (path) {
                 jq.each(data.scales, function () {
                     var scale = this,
                         option = jq('<option/>')
-                            .attr({'value': scale_form_key(scale.value)})
+                            .attr({'value': scale.value})
                             .text(scale_title(scale));
 
                     if (option.val() === dimension) {
