@@ -1,4 +1,4 @@
-/*jslint browser: true, sloppy: true, white: true, plusplus: true, maxerr: 500, indent: 4 */
+/*jslint regexp: true, browser: true, sloppy: true, white: true, plusplus: true, maxerr: 500, indent: 4 */
 /**
  * Image selection dialog.
  *
@@ -200,7 +200,7 @@ ImageDialog.prototype.parseImageScale = function (url) {
             parsed.scale = "@@images/image/" + parts.pop().substring(6);
             parsed.url = parts.join("/");
         } else {
-            scale_pos = url.search(/@@images\/[^/]+\/.+/);
+            scale_pos = url.search(/@@images\/[^\/]+\/.+/);
             if (scale_pos > -1) {
                 // This is a new style URL
                 parsed.url = url.substring(0, scale_pos - 1);
