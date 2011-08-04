@@ -74,6 +74,14 @@ ImageDialog.prototype.init = function () {
         e.stopPropagation();
         self.checkSearch(e);
     });
+    // handle different folder listing view types
+    jq('#general_panel .legend a', document).click(function (e) {
+        e.preventDefault();
+        jq('#general_panel .legend a', document).removeClass('current');
+        jq(this).addClass('current');
+        // refresh listing with new view settings
+        self.getFolderListing(self.folderlisting_context_url, self.folderlisting_method);
+    });
 
     if (!this.editor.settings.allow_captioned_images) {
         jq('#caption', document).parent().parent().hide();
@@ -391,6 +399,15 @@ ImageDialog.prototype.setDetails = function (image_url) {
                 });
             }
             self.displayPreviewPanel();
+
+            // select radio button in folder listing and mark selected image
+            jq('input:radio[name=internallink][value!=' + image_url + ']', document).parent('.item').removeClass('current');
+            jq('input:radio[name=internallink][value=' + image_url + ']', document)
+                .attr('checked', true).parent('.item').addClass('current');
+
+            self.current_url = image_url;
+            self.current_link = self.editor.settings.link_using_uids ? data.uid_url : image_url;
+
         }
     });
 };
@@ -412,6 +429,10 @@ ImageDialog.prototype.getCurrentFolderListing = function () {
 ImageDialog.prototype.getFolderListing = function (context_url, method) {
     var self = this;
 
+    // store this for view type refreshing
+    this.folderlisting_context_url = context_url
+    this.folderlisting_method = method
+
     jq.ajax({
         'url': context_url + '/' + method,
         'type': 'POST',
@@ -424,7 +445,14 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
         'success': function (data) {
             var html = [],
                 len,
-                current_uid;
+                current_uid,
+                item_number = 0,
+                folder_html = [],
+                item_html = [],
+                thumb_name = self.editor.settings.thumbnail_size[0],
+                thumb_width = self.editor.settings.thumbnail_size[1],
+                thumb_height = self.editor.settings.thumbnail_size[2],
+                col_items_number = self.editor.settings.num_of_thumb_columns;
 
             if (data.items.length === 0) {
                 html.push(self.labels.label_no_items);
@@ -434,37 +462,66 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                         self.current_link = 'resolveuid/' + item.uid;
                     }
                     if (item.is_folderish) {
-                        jq.merge(html, [
-                            '<div class="item folderish ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
+                        jq.merge(folder_html, [
+                            '<div class="list item folderish ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
                                 '<img src="img/arrow_right.png" />',
-                                '<img src="' + item.icon + '" />',
+                                '<img src="' + item.icon +  '"/>',
                                 '<a href="' + item.url + '" class="folderlink contenttype-' + item.normalized_type + '">',
                                     item.title,
                                 '</a>',
                             '</div>'
                         ]);
                     } else {
-                        jq.merge(html, [
-                            '<div class="item ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
-                                '<input href="' + item.url + '" ',
-                                    'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
-                                    self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
-                                    '"/> ',
-                                '<img src="' + item.icon + '" /> ',
-                                '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
-                            '</div>'
-                        ]);
+                        switch (jq('#general_panel .legend .current', document).attr('id')) {
+                            // TODO: use jquery dom to be sure stuff is closed
+                            case 'listview':
+                                jq.merge(item_html, [
+                                    '<div class="item list ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description + '">',
+                                        '<input href="' + item.url + '" ',
+                                            'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
+                                            self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
+                                            '"/> ',
+                                        '<img src="' + item.icon + '" /> ',
+                                        '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
+                                    '</div>'
+                                ]);
+                                break;
+                            case 'thumbview':
+                                if (item_number % col_items_number === 0) {
+                                    item_html.push('<div class="row">');
+                                }
+                                jq.merge(item_html, [
+                                        '<div class="width-1:' + col_items_number + ' cell position-' + item_number % col_items_number * (16 / col_items_number) + '">',
+                                            '<div class="thumbnail item ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description +  '">',
+                                                '<div style="width: ' + thumb_width + 'px; height: ' + thumb_height + 'px" class="thumb">',
+                                                    '<img src="' + item.url + '/@@images/image/' + thumb_name + '" alt="' + item.title + '" />',
+                                                '</div>',
+                                                '<p>' + item.title + '</p>',
+                                                '<input href="' + item.url + '" ',
+                                                    'type="radio" class="noborder" name="internallink" value="',
+                                                    self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
+                                                    '"/> ',
+                                            '</div>',
+                                        '</div>'
+                                        ]);
+                                if (item_number % col_items_number === col_items_number - 1) {
+                                    item_html.push('</div>');
+                                }
+                                item_number++;
+                        }
                     }
 
                 });
             }
+            jq.merge(html, folder_html);
+            jq.merge(html, item_html);
             jq('#internallinkcontainer', document).html(html.join(''));
 
             // shortcuts
             if (method !== 'tinymce-jsonimagesearch' && self.editor.settings.image_shortcuts_html.length) {
                 jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_browser + '</strong></div>');
                 jq.each(self.editor.settings.image_shortcuts_html, function () {
-                    jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + this + '</div>');
+                    jq('#internallinkcontainer', document).prepend('<div class="item list shortcut">' + this + '</div>');
                 });
                 jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_shortcuts + '</strong></div>');
                 jq('#shortcuts', document).click(function() {
@@ -472,17 +529,15 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                 });
             }
 
-
-
             // disable insert until we have selected an item
             jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
 
             // make rows clickable
-            jq('#internallinkcontainer div', document).click(function() {
+            jq('#internallinkcontainer div.item', document).click(function() {
                 var el = jq(this),
                     checkbox = el.find('input');
                 if (checkbox.length) {
-                    checkbox[0].click();
+                    checkbox.click();
                 } else {
                     el.find('a').click();
                 }
@@ -522,27 +577,20 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
             jq('#upload_form', document).attr('action', context_url + '/tinymce-upload');
 
             if (self.current_link !== "") {
-                // In case the current folder listing contains the currently
-                // chosen image make sure that the checkbox is checked.
-                jq('input:radio[name=internallink][value=' + self.current_link + ']', document)
-                    .attr('checked', 'checked');
-
                 if (self.current_link.indexOf('resolveuid/') > -1) {
                     current_uid = self.current_link.split('resolveuid/')[1];
                     jq.ajax({
                         'url': self.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
                         'dataType': 'text',
                         'success': function(text) {
-                            self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
-                            self.setDetails(self.current_url);
+                            self.setDetails(self.getAbsoluteUrl(self.editor.settings.document_base_url, text));
                         }
+                        // TODO: handle 410 (image was deleted)
                     });
                 } else {
                     self.setDetails(self.current_link);
                 }
             }
-
-            self.hidePanels();
 
             // Check if allowed to upload
             if (data.upload_allowed) {
