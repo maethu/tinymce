@@ -613,9 +613,7 @@ ImageDialog.prototype.displayUploadPanel = function() {
     jq('#addimage_panel', document).removeClass('hide');
     jq('#details_panel', document).addClass("hide");
     jq('#internallinkcontainer input', document).attr('checked', false);
-    // TODO: check if the ORed selector works properly.
     jq('#upload, #insert', document).attr('disabled', true).fadeTo(1, 0.5);
-    jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
 };
 
 ImageDialog.prototype.displayPreviewPanel = function() {
