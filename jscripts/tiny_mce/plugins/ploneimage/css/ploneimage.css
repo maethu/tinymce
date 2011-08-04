@@ -12,6 +12,11 @@
 #internalpath { margin-left: 5px }
 .legend { margin: 5px 0 }
 .legend a { margin-right: 5px }
-.legend .current { font-weight: bold; border: none!important; color: #000!important }
+.legend .current { font-weight: bold; border: none!important; color: #000!important; cursor: default }
 .input-border {border: 0.1em solid #CCC!important}
 .browser-separator { background-color: #DDD }
+.thumbnail { text-align: center }
+.thumbnail input { display: none }
+.thumbnail.current { border: 1px solid #DDD }
+.thumbnail .thumb { margin: 3px auto; position: relative }
+.thumbnail .thumb img { position: absolute; bottom: 0 }

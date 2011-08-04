@@ -86,8 +86,11 @@ overflow-y: auto;
 overflow-x: hidden;
 }
 
-.radioscrolllist div {
+.radioscrolllist .list {
 padding-left: 0.5em;
+}
+.radioscrolllist .list a {
+margin-left: 0.5em;
 }
 
 /* ActionPanel */

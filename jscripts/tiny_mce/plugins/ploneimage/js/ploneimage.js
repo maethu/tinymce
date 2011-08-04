@@ -1,4 +1,10 @@
-/*jslint browser: true, sloppy: true, white: true, plusplus: true, maxerr: 500, indent: 4 */
+/*jslint regexp: true,
+         browser: true,
+         sloppy: true,
+         white: true,
+         plusplus: true,
+         indent: 4 */
+/*global jq, tinymce, tinyMCEPopup */
 /**
  * Image selection dialog.
  *
@@ -20,10 +26,15 @@ var ImageDialog = function (mcePopup) {
     this.current_url = "";
 
     /* List of additional CSS classes set on the <img/> element which have no
-       special meaning for TinyMCE. */
+       special meaning for TinyMCE. These are passed through as is. */
     this.current_classes = [];
     this.is_search_activated = false;
+
+    /* Translatable UI labels */
     this.labels = this.editor.getParam("labels");
+
+    /* URL of the thumbnail image shown on the right side details pane when
+       an image is selected.  */
     this.thumb_url = "";
 
     this.tinyMCEPopup.requireLangPack();
@@ -45,7 +56,7 @@ var ImageDialog = function (mcePopup) {
 ImageDialog.prototype.init = function () {
     var self = this,
         selected_node = jq(this.editor.selection.getNode(), document),
-        image_scale,
+        scaled_image,
         current_uid;
 
     this.tinyMCEPopup.resizeToInnerSize();
@@ -64,10 +75,18 @@ ImageDialog.prototype.init = function () {
     });
     jq('#searchtext', document).keyup(function (e) {
         e.preventDefault();
-        // We need to stop the event from propagating so the pressing Esc will
+        // We need to stop the event from propagating so that pressing Esc will
         // only stop the search but not close the whole dialog.
         e.stopPropagation();
         self.checkSearch(e);
+    });
+    // handle different folder listing view types
+    jq('#general_panel .legend a', document).click(function (e) {
+        e.preventDefault();
+        jq('#general_panel .legend a', document).removeClass('current');
+        jq(this).addClass('current');
+        // refresh listing with new view settings
+        self.getFolderListing(self.folderlisting_context_url, self.folderlisting_method);
     });
 
     if (!this.editor.settings.allow_captioned_images) {
@@ -112,15 +131,15 @@ ImageDialog.prototype.init = function () {
             }
         });
 
-        image_scale = this.parseImageScale(selected_node.attr("src"));
+        scaled_image = this.parseImageScale(selected_node.attr("src"));
 
         // Update the dimensions <select> with the corresponding value.
-        jq('#dimensions', document).val(image_scale.scale);
+        jq('#dimensions', document).val(scaled_image.scale);
 
-        if (image_scale.url.indexOf('resolveuid/') > -1) {
+        if (scaled_image.url.indexOf('resolveuid/') > -1) {
             /** Handle UID linked image **/
 
-            current_uid = image_scale.url.split('resolveuid/')[1];
+            current_uid = scaled_image.url.split('resolveuid/')[1];
 
             // Fetch the information about the UID linked image.
             jq.ajax({
@@ -128,19 +147,17 @@ ImageDialog.prototype.init = function () {
                 'dataType': 'text',
                 'type': 'GET',
                 'success': function (text) {
+                    // Store the absolute URL to the UID referenced image
                     self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
+                    // Store the image link as UID or full URL based on policy
+                    self.current_link = self.editor.settings.link_using_uids ? scaled_image.url : self.current_url;
 
-                    if (self.editor.settings.link_using_uids) {
-                        self.current_link = image_scale.url;
-                    } else {
-                        self.current_link = self.current_url;
-                    }
                     self.getFolderListing(self.getParentUrl(self.current_url), 'tinymce-jsonimagefolderlisting');
                 }
             });
         } else {
             /** Handle directly linked image **/
-            this.current_link = this.getAbsoluteUrl(this.editor.settings.document_base_url, image_scale.url);
+            this.current_link = this.getAbsoluteUrl(this.editor.settings.document_base_url, scaled_image.url);
             this.getFolderListing(this.getParentUrl(this.current_link), 'tinymce-jsonimagefolderlisting');
         }
     } else {
@@ -173,7 +190,8 @@ ImageDialog.prototype.init = function () {
  *   'scale' : '@@images/image/thumb' }
  *
  * The 'scale' key will always contain the plone.app.imaging type of scale
- * regardless of the original form.
+ * regardless of the original form, effectively rewriting everything to use
+ * the @@images view.
  *
  * @param url URL to a possible scaled image.
  */
@@ -196,7 +214,7 @@ ImageDialog.prototype.parseImageScale = function (url) {
             parsed.scale = "@@images/image/" + parts.pop().substring(6);
             parsed.url = parts.join("/");
         } else {
-            scale_pos = url.search(/@@images\/[^/]+\/.+/);
+            scale_pos = url.search(/@@images\/[^\/]+\/.+/);
             if (scale_pos > -1) {
                 // This is a new style URL
                 parsed.url = url.substring(0, scale_pos - 1);
@@ -208,19 +226,25 @@ ImageDialog.prototype.parseImageScale = function (url) {
     return parsed;
 };
 
+/**
+ * Returns the URL of the currently selected image.
+ *
+ */
 ImageDialog.prototype.getSelectedImageUrl = function () {
-    // This method provides a single entry point.
-
     // First, try to get the URL corresponding to the image that the user
     // selected in the center pane.
+    // TODO: User is also able to select an image from the thumbnails view so
+    //       it is important that the event handler there also updates the
+    //       radio button input so that the selector below will work.
     var href = jq.trim(jq('input:radio[name=internallink]:checked', document).val());
 
     if (href === '') {
+        // TODO: Is this branch necessary anymore?
         // The user didn't select an image from the center pane.  So we
         // default to the URL for the thumbnail image in the right pane.
         href = jq.trim(this.thumb_url);
         if (href !== '') {
-            href = href.substring(0, href.indexOf('/@@'));
+            href = this.parseImageScale(href).url;
         }
     }
 
@@ -288,9 +312,16 @@ ImageDialog.prototype.insert = function () {
     this.tinyMCEPopup.close();
 };
 
+/**
+ * Activates and disables the search feature based on user input.
+ */
 ImageDialog.prototype.checkSearch = function (e) {
-    var el = jq('#searchtext', document);
-    if (el.val().length >= 3 && (this.tinyMCEPopup.editor.settings.livesearch || e.keyCode === 13)) {
+    var el = jq('#searchtext', document),
+        len = el.val().length;
+
+    // Activate search when we have enough input and either livesearch is
+    // enabled or the user explicitly pressed Enter.
+    if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch || e.keyCode === 13)) {
         this.is_activated_search = true;
         this.getFolderListing(this.tinyMCEPopup.editor.settings.navigation_root_url, 'tinymce-jsonimagesearch');
         jq('#upload', document)
@@ -298,7 +329,10 @@ ImageDialog.prototype.checkSearch = function (e) {
             .fadeTo(1, 0.5);
         jq('#internalpath', document).prev().text(this.labels.label_search_results);
     }
-    if ((el.val().length === 0 && this.is_activated_search) || e.keyCode === 27) {
+
+    // Disable search when we have no input or the user explicitly pressed the
+    // Escape key.
+    if ((len === 0 && this.is_activated_search) || e.keyCode === 27) {
         el.val('');
         this.is_activated_search = false;
         this.getCurrentFolderListing();
@@ -309,22 +343,21 @@ ImageDialog.prototype.checkSearch = function (e) {
     }
 };
 
-ImageDialog.prototype.setDetails = function (path) {
-    // Sends a low level AJAX request.
-
-    // If our AJAX call succeeds and we get a thumbnail image to display in
-    // the right pane, we save that thumbnail image's URL directly on the
-    // ImageDialog object for posterity.  Later, we may need the thumbnail
-    // image's URL in this case:
-    //
-    //  1. The user clicks an image and clicks the "edit image" button.
-    //  2. The user doesn't select any image from the center pane.
-    //  3. The user clicks the "update" button.
-    //
-    // We always try to use the image that the user selects in the center
-    // pane first.  But as in the above case, if the user selects no image
-    // in the center pane, we fall back to the thumbnailed image.
+/**
+ * Updates the details pane on the right by fetching image information from
+ * the backend.
+ *
+ * After successful retrieval the right side pane will be updated with a
+ * thumbnail of the selected image with information about the caption,
+ * alignment and scale.
+ *
+ * @param image_url URL of the image to fetch.
+ */
+ImageDialog.prototype.setDetails = function (image_url) {
     var self = this,
+        /**
+         * Pretty-prints a human readable title for a image scale.
+         */
         scale_title = function (scale) {
             if (scale.size[0]) {
                 return scale.title + ' (' + scale.size[0] + 'x' + scale.size[1] + ')';
@@ -332,11 +365,11 @@ ImageDialog.prototype.setDetails = function (path) {
                 return scale.title;
             }
         };
-    this.thumb_url = null;
 
+    this.thumb_url = '';
 
     jq.ajax({
-        'url': path + '/tinymce-jsondetails',
+        'url': image_url + '/tinymce-jsondetails',
         'type': 'POST',
         'dataType': 'json',
         'success': function (data) {
@@ -353,7 +386,7 @@ ImageDialog.prototype.setDetails = function (path) {
             }
 
             jq('#description', document).val(data.description);
-            jq('#description_href', document).val(path);
+            jq('#description_href', document).val(image_url);
 
             // Repopulate the <option>s in the dimensions <select> element.
             if (data.scales) {
@@ -372,19 +405,42 @@ ImageDialog.prototype.setDetails = function (path) {
                 });
             }
             self.displayPreviewPanel();
+
+            // select radio button in folder listing and mark selected image
+            jq('input:radio[name=internallink][value!=' + image_url + ']', document).parent('.item').removeClass('current');
+            jq('input:radio[name=internallink][value=' + image_url + ']', document)
+                .attr('checked', true).parent('.item').addClass('current');
+
+            self.current_url = image_url;
+            self.current_link = self.editor.settings.link_using_uids ? data.uid_url : image_url;
+
         }
     });
 };
 
+/**
+ * Utility method to update the middle pane with the current context listing.
+ */
 ImageDialog.prototype.getCurrentFolderListing = function () {
     this.getFolderListing(this.editor.settings.document_base_url, 'tinymce-jsonimagefolderlisting');
 };
 
-ImageDialog.prototype.getFolderListing = function (path, method) {
+
+/**
+ * Updates the center pane with a listing of content from the given context.
+ *
+ * @param context_url URL of the context where the request will be made
+ * @param method Name of the backed view to query
+ */
+ImageDialog.prototype.getFolderListing = function (context_url, method) {
     var self = this;
 
+    // store this for view type refreshing
+    this.folderlisting_context_url = context_url
+    this.folderlisting_method = method
+
     jq.ajax({
-        'url': path + '/' + method,
+        'url': context_url + '/' + method,
         'type': 'POST',
         'dataType': 'json',
         'data': {
@@ -395,7 +451,14 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
         'success': function (data) {
             var html = [],
                 len,
-                current_uid;
+                current_uid,
+                item_number = 0,
+                folder_html = [],
+                item_html = [],
+                thumb_name = self.editor.settings.thumbnail_size[0],
+                thumb_width = self.editor.settings.thumbnail_size[1],
+                thumb_height = self.editor.settings.thumbnail_size[2],
+                col_items_number = self.editor.settings.num_of_thumb_columns;
 
             if (data.items.length === 0) {
                 html.push(self.labels.label_no_items);
@@ -405,37 +468,66 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
                         self.current_link = 'resolveuid/' + item.uid;
                     }
                     if (item.is_folderish) {
-                        jq.merge(html, [
-                            '<div class="item folderish ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
+                        jq.merge(folder_html, [
+                            '<div class="list item folderish ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
                                 '<img src="img/arrow_right.png" />',
-                                '<img src="' + item.icon + '" />',
+                                '<img src="' + item.icon +  '"/>',
                                 '<a href="' + item.url + '" class="folderlink contenttype-' + item.normalized_type + '">',
                                     item.title,
                                 '</a>',
                             '</div>'
                         ]);
                     } else {
-                        jq.merge(html, [
-                            '<div class="item ' + (i % 2 === 0 ? 'even' : 'odd') + '">',
-                                '<input href="' + item.url + '" ',
-                                    'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
-                                    self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
-                                    '"/> ',
-                                '<img src="' + item.icon + '" /> ',
-                                '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
-                            '</div>'
-                        ]);
+                        switch (jq('#general_panel .legend .current', document).attr('id')) {
+                            // TODO: use jquery dom to be sure stuff is closed
+                            case 'listview':
+                                jq.merge(item_html, [
+                                    '<div class="item list ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description + '">',
+                                        '<input href="' + item.url + '" ',
+                                            'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
+                                            self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
+                                            '"/> ',
+                                        '<img src="' + item.icon + '" /> ',
+                                        '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
+                                    '</div>'
+                                ]);
+                                break;
+                            case 'thumbview':
+                                if (item_number % col_items_number === 0) {
+                                    item_html.push('<div class="row">');
+                                }
+                                jq.merge(item_html, [
+                                        '<div class="width-1:' + col_items_number + ' cell position-' + item_number % col_items_number * (16 / col_items_number) + '">',
+                                            '<div class="thumbnail item ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description +  '">',
+                                                '<div style="width: ' + thumb_width + 'px; height: ' + thumb_height + 'px" class="thumb">',
+                                                    '<img src="' + item.url + '/@@images/image/' + thumb_name + '" alt="' + item.title + '" />',
+                                                '</div>',
+                                                '<p>' + item.title + '</p>',
+                                                '<input href="' + item.url + '" ',
+                                                    'type="radio" class="noborder" name="internallink" value="',
+                                                    self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
+                                                    '"/> ',
+                                            '</div>',
+                                        '</div>'
+                                        ]);
+                                if (item_number % col_items_number === col_items_number - 1) {
+                                    item_html.push('</div>');
+                                }
+                                item_number++;
+                        }
                     }
 
                 });
             }
+            jq.merge(html, folder_html);
+            jq.merge(html, item_html);
             jq('#internallinkcontainer', document).html(html.join(''));
 
             // shortcuts
             if (method !== 'tinymce-jsonimagesearch' && self.editor.settings.image_shortcuts_html.length) {
                 jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_browser + '</strong></div>');
                 jq.each(self.editor.settings.image_shortcuts_html, function () {
-                    jq('#internallinkcontainer', document).prepend('<div class="item shortcut">' + this + '</div>');
+                    jq('#internallinkcontainer', document).prepend('<div class="item list shortcut">' + this + '</div>');
                 });
                 jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_shortcuts + '</strong></div>');
                 jq('#shortcuts', document).click(function() {
@@ -443,17 +535,15 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
                 });
             }
 
-
-
             // disable insert until we have selected an item
             jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
 
             // make rows clickable
-            jq('#internallinkcontainer div', document).click(function() {
+            jq('#internallinkcontainer div.item', document).click(function() {
                 var el = jq(this),
                     checkbox = el.find('input');
                 if (checkbox.length) {
-                    checkbox[0].click();
+                    checkbox.click();
                 } else {
                     el.find('a').click();
                 }
@@ -490,30 +580,23 @@ ImageDialog.prototype.getFolderListing = function (path, method) {
             });
 
             // Make the image upload form upload the image into the current container.
-            jq('#upload_form', document).attr('action', path + '/tinymce-upload');
+            jq('#upload_form', document).attr('action', context_url + '/tinymce-upload');
 
             if (self.current_link !== "") {
-                // In case the current folder listing contains the currently
-                // chosen image make sure that the checkbox is checked.
-                jq('input:radio[name=internallink][value=' + self.current_link + ']', document)
-                    .attr('checked', 'checked');
-
                 if (self.current_link.indexOf('resolveuid/') > -1) {
                     current_uid = self.current_link.split('resolveuid/')[1];
                     jq.ajax({
                         'url': self.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
                         'dataType': 'text',
                         'success': function(text) {
-                            self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
-                            self.setDetails(self.current_url);
+                            self.setDetails(self.getAbsoluteUrl(self.editor.settings.document_base_url, text));
                         }
+                        // TODO: handle 410 (image was deleted)
                     });
                 } else {
                     self.setDetails(self.current_link);
                 }
             }
-
-            self.hidePanels();
 
             // Check if allowed to upload
             if (data.upload_allowed) {
@@ -584,9 +667,7 @@ ImageDialog.prototype.displayUploadPanel = function() {
     jq('#addimage_panel', document).removeClass('hide');
     jq('#details_panel', document).addClass("hide");
     jq('#internallinkcontainer input', document).attr('checked', false);
-    // TODO: check if the ORed selector works properly.
     jq('#upload, #insert', document).attr('disabled', true).fadeTo(1, 0.5);
-    jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
 };
 
 ImageDialog.prototype.displayPreviewPanel = function() {
