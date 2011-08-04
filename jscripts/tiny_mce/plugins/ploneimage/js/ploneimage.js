@@ -1,4 +1,10 @@
-/*jslint regexp: true, browser: true, sloppy: true, white: true, plusplus: true, maxerr: 500, indent: 4 */
+/*jslint regexp: true,
+         browser: true,
+         sloppy: true,
+         white: true,
+         plusplus: true,
+         indent: 4 */
+/*global jq, tinymce, tinyMCEPopup */
 /**
  * Image selection dialog.
  *
