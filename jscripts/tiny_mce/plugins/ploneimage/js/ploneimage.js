@@ -37,6 +37,7 @@ var ImageDialog = function (mcePopup) {
        an image is selected.  */
     this.thumb_url = "";
 
+    // No idea yet what it does.
     this.tinyMCEPopup.requireLangPack();
 
     // TODO: WTF?
@@ -68,6 +69,9 @@ ImageDialog.prototype.init = function () {
     jq('#upload', document).click(function (e) {
         e.preventDefault();
         self.displayUploadPanel();
+    });
+    jq('#uploadbutton', document).click(function (e) {
+        jq('#upload_form', document).submit();
     });
     jq('#cancel', document).click(function (e) {
         e.preventDefault();
