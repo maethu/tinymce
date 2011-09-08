@@ -330,25 +330,17 @@ ImageDialog.prototype.checkSearch = function (e) {
 
     // Activate search when we have enough input and either livesearch is
     // enabled or the user explicitly pressed Enter.
-    if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch || e.keyCode === 13)) {
-        this.is_activated_search = true;
+    if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch === true || e.keyCode === 13)) {
+        this.is_search_activated = true;
         this.getFolderListing(this.tinyMCEPopup.editor.settings.navigation_root_url, 'tinymce-jsonimagesearch');
-        jq('#upload', document)
-            .attr('disabled', true)
-            .fadeTo(1, 0.5);
-        jq('#internalpath', document).prev().text(this.labels.label_search_results);
     }
 
     // Disable search when we have no input or the user explicitly pressed the
     // Escape key.
-    if ((len === 0 && this.is_activated_search) || e.keyCode === 27) {
+    if ((len === 0 && this.is_search_activated) || e.keyCode === 27) {
+        this.is_search_activated = false;
         el.val('');
-        this.is_activated_search = false;
         this.getCurrentFolderListing();
-        jq('#upload', document)
-            .attr('disabled', false)
-            .fadeTo(1, 1);
-        jq('#internalpath', document).prev().text(this.labels.label_internal_path);
     }
 };
 
@@ -538,7 +530,7 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
             jq('#internallinkcontainer', document).html(html.join(''));
 
             // display shortcuts
-            if (method !== 'tinymce-jsonimagesearch' && self.editor.settings.image_shortcuts_html.length) {
+            if (self.is_search_activated === false && self.editor.settings.image_shortcuts_html.length) {
                 html = [];
                 jq.merge(html, [
                     '<div id="shortcuts" class="browser-separator">',
@@ -627,13 +619,20 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                 }
             }
 
-            // Check if allowed to upload
-            if (data.upload_allowed) {
-                jq('#upload', document).show();
+            // Check if upload button should be displayed
+            if (data.upload_allowed === true && self.is_search_activated === false) {
+                jq('#upload', document).show().attr('disabled', false).fadeTo(1, 1);
             } else {
                 jq('#upload', document).hide();
             }
 
+            // Handle search
+            if (self.is_search_activated === true) {
+                jq('#internalpath', document).prev().text(self.labels.label_search_results);
+            } else {
+                jq('#internalpath', document).prev().text(self.labels.label_internal_path);
+            }
+            self.hidePanels();
         }
     });
 };
@@ -703,7 +702,9 @@ ImageDialog.prototype.displayPreviewPanel = function() {
     jq('#general_panel', document).width(530);
     jq('#addimage_panel', document).addClass('hide');
     jq('#details_panel', document).removeClass("hide");
-    jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
+    if (this.is_search_activated !== true) {
+        jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
+    }
     jq('#insert', document).attr('disabled', false).fadeTo(1, 1);
 };
 
@@ -711,7 +712,6 @@ ImageDialog.prototype.hidePanels = function() {
     jq('#general_panel', document).width(790);
     jq('#addimage_panel', document).addClass('hide');
     jq('#details_panel', document).addClass("hide");
-    jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
 };
 
 
