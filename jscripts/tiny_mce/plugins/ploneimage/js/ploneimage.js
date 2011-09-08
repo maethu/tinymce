@@ -74,6 +74,7 @@ ImageDialog.prototype.init = function () {
         self.displayUploadPanel();
     });
     jq('#uploadbutton', document).click(function (e) {
+        e.preventDefault();
         jq('#upload_form', document).submit();
     });
     jq('#cancel', document).click(function (e) {
@@ -448,8 +449,8 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
     var self = this;
 
     // store this for view type refreshing
-    this.folderlisting_context_url = context_url
-    this.folderlisting_method = method
+    this.folderlisting_context_url = context_url;
+    this.folderlisting_method = method;
 
     jq.ajax({
         'url': context_url + '/' + method,
@@ -509,23 +510,24 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                                     item_html.push('<div class="row">');
                                 }
                                 jq.merge(item_html, [
-                                        '<div class="width-1:' + col_items_number + ' cell position-' + item_number % col_items_number * (16 / col_items_number) + '">',
-                                            '<div class="thumbnail item ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description +  '">',
-                                                '<div style="width: ' + thumb_width + 'px; height: ' + thumb_height + 'px" class="thumb">',
-                                                    '<img src="' + item.url + '/@@images/image/' + thumb_name + '" alt="' + item.title + '" />',
-                                                '</div>',
-                                                '<p>' + item.title + '</p>',
-                                                '<input href="' + item.url + '" ',
-                                                    'type="radio" class="noborder" name="internallink" value="',
-                                                    self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
-                                                    '"/> ',
+                                    '<div class="width-1:' + col_items_number + ' cell position-' + item_number % col_items_number * (16 / col_items_number) + '">',
+                                        '<div class="thumbnail item ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description +  '">',
+                                            '<div style="width: ' + thumb_width + 'px; height: ' + thumb_height + 'px" class="thumb">',
+                                                '<img src="' + item.url + '/@@images/image/' + thumb_name + '" alt="' + item.title + '" />',
                                             '</div>',
-                                        '</div>'
-                                        ]);
+                                            '<p>' + item.title + '</p>',
+                                            '<input href="' + item.url + '" ',
+                                                'type="radio" class="noborder" name="internallink" value="',
+                                                self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
+                                                '"/> ',
+                                        '</div>',
+                                    '</div>'
+                                ]);
                                 if (item_number % col_items_number === col_items_number - 1) {
                                     item_html.push('</div>');
                                 }
                                 item_number++;
+                                break;
                         }
                     }
 
@@ -551,7 +553,7 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                     '<div class="browser-separator">',
                         '<img src="img/arrow_down.png" />',
                         '<strong>' + self.labels.label_browser + '</strong>',
-                    '</div>',
+                    '</div>'
                 ]);
                 jq('#internallinkcontainer', document).prepend(html.join(''));
 
@@ -588,7 +590,6 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                 } else {
                     html.push('<a href="' + item.url + '">' + item.title + '</a>');
                 }
-
             });
             jq('#internalpath', document).html(html.join(''));
 
@@ -724,9 +725,9 @@ var uploadOk = function uploadOk(current_link) {
     imgdialog.current_link = current_link;
     imgdialog.getFolderListing(imgdialog.getParentUrl(current_link), 'tinymce-jsonimagefolderlisting');
     imgdialog.displayPreviewPanel();
-}
+};
 
 var uploadError = function uploadError(current_link) {
     alert(current_link);
     // TODO: display ajax panel instead of alert
-}
+};
