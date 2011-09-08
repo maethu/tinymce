@@ -411,9 +411,13 @@ ImageDialog.prototype.setDetails = function (image_url) {
             self.displayPreviewPanel();
 
             // select radio button in folder listing and mark selected image
-            jq('input:radio[name=internallink][value!=' + image_url + ']', document).parent('.item').removeClass('current');
-            jq('input:radio[name=internallink][value=' + image_url + ']', document)
-                .attr('checked', true).parent('.item').addClass('current');
+            jq('input:radio[name=internallink][value!=' + data.uid_relative_url + ']', document)
+                .parent('.item')
+                .removeClass('current');
+            jq('input:radio[name=internallink][value=' + data.uid_relative_url + ']', document)
+                .attr('checked', true)
+                .parent('.item')
+                .addClass('current');
 
             self.current_url = image_url;
             self.current_link = self.editor.settings.link_using_uids ? data.uid_url : image_url;
