@@ -622,7 +622,7 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
  *
  * @param url URL with at least a single path component.
  */
-ImageDialog.prototype.getParentUrl = function(url) {
+ImageDialog.prototype.getParentUrl = function (url) {
     var url_array = url.split('/');
     url_array.pop();
     return url_array.join('/');
