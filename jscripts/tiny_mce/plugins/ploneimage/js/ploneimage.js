@@ -37,6 +37,9 @@ var ImageDialog = function (mcePopup) {
        an image is selected.  */
     this.thumb_url = "";
 
+    /* Hold state if we are updateing image */
+    this.editing_existing_image = false;
+
     // No idea yet what it does.
     this.tinyMCEPopup.requireLangPack();
 
@@ -102,6 +105,7 @@ ImageDialog.prototype.init = function () {
 
     if (selected_node.get(0).tagName && selected_node.get(0).tagName.toUpperCase() === 'IMG') {
         /** The image dialog was opened to edit an existing image element. **/
+        this.editing_existing_image = true;
 
         // Manage the CSS classes defined in the <img/> element. We handle the
         // following classes as special cases:
@@ -604,7 +608,9 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
             // Make the image upload form upload the image into the current container.
             jq('#upload_form', document).attr('action', context_url + '/tinymce-upload');
 
-            if (self.current_link !== "") {
+            // Select image if we are updating existing one
+            if (self.editing_existing_image) {
+                self.editing_existing_image = false;
                 if (self.current_link.indexOf('resolveuid/') > -1) {
                     current_uid = self.current_link.split('resolveuid/')[1];
                     jq.ajax({
