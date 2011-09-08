@@ -696,3 +696,17 @@ ImageDialog.prototype.hidePanels = function() {
 
 var imgdialog = new ImageDialog(tinyMCEPopup);
 tinyMCEPopup.onInit.add(imgdialog.init, imgdialog);
+
+/* These two functions are called from adapters.Upload.py
+ * after uploadbutton was pressed
+ */
+var uploadOk = function uploadOk(current_link) {
+    imgdialog.current_link = current_link;
+    imgdialog.getFolderListing(imgdialog.getParentUrl(current_link), 'tinymce-jsonimagefolderlisting');
+    imgdialog.displayPreviewPanel();
+}
+
+var uploadError = function uploadError(current_link) {
+    alert(current_link);
+    // TODO: display ajax panel instead of alert
+}
