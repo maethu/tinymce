@@ -531,13 +531,27 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
             jq.merge(html, item_html);
             jq('#internallinkcontainer', document).html(html.join(''));
 
-            // shortcuts
+            // display shortcuts
             if (method !== 'tinymce-jsonimagesearch' && self.editor.settings.image_shortcuts_html.length) {
-                jq('#internallinkcontainer', document).prepend('<div class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_browser + '</strong></div>');
+                html = [];
+                jq.merge(html, [
+                    '<div id="shortcuts" class="browser-separator">',
+                        '<img src="img/arrow_down.png" />',
+                        '<strong>' + self.labels.label_shortcuts + '</strong>',
+                    '</div>'
+                ]);
                 jq.each(self.editor.settings.image_shortcuts_html, function () {
-                    jq('#internallinkcontainer', document).prepend('<div class="item list shortcut">' + this + '</div>');
+                    html.push('<div class="item list shortcut">' + this + '</div>');
                 });
-                jq('#internallinkcontainer', document).prepend('<div id="shortcuts" class="browser-separator"><img src="img/arrow_down.png"><strong>' + self.labels.label_shortcuts + '</strong></div>');
+                jq.merge(html, [
+                    '<div class="browser-separator">',
+                        '<img src="img/arrow_down.png" />',
+                        '<strong>' + self.labels.label_browser + '</strong>',
+                    '</div>',
+                ]);
+                jq('#internallinkcontainer', document).prepend(html.join(''));
+
+                // Shortcuts listing can be hidden
                 jq('#shortcuts', document).click(function() {
                     jq('#internallinkcontainer .shortcut', document).toggle();
                 });
