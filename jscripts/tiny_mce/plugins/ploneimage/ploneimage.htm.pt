@@ -101,7 +101,7 @@
 						 </div>
 				 </div>
 
-				 <div class="field">
+				 <div class="field hide">
 						 <label for="uploadurl" i18n:domain="plone.tinymce" i18n:translate="">or External URL</label>
 						 <div class="widget">
 										 <input type="text" name="uploadurl" id="uploadurl" />
