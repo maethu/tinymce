@@ -1167,7 +1167,7 @@
 					winMan.open({
 						url : url + '/table.htm',
 						width : 400 + parseInt(ed.getLang('table.table_delta_width', 0)),
-						height : 320 + parseInt(ed.getLang('table.table_delta_height', 0)),
+						height : 340 + parseInt(ed.getLang('table.table_delta_height', 0)),
 						inline : 1
 					}, {
 						plugin_url : url,
@@ -1178,8 +1178,8 @@
 				mceTableRowProps : function() {
 					winMan.open({
 						url : url + '/row.htm',
-						width : 293 + parseInt(ed.getLang('table.rowprops_delta_width', 0)),
-						height : 340 + parseInt(ed.getLang('table.rowprops_delta_height', 0)),
+						width : 320 + parseInt(ed.getLang('table.rowprops_delta_width', 0)),
+						height : 310 + parseInt(ed.getLang('table.rowprops_delta_height', 0)),
 						inline : 1
 					}, {
 						plugin_url : url
@@ -1189,8 +1189,8 @@
 				mceTableCellProps : function() {
 					winMan.open({
 						url : url + '/cell.htm',
-						width : 300 + parseInt(ed.getLang('table.cellprops_delta_width', 0)),
-						height : 380 + parseInt(ed.getLang('table.cellprops_delta_height', 0)),
+						width : 320 + parseInt(ed.getLang('table.cellprops_delta_width', 0)),
+						height : 310 + parseInt(ed.getLang('table.cellprops_delta_height', 0)),
 						inline : 1
 					}, {
 						plugin_url : url
