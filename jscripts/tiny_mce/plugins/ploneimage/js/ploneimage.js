@@ -100,7 +100,7 @@ ImageDialog.prototype.init = function () {
     if (!this.editor.settings.allow_captioned_images) {
         jq('#caption', document).parent().parent().hide();
     }
-    if (this.editor.settings.rooted) {
+    if (this.editor.settings.rooted === true) {
         jq('#home', document).hide();
     }
 
