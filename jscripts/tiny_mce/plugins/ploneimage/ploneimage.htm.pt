@@ -36,6 +36,9 @@
 			<div class="widget radioscrolllist input-border">
 				<div class="field">
 					<div class="widget">
+					  <img tal:define="scale context/@@images"
+                 tal:replace="structure python: scale.scale('image',
+                              scale='mini').tag()" />
 						<div id="previewimagecontainer">
 						</div>
 					</div>
