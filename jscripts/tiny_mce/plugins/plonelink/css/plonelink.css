@@ -14,4 +14,4 @@
 #uploadfile { width: 100%; }
 #upload_iframe { display: none; }
 #popup_panel { display: none; }
-
+#plonelink #general_panel { height: 390px; }
