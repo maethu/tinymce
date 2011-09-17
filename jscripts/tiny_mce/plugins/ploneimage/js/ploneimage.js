@@ -97,7 +97,7 @@ ImageDialog.prototype.init = function () {
         self.getFolderListing(self.folderlisting_context_url, self.folderlisting_method);
     });
 
-    if (!this.editor.settings.allow_captioned_images) {
+    if (this.editor.settings.allow_captioned_images === false) {
         jq('#caption', document).parent().parent().hide();
     }
     if (this.editor.settings.rooted === true) {
