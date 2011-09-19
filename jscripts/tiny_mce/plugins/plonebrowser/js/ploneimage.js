@@ -11,7 +11,7 @@
  * @param mcePopup Reference to a corresponding TinyMCE popup object.
  */
 var ImageDialog = function (mcePopup) {
-    var image_list_url;
+    var image_list_url, link_list_url;
 
     this.tinyMCEPopup = mcePopup;
     this.editor = mcePopup.editor;
@@ -40,13 +40,14 @@ var ImageDialog = function (mcePopup) {
     /* Hold state if we are updateing image */
     this.editing_existing_image = false;
 
-    // No idea yet what it does.
-    this.tinyMCEPopup.requireLangPack();
-
     // TODO: WTF?
     image_list_url = this.tinyMCEPopup.getParam("external_image_list_url");
     if (image_list_url) {
         jq.getScript(this.editor.documentBaseURI.toAbsolute(image_list_url));
+    }
+    link_list_url = tinyMCEPopup.getParam("external_link_list_url");
+    if (link_list_url) {
+        jq.getScript(this.editor.documentBaseURI.toAbsolute(link_list_url));
     }
 };
 
@@ -65,13 +66,17 @@ ImageDialog.prototype.init = function () {
 
     this.tinyMCEPopup.resizeToInnerSize();
 
-    jq('#action-form', document).submit(function (e) {
+    // Determine type of the plugin: link or image
+    this.is_link_plugin = window.location.search.indexOf('plonelink') > -1
+
+
+    jq('#action_form', document).submit(function (e) {
         e.preventDefault();
         self.insert();
     });
     jq('#upload', document).click(function (e) {
         e.preventDefault();
-        self.displayUploadPanel();
+        self.displayPanel('upload');
     });
     jq('#uploadbutton', document).click(function (e) {
         e.preventDefault();
@@ -91,22 +96,52 @@ ImageDialog.prototype.init = function () {
     // handle different folder listing view types
     jq('#general_panel .legend a', document).click(function (e) {
         e.preventDefault();
-        self.editing_existing_image = true;
         jq('#general_panel .legend a', document).removeClass('current');
         jq(this).addClass('current');
         // refresh listing with new view settings
         self.getFolderListing(self.folderlisting_context_url, self.folderlisting_method);
     });
 
-    if (this.editor.settings.allow_captioned_images === false) {
+    if (!this.editor.settings.allow_captioned_images) {
         jq('#caption', document).parent().parent().hide();
     }
     if (this.editor.settings.rooted === true) {
         jq('#home', document).hide();
     }
 
+    // setup UI depending on plugin type
+    if (this.is_link_plugin === true) {
+        jq('#linktype_panel', document).removeClass('hide');
+        jq('#listview', document).click();
+        jq('.legend', document).hide();
+        jq('#linktype a', document).click(function (e) {
+            e.preventDefault();
+            jq('#linktype_panel p', document).removeClass('current');
+            jq(this, document).parent('p').addClass('current');
+            switch (jq(this).attr('href')) {
+                case "#internal":
+                    self.displayPanel('browse');
+                    break;
+                case "#external":
+                    self.displayPanel('external');
+                    break;
+                case "#email":
+                    self.displayPanel('email');
+                    break;
+                case "#anchor":
+                    self.displayPanel('anchor');
+                    break;
+            }
+        });
+        jq('#advanced_options', document).click(function (e) {
+            self.displayPanel('advanced');
+            e.preventDefault();
+        });
+    } else {
+    }
+
     if (selected_node.get(0).tagName && selected_node.get(0).tagName.toUpperCase() === 'IMG') {
-        // The image dialog was opened to edit an existing image element. 
+        /** The image dialog was opened to edit an existing image element. **/
         this.editing_existing_image = true;
 
         // Manage the CSS classes defined in the <img/> element. We handle the
@@ -406,7 +441,7 @@ ImageDialog.prototype.setDetails = function (image_url) {
                     option.appendTo(dimensions);
                 });
             }
-            self.displayPreviewPanel();
+            self.displayPanel('details');
 
             // select radio button in folder listing and mark selected image
             jq('input:radio[name=internallink][value!=' + data.uid_relative_url + ']', document)
@@ -491,7 +526,7 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                                     '<div class="item list ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description + '">',
                                         '<input href="' + item.url + '" ',
                                             'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
-                                            'resolveuid/' + item.uid,
+                                            self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
                                             '"/> ',
                                         '<img src="' + item.icon + '" /> ',
                                         '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
@@ -511,7 +546,7 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                                             '<p>' + item.title + '</p>',
                                             '<input href="' + item.url + '" ',
                                                 'type="radio" class="noborder" name="internallink" value="',
-                                                'resolveuid/' + item.uid,
+                                                self.editor.settings.link_using_uids ? 'resolveuid/' + item.uid : item.url,
                                                 '"/> ',
                                         '</div>',
                                     '</div>'
@@ -556,9 +591,6 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                 });
             }
 
-            // disable insert until we have selected an item
-            jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
-
             // make rows clickable
             jq('#internallinkcontainer div.item', document).click(function() {
                 var el = jq(this),
@@ -602,10 +634,7 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
             // Make the image upload form upload the image into the current container.
             jq('#upload_form', document).attr('action', context_url + '/tinymce-upload');
 
-            // Select image if:
-            // a) we are updating existing one
-            // b) we are switching view mode
-            // c) we are uploading an image
+            // Select image if we are updating existing one
             if (self.editing_existing_image) {
                 self.editing_existing_image = false;
                 if (self.current_link.indexOf('resolveuid/') > -1) {
@@ -622,8 +651,9 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
                     self.setDetails(self.current_link);
                 }
             }
+            self.displayPanel('browse');
 
-            // Check if upload button should be displayed
+            // TODO: Check if upload button should be displayed
             if (data.upload_allowed === true && self.is_search_activated === false) {
                 jq('#upload', document).show().attr('disabled', false).fadeTo(1, 1);
             } else {
@@ -636,7 +666,6 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
             } else {
                 jq('#internalpath', document).prev().text(self.labels.label_internal_path);
             }
-            self.hidePanels();
         }
     });
 };
@@ -694,33 +723,71 @@ ImageDialog.prototype.getAbsoluteUrl = function (base, link) {
     return base_array.join('/');
 };
 
-ImageDialog.prototype.displayUploadPanel = function() {
-    jq('#general_panel', document).width(530);
-    jq('#general_panel #searchtext', document).width(526);
-    jq('#addimage_panel', document).removeClass('hide');
-    jq('#details_panel', document).addClass("hide");
-    jq('#internallinkcontainer input', document).attr('checked', false);
-    jq('#upload, #insert', document).attr('disabled', true).fadeTo(1, 0.5);
-};
+ImageDialog.prototype.displayPanel = function(panel) {
+    // handles: details, browse, search, external, email, anchor, upload
+    var correction_length;
 
-ImageDialog.prototype.displayPreviewPanel = function() {
-    jq('#general_panel', document).width(530);
-    jq('#general_panel #searchtext', document).width(526);
-    jq('#addimage_panel', document).addClass('hide');
-    jq('#details_panel', document).removeClass("hide");
-    if (this.is_search_activated !== true) {
-        jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
+    // handle browse panel
+    if (jq.inArray(panel, ["search", "details", "browse", "upload"]) > -1) {
+        jq('#browseimage_panel', document).removeClass("hide");
+        correction_length = this.is_link_plugin ? 145 : 0;
+        if (jq.inArray(panel, ["upload", "details"]) > -1) {
+            jq('#browseimage_panel', document).width(555 - correction_length);
+        } else {
+            jq('#browseimage_panel', document).width(790 - correction_length);
+        }
+    } else {
+        jq('#browseimage_panel', document).addClass("hide");
     }
-    jq('#insert', document).attr('disabled', false).fadeTo(1, 1);
+    // handle details/preview panel
+    if (panel === 'details') {
+        jq('#details_panel', document).removeClass("hide");
+    } else {
+        jq('#details_panel', document).addClass("hide");
+    }
+    // handle upload panel
+    if (panel === "upload") {
+        jq('#addimage_panel', document).removeClass('hide');
+    } else {
+        jq('#addimage_panel', document).addClass('hide');
+    }
+    // handle upload button
+    if (panel === "browse" || panel === "details" && this.is_search_activated === false) {
+        jq('#upload', document).attr('disabled', false).fadeTo(1, 1);
+    } else {
+        jq('#upload', document).attr('disabled', true).fadeTo(1, 0.5);
+    }
+    // handle insert button
+    if (jq.inArray(panel, ["details", "external", "email", "anchor"]) > -1) {
+        jq('#insert', document).attr('disabled', false).fadeTo(1, 1);
+    } else {
+        jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
+    }
+    // handle email panel
+    if (panel === "email") {
+        jq('#email_panel', document).removeClass('hide');
+    } else {
+        jq('#email_panel', document).addClass('hide');
+    }
+    // handle anchor panel
+    if (panel === "anchor") {
+        jq('#anchor_panel', document).removeClass('hide');
+    } else {
+        jq('#anchor_panel', document).addClass('hide');
+    }
+    // handle external panel
+    if (panel === "external") {
+        jq('#external_panel', document).removeClass('hide');
+    } else {
+        jq('#external_panel', document).addClass('hide');
+    }
+    // handle advanced panel
+    if (panel === "advanced") {
+        jq('#advanced_panel', document).removeClass('hide');
+    } else {
+        jq('#advanced_panel', document).addClass('hide');
+    }
 };
-
-ImageDialog.prototype.hidePanels = function() {
-    jq('#general_panel', document).width(790);
-    jq('#general_panel #searchtext', document).width(786);
-    jq('#addimage_panel', document).addClass('hide');
-    jq('#details_panel', document).addClass("hide");
-};
-
 
 var imgdialog = new ImageDialog(tinyMCEPopup);
 tinyMCEPopup.onInit.add(imgdialog.init, imgdialog);
@@ -730,9 +797,8 @@ tinyMCEPopup.onInit.add(imgdialog.init, imgdialog);
  */
 var uploadOk = function uploadOk(current_link) {
     imgdialog.current_link = current_link;
-    imgdialog.editing_existing_image = true;
     imgdialog.getFolderListing(imgdialog.getParentUrl(current_link), 'tinymce-jsonimagefolderlisting');
-    imgdialog.displayPreviewPanel();
+    imgdialog.displayPanel('details');
 };
 
 var uploadError = function uploadError(current_link) {

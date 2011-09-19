@@ -1,7 +1,3 @@
-/* Functions for the plonelink plugin popup */
-
-tinyMCEPopup.requireLangPack();
-
 var templates = {
     "window.open" : "window.open('${url}','${target}','${options}')"
 };
@@ -12,16 +8,7 @@ var current_url = "";
 var current_pageanchor = "";
 var labels = "";
 
-function preinit() {
-    var url;
-
-    if (url = tinyMCEPopup.getParam("external_link_list_url"))
-        document.write('<script language="javascript" type="text/javascript" src="' + tinyMCEPopup.editor.documentBaseURI.toAbsolute(url) + '"></script>');
-}
-
 function init() {
-    tinyMCEPopup.resizeToInnerSize();
-
     var formGeneralObj = document.forms[0];
     var formUploadObj = document.forms[1];
     var formAdvancedObj = document.forms[2];
@@ -41,11 +28,6 @@ function init() {
 
     // Set button caption
     formButtonsObj.insert.value = tinyMCEPopup.getLang(action, 'Insert', true); 
-
-    // Check if rooted
-    if (tinyMCEPopup.editor.settings.rooted) {
-        document.getElementById('home').style.display = 'none';
-    }
 
     if (action == "update") {
         var href = inst.dom.getAttrib(elm, 'href');
@@ -162,37 +144,6 @@ function checkExternalUrl() {
             setFormValue('externalurl', href, 0);
         }
     }
-}
-function getParentUrl(url) {
-    var url_array = url.split('/');
-    url_array.pop();
-    return url_array.join('/');
-}
-
-function getAbsoluteUrl(base, link) {
-    if ((link.indexOf('http://') != -1) || (link.indexOf('https://') != -1) || (link.indexOf('ftp://') != -1)) {
-        return link;
-    }
-    
-    var base_array = base.split('/');
-    var link_array = link.split('/');
-    
-    // Remove document from base url
-    base_array.pop();
-    
-    while (link_array.length != 0) {
-        var item = link_array.shift();
-        if (item == ".") {
-            // Do nothing
-        } else if (item == "..") {
-            // Remove leave node from base
-            base_array.pop();
-        } else {
-            // Push node to base_array
-            base_array.push(item);
-        }
-    }
-    return (base_array.join('/'));
 }
 
 function setFormValue(name, value, formnr) {
@@ -687,15 +638,6 @@ function getTargetListHTML(elm_id, target_form_element) {
     html += '</select>';
 
     return html;
-}
-
-function displayPanel(elm_id) {
-    document.getElementById ('internal_panel').style.display = elm_id == 'internal_panel' || elm_id == 'upload_panel' ? 'block' : 'none';
-    document.getElementById ('internal_details_panel').style.display = elm_id == 'internal_panel' ? 'block' : 'none';
-    document.getElementById ('external_panel').style.display = elm_id == 'external_panel' ? 'block' : 'none';
-    document.getElementById ('mail_panel').style.display = elm_id == 'mail_panel' ? 'block' : 'none';
-    document.getElementById ('anchors_panel').style.display = elm_id == 'anchors_panel' ? 'block' : 'none';
-    document.getElementById ('upload_panel').style.display = elm_id == 'upload_panel' ? 'block' : 'none';
 }
 
 function setDetails(path, pageanchor) {
