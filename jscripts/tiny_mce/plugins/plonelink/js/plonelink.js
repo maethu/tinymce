@@ -112,40 +112,8 @@ function init() {
     }
 }
 
-function checkSearch(e) {
-    if (document.getElementById('searchtext').value.length >= 3 && (tinyMCEPopup.editor.settings.livesearch || e.keyCode == 13)) {
-        getFolderListing(tinyMCEPopup.editor.settings.navigation_root_url, 'tinymce-jsonlinkablesearch');
-    }
-}
-
-function setFormValue(name, value, formnr) {
-    document.forms[formnr].elements[name].value = value;
-}
-
 function getOption(opts, name) {
     return typeof(opts[name]) == "undefined" ? "" : opts[name];
-}
-
-function parseOptions(opts) {
-    if (opts == null || opts == "")
-        return [];
-
-    // Cleanup the options
-    opts = opts.toLowerCase();
-    opts = opts.replace(/;/g, ",");
-    opts = opts.replace(/[^0-9a-z=,]/g, "");
-
-    var optionChunks = opts.split(',');
-    var options = [];
-
-    for (var i=0; i<optionChunks.length; i++) {
-        var parts = optionChunks[i].split('=');
-
-        if (parts.length == 2)
-            options[parts[0]] = parts[1];
-    }
-
-    return options;
 }
 
 function getPopupHref(href) {
@@ -389,15 +357,6 @@ function setAllAttribs(elm) {
     }
 }
 
-function getSelectValue(form_obj, field_name) {
-    var elm = form_obj.elements[field_name];
-
-    if (!elm || elm.options == null || elm.selectedIndex == -1)
-        return "";
-
-    return elm.options[elm.selectedIndex].value;
-}
-
 function setDetails(path, pageanchor) {
     // Sends a low level Ajax request
     tinymce.util.XHR.send({
@@ -441,10 +400,6 @@ function setDetails(path, pageanchor) {
             document.getElementById('upload_panel').style.display = 'none';
         }
     });
-}
-
-function getCurrentFolderListing() {
-    getFolderListing(tinyMCEPopup.editor.settings.document_base_url, 'tinymce-jsonlinkablefolderlisting'); 
 }
 
 function getFolderListing(path, method) {
@@ -537,10 +492,4 @@ function getFolderListing(path, method) {
             }
         }
     });
-}
-
-function uploadOk(ok_msg) {
-    current_link = ok_msg;
-    displayPanel('internal_panel');
-    getFolderListing(current_path,'tinymce-jsonlinkablefolderlisting');
 }
