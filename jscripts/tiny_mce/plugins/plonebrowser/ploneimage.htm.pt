@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" i18n:domain="tinymce"
 	tal:define="portal_url context/portal_url; portal_tinymce context/portal_tinymce;">
 <head>
-  <title>Insert/Edit</title>
+  <title i18n:domain="plone.tinymce" i18n:translate="">Insert/Edit</title>
   <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
   <script type="text/javascript" src="../../utils/mctabs.js"></script>
   <script type="text/javascript" src="../../utils/form_utils.js"></script>
@@ -13,23 +13,23 @@
 <body id="ploneimage">
   <div class="dialog-wrapper" id="content">
 		<div id="linktype_panel" class="column hide">
-			<h2 i18n:translate="">Type of link</h2>
+			<h2 i18n:domain="plone.tinymce" i18n:translate="">Type of link</h2>
 			<div id="linktype">
 				<p id="internal_link" class="current">
 					<img src="img/internal_link.png" />
-					<a href="#internal" i18n:translate="">Internal</a>
+					<a href="#internal" i18n:translate="" i18n:domain="plone.tinymce">Internal</a>
 				</p>
 				<p id="external_link">
 					<img src="img/external_link.png" />
-					<a href="#external" i18n:translate="">External</a>
+					<a href="#external" i18n:translate="" i18n:domain="plone.tinymce">External</a>
 				</p>
 				<p id="email_link">
 					<img src="img/email_link.png" />
-					<a href="#email" i18n:translate="">Email</a>
+					<a href="#email" i18n:translate="" i18n:domain="plone.tinymce">Email</a>
 				</p>
 				<p id="anchor_link">
 					<img src="img/anchor_link.png" />
-					<a href="#anchor" i18n:translate="">Anchor</a>
+					<a href="#anchor" i18n:translate="" i18n:domain="plone.tinymce">Anchor</a>
 				</p>
 			</div>
 			<a id="advanced_options" href="#">
@@ -65,14 +65,14 @@
 					</div>
 				</div>
 				<div class="field">
-					<label id="titlelabel" i18n:translate="">Title</label>
+					<label id="titlelabel" i18n:domain="plone.tinymce" i18n:translate="">Title</label>
 					<div class="widget">
 						<p id="titledetails"></p>
 					</div>
 				</div>
 
 				<div class="field">
-					<label id="descriptionlabel" for="description" i18n:translate="">Description</label>
+					<label id="descriptionlabel" for="description" i18n:domain="plone.tinymce" i18n:translate="">Description</label>
 					<div class="widget">
 						<input id="description_href" name="description_href" type="hidden" value="" />
 						<input id="description" name="description" type="text" value="" size="20" />
@@ -320,9 +320,9 @@
 		<div class="visualClear"><!-- --></div>
 		<form action="#" id="action_form">
 			<div class="mceActionPanel">
-				<input type="submit" id="insert" class="context plonebutton" name="insert" i18n:attributes="value common_insert" />
-				<input type="button" id="upload" class="context plonebutton" name="upload" i18n:attributes="value" value="Upload into current folder" />
-				<input type="button" id="cancel" class="standalone plonebutton" name="cancel" i18n:attributes="value common_cancel" />
+				<input type="submit" id="insert" class="context plonebutton" name="insert" i18n:attributes="value" value="common_insert" />
+				<input type="button" id="upload" class="context plonebutton" name="upload" i18n:attributes="value" i18n:domain="plone.tinymce" value="Upload into current folder" />
+				<input type="button" id="cancel" class="standalone plonebutton" name="cancel" i18n:attributes="value" value="common_cancel" />
 			</div>
 		</form>
   </div>
