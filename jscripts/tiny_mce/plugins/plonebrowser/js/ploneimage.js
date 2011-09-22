@@ -522,7 +522,7 @@ ImageDialog.prototype.insertImage = function () {
     // Alignment class
     classes.push(jq.trim(jq('#classes', document).val()));
     // Image captioning
-    if (this.editor.settings.allow_captioned_images && jq('#caption', document).get(0).checked) {
+    if (this.editor.settings.allow_captioned_images && jq('#caption', document).is(':checked')) {
         classes.push('captioned');
     }
 
