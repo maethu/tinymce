@@ -23,10 +23,10 @@
 .legend .current { font-weight: bold; border: none!important; color: #000!important; cursor: default }
 .input-border { border: 0.1em solid #CCC!important }
 .browser-separator { background-color: #DDD }
-.thumbnail { text-align: center; margin-top: 3px; }
+.thumbnail { text-align: center; overflow: hidden }
 .thumbnail p { margin-bottom: 0 }
 .thumbnail input { display: none }
-.thumbnail.current { border: 1px solid #DDD }
+.thumbnail.current { border: 0.1em solid #DDD; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
 .thumbnail .thumb { margin: 3px auto; position: relative }
 .thumbnail .thumb img { bottom: 0; margin-top: 3px }
 
