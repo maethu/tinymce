@@ -563,14 +563,14 @@ ImageDialog.prototype.checkSearch = function (e) {
 
     // Activate search when we have enough input and either livesearch is
     // enabled or the user explicitly pressed Enter.
-    if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch === true || e.keyCode === 13)) {
+    if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch === true || e.which === 13)) {
         this.is_search_activated = true;
         this.getFolderListing(this.tinyMCEPopup.editor.settings.navigation_root_url, this.method_search);
     }
 
     // Disable search when we have no input or the user explicitly pressed the
     // Escape key.
-    if ((len === 0 && this.is_search_activated) || e.keyCode === 27) {
+    if ((len === 0 && this.is_search_activated) || e.which === 27) {
         this.is_search_activated = false;
         el.val('');
         this.getCurrentFolderListing();
