@@ -1109,10 +1109,10 @@ tinyMCEPopup.onInit.add(imgdialog.init, imgdialog);
 /* These two functions are called from adapters.Upload.py
  * after uploadbutton was pressed
  */
-var uploadOk = function uploadOk(current_link) {
+var uploadOk = function uploadOk(current_link, folder) {
     imgdialog.editing_existing_image = true;
     imgdialog.current_link = current_link;
-    imgdialog.getFolderListing(imgdialog.getParentUrl(current_link), imgdialog.method_folderlisting);
+    imgdialog.getFolderListing(folder, imgdialog.method_folderlisting);
     imgdialog.displayPanel('details');
 };
 
