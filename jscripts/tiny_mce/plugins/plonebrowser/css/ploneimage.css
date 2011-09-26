@@ -24,6 +24,7 @@
 .input-border { border: 0.1em solid #CCC!important }
 .browser-separator { background-color: #DDD }
 .thumbnail { text-align: center; overflow: hidden }
+.thumbnail:hover { overflow: visible }
 .thumbnail p { margin-bottom: 0 }
 .thumbnail input { display: none }
 .thumbnail.current { border: 0.1em solid #DDD; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
