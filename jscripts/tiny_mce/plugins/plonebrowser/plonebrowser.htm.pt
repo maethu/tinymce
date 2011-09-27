@@ -6,11 +6,11 @@
   <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
   <script type="text/javascript" src="../../utils/mctabs.js"></script>
   <script type="text/javascript" src="../../utils/form_utils.js"></script>
-  <script type="text/javascript" src="js/ploneimage.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/ploneimage.css" />
+  <script type="text/javascript" src="js/plonebrowser.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/plonebrowser.css" />
   <link rel="stylesheet" type="text/css" tal:attributes="href string:${portal_url}/portal_css/columns.css" />
 </head>
-<body id="ploneimage">
+<body id="plonebrowser">
   <div class="dialog-wrapper" id="content">
 		<div id="linktype_panel" class="column hide">
 			<h2 i18n:domain="plone.tinymce" i18n:translate="">Type of link</h2>
@@ -56,7 +56,7 @@
 			</div>
 		</div>
 		<div id="details_panel" class="column hide">
-			<h2 i18n:translate="ploneimage_dlg_preview"></h2>
+			<h2 i18n:translate="plonebrowser_dlg_preview"></h2>
 			<div class="widget radioscrolllist input-border">
 				<div class="field">
 					<div class="widget">
@@ -86,18 +86,18 @@
 				</div>
 
 				<div class="field">
-					<label id="alignlabel" for="align" i18n:translate="ploneimage_dlg_align"></label>
+					<label id="alignlabel" for="align" i18n:translate="plonebrowser_dlg_align"></label>
 					<div class="widget">
 						<select id="classes" name="classes">
 							<option value="image-inline" i18n:domain="plone.tinymce" i18n:translate="">Inline</option>
-							<option value="image-left" i18n:translate="ploneimage_dlg_align_left"></option>
-							<option value="image-right" i18n:translate="ploneimage_dlg_align_right"></option>
+							<option value="image-left" i18n:translate="plonebrowser_dlg_align_left"></option>
+							<option value="image-right" i18n:translate="plonebrowser_dlg_align_right"></option>
 						</select>
 					</div>
 				</div>
 
 				<div class="field">
-					<label id="dimensionslabel" for="dimensions" i18n:translate="ploneimage_dlg_dimensions"></label>
+					<label id="dimensionslabel" for="dimensions" i18n:translate="plonebrowser_dlg_dimensions"></label>
 					<div class="widget">
 						<select id="dimensions" name="dimensions">
 							<option tal:repeat="item portal_tinymce/getImageScales" tal:attributes="value item/value"
@@ -120,7 +120,7 @@
 			 <h2></h2>
 			 <form name="upload_form" id="upload_form" method="post" target="upload_iframe" enctype="multipart/form-data">
 				 <div class="field">
-						 <label for="uploadtitle" i18n:translate="ploneimage_dlg_title"></label>
+						 <label for="uploadtitle" i18n:translate="plonebrowser_dlg_title"></label>
 						 <div class="widget">
 										 <input type="text" name="uploadtitle" id="uploadtitle" value="" />
 						 </div>

@@ -10,7 +10,7 @@
  *
  * @param mcePopup Reference to a corresponding TinyMCE popup object.
  */
-var ImageDialog = function (mcePopup) {
+var BrowserDialog = function (mcePopup) {
     var image_list_url, link_list_url;
 
     this.tinyMCEPopup = mcePopup;
@@ -58,7 +58,7 @@ var ImageDialog = function (mcePopup) {
  * This will be called when the dialog is activated by pressing the
  * corresponding toolbar icon.
  */
-ImageDialog.prototype.init = function () {
+BrowserDialog.prototype.init = function () {
     var self = this,
         selected_node = jq(this.editor.selection.getNode(), document),
         scaled_image,
@@ -336,7 +336,7 @@ ImageDialog.prototype.init = function () {
  *
  * @param url URL to a possible scaled image.
  */
-ImageDialog.prototype.parseImageScale = function (url) {
+BrowserDialog.prototype.parseImageScale = function (url) {
     var parts,
         last_part,
         scale_pos,
@@ -370,7 +370,7 @@ ImageDialog.prototype.parseImageScale = function (url) {
 /**
  * Given DOM node and href value, setup all node attributes/properies
  */
-ImageDialog.prototype.setAnchorAttributes = function (node, link) {
+BrowserDialog.prototype.setAnchorAttributes = function (node, link) {
     var target = jq('#targetlist', document).val(),
         panelname = jq('#linktype .current a', document).attr('href');
 
@@ -392,7 +392,7 @@ ImageDialog.prototype.setAnchorAttributes = function (node, link) {
  * Handle inserting the selected link into the DOM of the editable area.
  *
  */
-ImageDialog.prototype.insertLink = function () {
+BrowserDialog.prototype.insertLink = function () {
     var selected_node = jq(this.editor.selection.getNode(), document),
         active_panel = jq('#linktype .current a', document).attr('href'),
         self = this,
@@ -497,7 +497,7 @@ ImageDialog.prototype.insertLink = function () {
  * Handle inserting the selected image into the DOM of the editable area.
  *
  */
-ImageDialog.prototype.insertImage = function () {
+BrowserDialog.prototype.insertImage = function () {
     var attrs,
         selected_node = this.editor.selection.getNode(),
         href = this.current_link,
@@ -562,7 +562,7 @@ ImageDialog.prototype.insertImage = function () {
 /**
  * Activates and disables the search feature based on user input.
  */
-ImageDialog.prototype.checkSearch = function (e) {
+BrowserDialog.prototype.checkSearch = function (e) {
     var el = jq('#searchtext', document),
         len = el.val().length;
 
@@ -592,7 +592,7 @@ ImageDialog.prototype.checkSearch = function (e) {
  *
  * @param url URL of the object to fetch.
  */
-ImageDialog.prototype.setDetails = function (url) {
+BrowserDialog.prototype.setDetails = function (url) {
     var self = this,
         /**
          * Pretty-prints a human readable title for a image scale.
@@ -680,7 +680,7 @@ ImageDialog.prototype.setDetails = function (url) {
 /**
  * Utility method to update the middle pane with the current context listing.
  */
-ImageDialog.prototype.getCurrentFolderListing = function () {
+BrowserDialog.prototype.getCurrentFolderListing = function () {
     this.getFolderListing(this.editor.settings.document_base_url, this.method_folderlisting);
 };
 
@@ -691,7 +691,7 @@ ImageDialog.prototype.getCurrentFolderListing = function () {
  * @param context_url URL of the context where the request will be made
  * @param method Name of the backed view to query
  */
-ImageDialog.prototype.getFolderListing = function (context_url, method) {
+BrowserDialog.prototype.getFolderListing = function (context_url, method) {
     var self = this;
 
     // store this for view type refreshing
@@ -895,7 +895,7 @@ ImageDialog.prototype.getFolderListing = function (context_url, method) {
  *
  * @param url URL with at least a single path component.
  */
-ImageDialog.prototype.getParentUrl = function (url) {
+BrowserDialog.prototype.getParentUrl = function (url) {
     var url_array = url.split('/');
     url_array.pop();
     return url_array.join('/');
@@ -911,7 +911,7 @@ ImageDialog.prototype.getParentUrl = function (url) {
  * @param base The base URL
  * @param link The link to calculate an absolute URL for
  */
-ImageDialog.prototype.getAbsoluteUrl = function (base, link) {
+BrowserDialog.prototype.getAbsoluteUrl = function (base, link) {
     var base_array,
         link_array,
         item;
@@ -948,7 +948,7 @@ ImageDialog.prototype.getAbsoluteUrl = function (base, link) {
  * @param panel Name of the panel to show
  * @param upload_allowed Boolean indication upload rights in current context
  */
-ImageDialog.prototype.displayPanel = function(panel, upload_allowed) {
+BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handles: details, browse, search, external, email, anchor, upload, advanced
     var correction_length;
 
@@ -1020,7 +1020,7 @@ ImageDialog.prototype.displayPanel = function(panel, upload_allowed) {
 /**
  * Retrieves anchors from current document and populates the list
  */
-ImageDialog.prototype.populateAnchorList = function () {
+BrowserDialog.prototype.populateAnchorList = function () {
     var nodes,
         html = "",
         divclass = "even",
@@ -1064,7 +1064,7 @@ ImageDialog.prototype.populateAnchorList = function () {
 /**
  * Strip HTTP scheme from URL and set prefix accordingly
  */
-ImageDialog.prototype.checkExternalURL = function (href) {
+BrowserDialog.prototype.checkExternalURL = function (href) {
     var el = jq('#externalurl', document),
         scheme = href.split('://')[0];
 
@@ -1081,7 +1081,7 @@ ImageDialog.prototype.checkExternalURL = function (href) {
 /**
  * Preview webpage if url is set
  */
-ImageDialog.prototype.previewExternalURL = function () {
+BrowserDialog.prototype.previewExternalURL = function () {
     var url = jq('#externalurl', document).val(),
         urlprefix = jq('#externalurlprefix', document).val();
 
@@ -1097,7 +1097,7 @@ ImageDialog.prototype.previewExternalURL = function () {
 /**
  * Currently disabled functionality
  */
-ImageDialog.prototype.setPopupVisibility = function (e) {
+BrowserDialog.prototype.setPopupVisibility = function (e) {
     e.preventDefault();
     //var targetlist = document.getElementById('targetlist');    
     //if (targetlist.options[targetlist.selectedIndex].value == 'popup') {
@@ -1108,17 +1108,17 @@ ImageDialog.prototype.setPopupVisibility = function (e) {
 };
 
 
-var imgdialog = new ImageDialog(tinyMCEPopup);
-tinyMCEPopup.onInit.add(imgdialog.init, imgdialog);
+var bwrdialog = new BrowserDialog(tinyMCEPopup);
+tinyMCEPopup.onInit.add(bwrdialog.init, bwrdialog);
 
 /* These two functions are called from adapters.Upload.py
  * after uploadbutton was pressed
  */
 var uploadOk = function uploadOk(current_link, folder) {
-    imgdialog.editing_existing_image = true;
-    imgdialog.current_link = current_link;
-    imgdialog.getFolderListing(folder, imgdialog.method_folderlisting);
-    imgdialog.displayPanel('details');
+    bwrdialog.editing_existing_image = true;
+    bwrdialog.current_link = current_link;
+    bwrdialog.getFolderListing(folder, bwrdialog.method_folderlisting);
+    bwrdialog.displayPanel('details');
 };
 
 var uploadError = function uploadError(current_link) {

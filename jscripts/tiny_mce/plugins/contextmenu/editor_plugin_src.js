@@ -140,7 +140,7 @@
 			}
 
 			m.addSeparator();
-			m.add({title : 'advanced.image_desc', icon : 'image', cmd : ed.plugins.ploneimage ? 'mcePloneImage' : 'mceImage', ui : true});
+			m.add({title : 'advanced.image_desc', icon : 'image', cmd : ed.plugins.plonebrowser ? 'mcePloneImage' : 'mceImage', ui : true});
 
 			m.addSeparator();
 			am = m.addMenu({title : 'contextmenu.align'});

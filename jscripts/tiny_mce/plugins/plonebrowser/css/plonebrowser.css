@@ -1,7 +1,7 @@
-#ploneimage .formHelp { height: 2em; }
-#ploneimage .field { margin-bottom: 0; }
-#ploneimage p { margin-bottom: 0; }
-#ploneimage .formHelp { margin: 0}
+#plonebrowser .formHelp { height: 2em; }
+#plonebrowser .field { margin-bottom: 0; }
+#plonebrowser p { margin-bottom: 0; }
+#plonebrowser .formHelp { margin: 0}
 #details_panel, #addimage_panel { width: 230px; margin-left: 7px }
 #details_panel h2 { margin-bottom: 26px }
 #addimage_panel h2 { margin-bottom: 6px }
