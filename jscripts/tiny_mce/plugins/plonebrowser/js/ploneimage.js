@@ -504,6 +504,11 @@ ImageDialog.prototype.insertImage = function () {
         dimension,
         classes;
 
+    // if we have absolute url, make sure it's relative
+    if (href.indexOf('resolveuid/') > -1) {
+        href = 'resolveuid/' + href.split('resolveuid/')[1];
+    }
+
     this.tinyMCEPopup.restoreSelection();
 
     // Fixes crash in Safari
