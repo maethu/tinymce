@@ -20,24 +20,6 @@
 		explode = tinymce.explode,
 		Dispatcher = tinymce.util.Dispatcher, undefined, instanceCounter = 0;
 
-    // Plone fix
-    var lo = window.location;
-    var lo_array = lo.href.split('/');
-    if (lo.href.indexOf('portal_factory') != -1) {
-        while (lo_array[lo_array.length-1] != 'portal_factory') {
-            lo_array.pop();
-        }
-        lo_array.pop();
-    } else {
-        if (lo_array.length > 4) {
-            lo_array.pop();
-        }
-        if (lo_array.length > 4) {
-            lo_array.pop();
-        }
-    }
-    tinymce.documentBaseURL = lo_array.join('/') + '/';
-
     // Plone fix when editing contextual portlets
     if (lo.href.indexOf('++contextportlets++') != -1) {
         tinymce.documentBaseURL = tinymce.documentBaseURL.substr(0, lo.href.indexOf('++contextportlets++'));
