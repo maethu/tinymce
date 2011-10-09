@@ -20,17 +20,15 @@
 		explode = tinymce.explode,
 		Dispatcher = tinymce.util.Dispatcher, undefined, instanceCounter = 0;
 
-    // Plone fix when editing contextual portlets
-    if (lo.href.indexOf('++contextportlets++') != -1) {
-        tinymce.documentBaseURL = tinymce.documentBaseURL.substr(0, lo.href.indexOf('++contextportlets++'));
-    }
+    // Setup some URLs where the editor API is located and where the document is
+    tinymce.documentBaseURL = window.location.href.replace(/[\?#].*$/, '').replace(/[\/\\][^\/]+$/, '');
+    if (!/[\/\\]$/.test(tinymce.documentBaseURL))
+        tinymce.documentBaseURL += '/';
 
-    /* Plone fix:
-	// Setup some URLs where the editor API is located and where the document is
-	tinymce.documentBaseURL = window.location.href.replace(/[\?#].*$/, '').replace(/[\/\\][^\/]+$/, '');
-	if (!/[\/\\]$/.test(tinymce.documentBaseURL))
-		tinymce.documentBaseURL += '/';
-    */
+    // Plone fix when editing contextual portlets
+    if (window.location.href.indexOf('++contextportlets++') != -1) {
+        tinymce.documentBaseURL = tinymce.documentBaseURL.substr(0, window.location.href.indexOf('++contextportlets++'));
+    }
 
 	tinymce.baseURL = new tinymce.util.URI(tinymce.documentBaseURL).toAbsolute(tinymce.baseURL);
 
