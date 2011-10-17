@@ -1006,9 +1006,9 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     if (jq.inArray(panel, ["search", "details", "browse", "upload"]) > -1) {
         correction_length = this.is_link_plugin ? 150 : 0;
         if (jq.inArray(panel, ["upload", "details"]) > -1) {
-            jq('#browseimage_panel', document).width(555 - correction_length);
+            jq('#browseimage_panel', document).width(550 - correction_length);
         } else {
-            jq('#browseimage_panel', document).width(790 - correction_length);
+            jq('#browseimage_panel', document).width(785 - correction_length);
         }
         jq('#browseimage_panel', document).removeClass("hide");
     } else {
