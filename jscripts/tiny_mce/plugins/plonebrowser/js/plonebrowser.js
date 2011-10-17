@@ -465,8 +465,6 @@ BrowserDialog.prototype.insertLink = function () {
 
     this.tinyMCEPopup.execCommand("mceBeginUndoLevel");
 
-    console.log(selected_node);
-    console.log(link);
     if (selected_node === null) {
         // Create new anchor elements
         // no idea what this does, yet.
