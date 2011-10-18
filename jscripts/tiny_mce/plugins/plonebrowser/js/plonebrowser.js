@@ -160,7 +160,7 @@ BrowserDialog.prototype.init = function () {
             e.preventDefault();
         });
         jq('#externalurl', document).keyup(function (e) {
-            self.checkExternalURL(jq(this).text());
+            self.checkExternalURL(this.value);
         });
         jq('#targetlist', document).change(this.setupPopupVisibility);
         jq('#previewexternalurl', document).click(function (e) {
