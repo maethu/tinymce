@@ -381,6 +381,7 @@ BrowserDialog.prototype.setAnchorAttributes = function (node, link) {
         panelname = jq('#linktype .current a', document).attr('href');
 
     jq(node).attr('href', link);
+    jq(node).attr('data-mce-href', link);
     jq(node).attr('target', target);
 
     jq(node)
