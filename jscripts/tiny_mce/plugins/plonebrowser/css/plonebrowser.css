@@ -23,15 +23,16 @@
 .legend .current { font-weight: bold; border: none!important; color: #000!important; cursor: default }
 .input-border { border: 0.1em solid #CCC!important }
 .browser-separator { background-color: #DDD }
+
+/* image plugin css */
 .thumbnail { text-align: center; overflow: hidden }
 .thumbnail:hover { overflow: visible }
+.thumbnail:hover p { position: absolute; background: #EEE; z-index: 2; min-width: 100% }
 .thumbnail p { margin-bottom: 0 }
 .thumbnail input { display: none }
 .thumbnail.current { border: 0.1em solid #DDD; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
-.thumbnail .thumb { margin: 3px auto; position: relative }
+.thumbnail .thumb { margin: 0 auto; padding: 3px 0; position: relative }
 .thumbnail .thumb img { bottom: 0; margin-top: 3px }
-
-/* image plugin css */
 
 /* link plugin css */
 #linktype_panel { line-height: 25px; width: 135px; margin-right: 10px; border-right: 0.1em solid #329FD7; height: 450px }
