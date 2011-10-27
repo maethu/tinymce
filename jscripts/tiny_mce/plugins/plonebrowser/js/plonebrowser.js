@@ -658,7 +658,7 @@ BrowserDialog.prototype.setDetails = function (url) {
                 .addClass('current');
 
             self.current_url = data.url;
-            self.current_link = self.editor.settings.link_using_uids ? data.uid_url : data.url;
+            self.current_link = self.editor.settings.link_using_uids ? data.uid_relative_url : data.url;
 
             jq('#titledetails', document).text(data.title);
             if (self.is_link_plugin === true) {
