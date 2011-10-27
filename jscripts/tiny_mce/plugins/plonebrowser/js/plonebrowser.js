@@ -420,7 +420,11 @@ BrowserDialog.prototype.insertLink = function () {
 
     switch (active_panel) {
         case "#internal":
-            link = this.current_link + '#' + jq('#pageanchor', document).val();
+            link = this.current_link;
+            anchor = jq('#pageanchor', document).val();
+            if (anchor) {
+                link += '#' + anchor;
+            }
             break;
         case "#external":
             link = this.previewExternalURL();
