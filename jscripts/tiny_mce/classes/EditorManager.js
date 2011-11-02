@@ -25,11 +25,6 @@
     if (!/[\/\\]$/.test(tinymce.documentBaseURL))
         tinymce.documentBaseURL += '/';
 
-    // Plone fix when editing contextual portlets
-    if (window.location.href.indexOf('++contextportlets++') != -1) {
-        tinymce.documentBaseURL = tinymce.documentBaseURL.substr(0, window.location.href.indexOf('++contextportlets++'));
-    }
-
 	tinymce.baseURL = new tinymce.util.URI(tinymce.documentBaseURL).toAbsolute(tinymce.baseURL);
 
 	/**
