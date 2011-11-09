@@ -709,9 +709,9 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
         'type': 'POST',
         'dataType': 'json',
         'data': {
-            'searchtext': encodeURIComponent(jq('#searchtext', document).val()),
+            'searchtext': jq('#searchtext', document).val(),
             'rooted': this.editor.settings.rooted ? 'True' : 'False',
-            'document_base_url': encodeURIComponent(this.editor.settings.document_base_url)
+            'document_base_url': this.editor.settings.document_base_url
             },
         'success': function (data) {
             var html = [],
