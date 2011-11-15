@@ -712,7 +712,7 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
             'searchtext': jq('#searchtext', document).val(),
             'rooted': this.editor.settings.rooted ? 'True' : 'False',
             'document_base_url': this.editor.settings.document_base_url
-            },
+        },
         'success': function (data) {
             var html = [],
                 len,
@@ -1099,20 +1099,6 @@ BrowserDialog.prototype.previewExternalURL = function () {
         return urlprefix + url;
     }
 };
-
-/**
- * Currently disabled functionality
- */
-BrowserDialog.prototype.setPopupVisibility = function (e) {
-    e.preventDefault();
-    //var targetlist = document.getElementById('targetlist');    
-    //if (targetlist.options[targetlist.selectedIndex].value == 'popup') {
-    //    document.getElementById('popup_panel').style.display = 'block';
-    //} else {
-    //    document.getElementById('popup_panel').style.display = 'none';
-    //}
-};
-
 
 var bwrdialog = new BrowserDialog(tinyMCEPopup);
 tinyMCEPopup.onInit.add(bwrdialog.init, bwrdialog);
