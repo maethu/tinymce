@@ -124,6 +124,8 @@ BrowserDialog.prototype.init = function () {
 
     // setup UI depending on plugin type
     if (this.is_link_plugin === true) {
+        // we may have image selected and anchor is the wrapping node
+        selected_node = selected_node.closest('a');
         jq('#browseimage_panel h2', document).text(this.labels.label_browselink);
         jq('#addimage_panel h2', document).text(this.labels.label_addnewfile);
         jq('#linktype_panel', document).removeClass('hide');
