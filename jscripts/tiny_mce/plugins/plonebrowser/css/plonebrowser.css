@@ -23,7 +23,7 @@
 .legend a { margin-right: 5px }
 .legend .current { font-weight: bold; border: none!important; color: #000!important; cursor: default }
 .input-border { border: 0.1em solid #CCC!important }
-.browser-separator { background-color: #DDD }
+.browser-separator { background-color: #f6f6f6; margin-bottom: 0.5em; }
 .shortcuts strong { cursor: pointer; }
 
 /* image plugin css */
