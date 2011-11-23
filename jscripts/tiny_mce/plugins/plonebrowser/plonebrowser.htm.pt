@@ -316,13 +316,12 @@
 				</form>
 			</fieldset>
 		</div>
-	
+
 		<div class="visualClear"><!-- --></div>
 		<form action="#" id="action_form">
 			<div class="mceActionPanel">
 				<input type="submit" id="insert" class="context plonebutton" name="insert" i18n:attributes="value" value="common_insert" />
 				<input type="button" id="upload" class="context plonebutton" name="upload" i18n:attributes="value" i18n:domain="plone.tinymce" value="Upload into current folder" />
-				<input type="button" id="cancel" class="standalone plonebutton" name="cancel" i18n:attributes="value" value="common_cancel" />
 			</div>
 		</form>
   </div>
