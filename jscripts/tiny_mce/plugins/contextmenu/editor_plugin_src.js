@@ -135,7 +135,7 @@
 
 			if ((el.nodeName == 'A' && !ed.dom.getAttrib(el, 'name')) || !col) {
 				m.addSeparator();
-				m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.plonelink ? 'mcePloneLink' : 'mceLink', ui : true});
+				m.add({title : 'advanced.link_desc', icon : 'link', cmd : ed.plugins.plonebrowser ? 'mcePloneLink' : 'mceLink', ui : true});
 				m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
 			}
 
