@@ -1109,6 +1109,11 @@ tinyMCEPopup.onInit.add(bwrdialog.init, bwrdialog);
  * after uploadbutton was pressed
  */
 var uploadOk = function uploadOk(current_link, folder) {
+    var filefield = jq('#uploadfile', document).parent();
+
+    // redraw input selection for better UX feeling after successful upload
+    filefield.html(filefield.html());
+
     bwrdialog.editing_existing_image = true;
     bwrdialog.current_link = current_link;
     bwrdialog.getFolderListing(folder, bwrdialog.method_folderlisting);
