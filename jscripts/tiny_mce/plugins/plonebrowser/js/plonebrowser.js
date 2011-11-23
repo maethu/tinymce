@@ -129,6 +129,8 @@ BrowserDialog.prototype.init = function () {
         jq('#browseimage_panel h2', document).text(this.labels.label_browselink);
         jq('#addimage_panel h2', document).text(this.labels.label_addnewfile);
         jq('#linktype_panel', document).removeClass('hide');
+        jq('#plonebrowser', document).removeClass('image-browser').addClass('link-browser');
+
         this.populateAnchorList();
 
         // display results as list and disable thumbs view
@@ -241,6 +243,7 @@ BrowserDialog.prototype.init = function () {
         /* handle image plugin startup */
         jq('#browseimage_panel h2', document).text(this.labels.label_browseimage);
         jq('#addimage_panel h2', document).text(this.labels.label_addnewimage);
+        jq('#plonebrowser', document).removeClass('link-browser').addClass('image-browser');
 
         if (selected_node.get(0).tagName && selected_node.get(0).tagName.toUpperCase() === 'IMG') {
             /** The image dialog was opened to edit an existing image element. **/
@@ -950,7 +953,7 @@ BrowserDialog.prototype.getAbsoluteUrl = function (base, link) {
     return base_array.join('/');
 };
 /*
- * Switch different panels and buttons 
+ * Switch different panels and buttons
  *
  * @param panel Name of the panel to show
  * @param upload_allowed Boolean indication upload rights in current context
