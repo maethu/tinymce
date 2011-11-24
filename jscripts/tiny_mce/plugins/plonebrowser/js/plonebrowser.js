@@ -969,6 +969,9 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handle insert button
     if (jq.inArray(panel, ["details", "external", "email", "anchor", "advanced"]) > -1) {
         jq('#insert', document).attr('disabled', false).fadeTo(1, 1);
+    } else if (jq("input:radio[name=internallink]:checked", document).length === 1) {
+        jq('#insert', document).attr('disabled', false).fadeTo(1, 1);
+
     } else {
         jq('#insert', document).attr('disabled', true).fadeTo(1, 0.5);
     }
