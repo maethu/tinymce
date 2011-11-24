@@ -53,6 +53,9 @@
 					<img src="img/display_list.png" /> <a id="listview" href="" i18n:translate="">List</a>
 					<img src="img/display_thumbs.png" /> <a id="thumbview" href="" class="current" i18n:translate="">Thumbnails</a>
 				</p>
+                <p>
+                    <img src="img/display_list.png" /> <a id="upload" href="" i18n:translate="">Upload content into current folder</a>
+                </p>
 			</div>
 		</div>
 		<div id="details_panel" class="column hide">
@@ -323,11 +326,6 @@
 		</div>
 
 		<div class="visualClear"><!-- --></div>
-		<form action="#" id="action_form">
-			<div class="mceActionPanel">
-				<input type="button" id="upload" class="context plonebutton" name="upload" i18n:attributes="value" i18n:domain="plone.tinymce" value="Upload into current folder" />
-			</div>
-		</form>
   </div>
 </body>
 </html>

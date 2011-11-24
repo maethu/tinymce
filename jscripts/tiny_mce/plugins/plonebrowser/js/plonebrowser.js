@@ -79,7 +79,7 @@ BrowserDialog.prototype.init = function () {
     // Setup events
     jq('#insert-selection', document).die().live('click', function (e) {
         e.preventDefault();
-        if (self.is_link_plugin) {
+        if (self.is_link_plugin === true) {
             self.insertLink();
         } else {
             self.insertImage();
@@ -614,6 +614,9 @@ BrowserDialog.prototype.setDetails = function (url) {
                 return scale.title;
             }
         };
+    if (jq.trim(url).length === 0) {
+        return;
+    }
 
     jq.ajax({
         'url': url + '/tinymce-jsondetails',
