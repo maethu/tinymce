@@ -114,6 +114,11 @@
 						</select>
 					</div>
 				</div>
+
+                <div class="field">
+                    <input type="submit" id="insert-selection" class="context plonebutton" name="insert-image"
+                           i18n:attributes="value" value="OK" />
+                </div>
 			</div>
 		</div>
 		<div id="addimage_panel" class="column hide">
@@ -320,7 +325,6 @@
 		<div class="visualClear"><!-- --></div>
 		<form action="#" id="action_form">
 			<div class="mceActionPanel">
-				<input type="submit" id="insert" class="context plonebutton" name="insert" i18n:attributes="value" value="common_insert" />
 				<input type="button" id="upload" class="context plonebutton" name="upload" i18n:attributes="value" i18n:domain="plone.tinymce" value="Upload into current folder" />
 			</div>
 		</form>

@@ -25,6 +25,7 @@
 .input-border { border: 0.1em solid #CCC!important }
 .browser-separator { background-color: #f6f6f6; margin-bottom: 0.5em; }
 .shortcuts strong { cursor: pointer; }
+#insert-selection { margin: 0.7em auto; display: block; width: 70%; }
 
 /* image plugin css */
 .thumbnail { overflow: hidden; }
@@ -38,6 +39,7 @@
 .thumbnail.current:hover { background-color: #f8e694 ! important; border: 0.1em solid #daa239 ! important; }
 .thumbnail .thumb { margin: 0 auto; padding: 3px 0; position: relative }
 .thumbnail .thumb img { bottom: 0; margin-top: 3px }
+
 
 /* link plugin css */
 #linktype_panel { line-height: 25px; width: 135px; margin-right: 10px; border-right: 0.1em solid #329FD7; height: 450px }

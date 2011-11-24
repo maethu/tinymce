@@ -77,9 +77,9 @@ BrowserDialog.prototype.init = function () {
     this.shortcuts_html = this.is_link_plugin ? self.editor.settings.link_shortcuts_html : self.editor.settings.image_shortcuts_html;
 
     // Setup events
-    jq('#action_form', document).submit(function (e) {
+    jq('#insert-selection', document).die().live('click', function (e) {
         e.preventDefault();
-        if (self.is_link_plugin === true) {
+        if (self.is_link_plugin) {
             self.insertLink();
         } else {
             self.insertImage();
