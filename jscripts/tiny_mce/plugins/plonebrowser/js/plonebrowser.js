@@ -241,7 +241,7 @@ BrowserDialog.prototype.init = function () {
 
     } else {
         /* handle image plugin startup */
-        jq('#browseimage_panel h2', document).text(this.labels.label_browseimage);
+        // jq('#browseimage_panel h2', document).text(this.labels.label_browseimage);
         jq('#addimage_panel h2', document).text(this.labels.label_addnewimage);
         jq('#plonebrowser', document).removeClass('link-browser').addClass('image-browser');
 
@@ -807,28 +807,49 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
 
             // display shortcuts
             if (self.is_search_activated === false && self.shortcuts_html.length) {
-                html = [];
-                jq.merge(html, [
-                    '<div id="shortcuts" class="browser-separator">',
-                        '<img src="img/arrow_down.png" />',
-                        '<strong>' + self.labels.label_shortcuts + '</strong>',
-                    '</div>'
-                ]);
+                
+                jqShortcutsBtn = jq('#shortcutsicon', document);
+                jqShortcutsView = jq('#shortcutsview', document);
+                jqShortcutItem = jq('#shortcutsview #item-template', document);
+                
+                jqShortcutsBtn.attr('title', self.labels.label_shortcuts);
+                jqShortcutsBtn.bind('click', function(e) {
+                    e.preventDefault();
+                    jqShortcutsBtn.toggleClass('selected');
+                    jqShortcutsView.toggle();
+                });
+                
                 jq.each(self.shortcuts_html, function () {
-                    html.push('<div class="item list shortcut">' + this + '</div>');
+                    jqItem = jqShortcutItem.clone();
+                    jqItem.append(''+this);
+                    jqItem.removeAttr('id');
+                    jqItem.appendTo(jqShortcutsView);
                 });
-                jq.merge(html, [
-                    '<div class="browser-separator">',
-                        '<img src="img/arrow_down.png" />',
-                        '<strong>' + self.labels.label_browser + '</strong>',
-                    '</div>'
-                ]);
-                jq('#internallinkcontainer', document).prepend(html.join(''));
-
+                jqShortcutItem.remove();
+                
+                
+//                html = [];
+//                jq.merge(html, [
+//                    '<div id="shortcuts" class="browser-separator">',
+//                        '<img src="img/arrow_down.png" />',
+//                        '<strong>' + self.labels.label_shortcuts + '</strong>',
+//                    '</div>'
+//                ]);
+//                jq.each(self.shortcuts_html, function () {
+//                    html.push('<div class="item list shortcut">' + this + '</div>');
+//                });
+//                jq.merge(html, [
+//                    '<div class="browser-separator">',
+//                        '<img src="img/arrow_down.png" />',
+//                        '<strong>' + self.labels.label_browser + '</strong>',
+//                    '</div>'
+//                ]);
+//                jq('#internallinkcontainer', document).prepend(html.join(''));
+//
                 // Shortcuts listing can be hidden
-                jq('#shortcuts', document).click(function() {
-                    jq('#internallinkcontainer .shortcut', document).toggle();
-                });
+//                jq('#shortcuts', document).click(function() {
+//                    jq('#internallinkcontainer .shortcut', document).toggle();
+//                });
             }
 
             // make rows clickable

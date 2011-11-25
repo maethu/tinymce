@@ -35,24 +35,31 @@
 			<a id="advanced_options" href="#">
 				<strong>Advanced options &raquo;</strong>
 			</a>
-	  </div>
+	    </div>
 		<div id="browseimage_panel" class="column">
-			<h2></h2>
-			<div class="formHelp">
-				<strong i18n:translate="">You are here:</strong>
-				<span id="internalpath"></span>
-			</div>
 			<div id="general_panel" class="column">
 				<div class="field">
 					<div class="widget">
 						<input type="text" name="searchtext" id="searchtext" title="Search Site" placeholder="Search Site" value="" i18n:attributes="placeholder, title"/>
 					</div>
 				</div>
+				<div class="legend">
+					<a id="listview" href="" title="List" i18n:translate=""><img src="img/display_list.png" /></a>
+					<a id="thumbview" href="" title="Thumbnails" class="current" i18n:translate=""><img src="img/display_thumbs.png" /></a>
+				</div>
+				<div class="action-icons">
+				    <a id="shortcutsicon" href="" title="Shortcuts" i18n:translate=""><img src="img/arrow_down.png" /></a>
+				</div>
+				<div id="shortcutsview">
+				    <div id="item-template" class="item list shortcut"></div>
+				</div>
+				<div class="formHelp">
+    				<strong i18n:translate="">You are here:</strong>
+    				<span id="internalpath"></span>
+    			</div>
+                
 				<div id="internallinkcontainer" class="widget radioscrolllist input-border"></div>
-				<p class="legend">
-					<img src="img/display_list.png" /> <a id="listview" href="" i18n:translate="">List</a>
-					<img src="img/display_thumbs.png" /> <a id="thumbview" href="" class="current" i18n:translate="">Thumbnails</a>
-				</p>
+				
                 <p>
                     <img src="img/display_list.png" /> <a id="upload" href="" i18n:translate="">Upload content into current folder</a>
                 </p>
