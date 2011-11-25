@@ -715,19 +715,20 @@
 
 				t._addToolbars(etb, o);
 
+				// add event to textarea to fire up toolbar
 				ed.onMouseUp.add(function() {
 					var e = DOM.get(ed.id + '_external');
 					DOM.show(e);
 
 					DOM.hide(lastExtID);
 
+					// close toolbar if user clicks X button
 					var f = Event.add(ed.id + '_external_close', 'click', function() {
 						DOM.hide(ed.id + '_external');
 						Event.remove(ed.id + '_external_close', 'click', f);
 					});
 
 					DOM.show(e);
-					DOM.setStyle(e, 'top', 0 - DOM.getRect(ed.id + '_tblext').h - 1);
 
 					// Fixes IE rendering bug
 					DOM.hide(e);
