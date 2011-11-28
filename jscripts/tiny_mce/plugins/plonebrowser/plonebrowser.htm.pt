@@ -12,30 +12,34 @@
 </head>
 <body id="plonebrowser">
   <div class="dialog-wrapper icons-on" id="content">
-		<div id="linktype_panel" class="column hide">
-			<h2 i18n:domain="plone.tinymce" i18n:translate="">Type of link</h2>
+
+		<div id="linktype_panel" class="tabs hide">
 			<div id="linktype">
-				<p id="internal_link" class="current">
+				<div id="internal_link" class="current">
 					<img src="img/internal_link.png" />
 					<a href="#internal" i18n:translate="" i18n:domain="plone.tinymce">Internal</a>
-				</p>
-				<p id="external_link">
+				</div>
+				<div id="external_link">
 					<img src="img/external_link.png" />
 					<a href="#external" i18n:translate="" i18n:domain="plone.tinymce">External</a>
-				</p>
-				<p id="email_link">
+				</div>
+				<div id="email_link">
 					<img src="img/email_link.png" />
 					<a href="#email" i18n:translate="" i18n:domain="plone.tinymce">Email</a>
-				</p>
-				<p id="anchor_link">
+				</div>
+				<div id="anchor_link">
 					<img src="img/anchor_link.png" />
 					<a href="#anchor" i18n:translate="" i18n:domain="plone.tinymce">Anchor</a>
-				</p>
+				</div>
 			</div>
-			<a id="advanced_options" href="#">
-				<strong>Advanced options &raquo;</strong>
-			</a>
 	    </div>
+	    
+	    
+	    <!-- // -------------------------------!!!!!!!!!!!!!!! -->
+        <!-- <a id="advanced_options" href="#">
+            <strong>Advanced options &raquo;</strong>
+        </a> -->
+
 		<div id="browseimage_panel" class="column">
 			<div id="general_panel" class="column">
 				<div class="field">

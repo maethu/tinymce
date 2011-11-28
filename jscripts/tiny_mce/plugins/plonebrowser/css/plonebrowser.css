@@ -58,8 +58,12 @@
 
 
 /* link plugin css */
-#linktype_panel { line-height: 25px; width: 135px; margin-right: 10px; border-right: 0.1em solid #329FD7; height: 450px; }
-#linktype { margin: 15px 0; }
+#linktype_panel { background: #F5F5F5; border-bottom: 1px solid #CCC; margin-bottom: 10px; padding: 5px 5px 0; }
+#linktype div { display: inline-block; padding: 5px 10px; margin-bottom: -1px; }
+#linktype div:hover { background: #FAFAFA; }
+#linktype div a { border: none!important; }
+#linktype div.current { background: #FFF; border: 1px solid #CCC; border-bottom: 1px solid #FFF; }
+
 #linktype .current a { font-weight: bold; color: #000; border: none; cursor: default; }
 #anchorlinkcontainer { height: 350px; }
 #external_panel, #mail_panel, #anchor_panel, #advanced_panel { width: 630px; }

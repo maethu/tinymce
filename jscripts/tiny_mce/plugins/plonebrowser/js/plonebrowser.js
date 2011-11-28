@@ -844,30 +844,7 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                     jqItem.appendTo(jqShortcutsView);
                 });
                 jqShortcutItem.remove();
-                
-                
-//                html = [];
-//                jq.merge(html, [
-//                    '<div id="shortcuts" class="browser-separator">',
-//                        '<img src="img/arrow_down.png" />',
-//                        '<strong>' + self.labels.label_shortcuts + '</strong>',
-//                    '</div>'
-//                ]);
-//                jq.each(self.shortcuts_html, function () {
-//                    html.push('<div class="item list shortcut">' + this + '</div>');
-//                });
-//                jq.merge(html, [
-//                    '<div class="browser-separator">',
-//                        '<img src="img/arrow_down.png" />',
-//                        '<strong>' + self.labels.label_browser + '</strong>',
-//                    '</div>'
-//                ]);
-//                jq('#internallinkcontainer', document).prepend(html.join(''));
-//
-                // Shortcuts listing can be hidden
-//                jq('#shortcuts', document).click(function() {
-//                    jq('#internallinkcontainer .shortcut', document).toggle();
-//                });
+
             }
 
             // make rows clickable
