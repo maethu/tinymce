@@ -733,35 +733,35 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                 col_items_number = self.editor.settings.num_of_thumb_columns;
 
             if (data.items.length === 0) {
-                html.push(self.labels.label_no_items);
+                html.push('<div id="no-items">' + self.labels.label_no_items + '</div>');
             } else {
                 jq.each(data.items, function (i, item) {
                     if (item.url === self.current_link && self.editor.settings.link_using_uids) {
                         self.current_link = 'resolveuid/' + item.uid;
                     }
-                    if (item.is_folderish) {
-                        folder_html.push('<div class="list item folderish ' + (i % 2 === 0 ? 'even' : 'odd') + '">');
-                        if (self.is_link_plugin === true) {
-                            jq.merge(folder_html, [
-                                '<input href="' + item.url + '" ',
-                                    'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
-                                    'resolveuid/' + item.uid ,
-                                    '"/> '
-                            ]);
-                        } else {
-                            folder_html.push('<img src="img/arrow_right.png" />');
-                        }
-                        jq.merge(folder_html, [
-                                item.icon,
-                                '<a href="' + item.url + '" class="folderlink contenttype-' + item.normalized_type + '">',
-                                    item.title,
-                                '</a>',
-                            '</div>'
-                        ]);
-                    } else {
-                        switch (jq('#general_panel .legend .current', document).attr('id')) {
-                            // TODO: use jquery dom to be sure stuff is closed
-                            case 'listview':
+                    switch (jq('#general_panel .legend .current', document).attr('id')) {
+                        // TODO: use jquery dom to be sure stuff is closed
+                        case 'listview':
+                            if (item.is_folderish) {
+                                folder_html.push('<div class="list item folderish ' + (i % 2 === 0 ? 'even' : 'odd') + '">');
+                                if (self.is_link_plugin === true) {
+                                    jq.merge(folder_html, [
+                                        '<input href="' + item.url + '" ',
+                                            'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
+                                            'resolveuid/' + item.uid ,
+                                            '"/> '
+                                    ]);
+                                } else {
+                                    folder_html.push('<img src="img/arrow_right.png" />');
+                                }
+                                jq.merge(folder_html, [
+                                        item.icon,
+                                        '<a href="' + item.url + '" class="folderlink contenttype-' + item.normalized_type + '">',
+                                            item.title,
+                                        '</a>',
+                                    '</div>'
+                                ]);
+                            } else {
                                 jq.merge(item_html, [
                                     '<div class="item list ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description + '">',
                                         '<input href="' + item.url + '" ',
@@ -772,14 +772,30 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                                         '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
                                     '</div>'
                                 ]);
-                                break;
-                            case 'thumbview':
-                                if (item_number % col_items_number === 0) {
-                                    item_html.push('<div class="row">');
-                                }
+                            }
+                            break;
+                        case 'thumbview':
+                            if (item_number % col_items_number === 0) {
+                                item_html.push('<div class="row">');
+                            }
+
+                            if (item.is_folderish) {
                                 jq.merge(item_html, [
                                     '<div class="width-1:' + col_items_number + ' cell position-' + item_number % col_items_number * (16 / col_items_number) + '">',
-                                        '<div class="thumbnail item ' + (i % 2 === 0 ? 'even' : 'odd') + '" title="' + item.description +  '">',
+                                        '<div class="thumbnail item folderish" title="' + item.description +  '">',
+                                            '<div style="width: ' + thumb_width + 'px; height: ' + thumb_height + 'px" class="thumb">',
+                                                '<img src="img/folder.png" alt="' + item.title + '" />',
+                                            '</div>',
+                                            '<a href="' + item.url + '">',
+                                                item.title,
+                                            '</a>',
+                                        '</div>',
+                                    '</div>'
+                                ]);
+                            } else {
+                                jq.merge(item_html, [
+                                    '<div class="width-1:' + col_items_number + ' cell position-' + item_number % col_items_number * (16 / col_items_number) + '">',
+                                        '<div class="thumbnail item" title="' + item.description +  '">',
                                             '<div style="width: ' + thumb_width + 'px; height: ' + thumb_height + 'px" class="thumb">',
                                                 '<img src="' + item.url + '/@@images/image/' + thumb_name + '" alt="' + item.title + '" />',
                                             '</div>',
@@ -791,13 +807,15 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                                         '</div>',
                                     '</div>'
                                 ]);
-                                if (item_number % col_items_number === col_items_number - 1) {
-                                    item_html.push('</div>');
-                                }
-                                item_number++;
-                                break;
-                        }
+                            }
+                        
+                            if (item_number % col_items_number === col_items_number - 1) {
+                                item_html.push('</div>');
+                            }
+                            item_number++;
+                            break;
                     }
+                    
 
                 });
             }
@@ -872,7 +890,7 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                 }
                 html.push(item.icon);
                 if (i === len - 1) {
-                    html.push(item.title);
+                    html.push('<span>' + item.title + '</span>');
                 } else {
                     html.push('<a href="' + item.url + '">' + item.title + '</a>');
                 }
