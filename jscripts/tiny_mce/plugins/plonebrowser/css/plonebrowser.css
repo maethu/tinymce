@@ -18,6 +18,8 @@
 #addimage_panel input, #addimage_panel textarea { width: 100%; }
 #addimage_panel #upload_iframe { display: none; }
 #searchtext { float:left; width: 70%; max-width:500px; height: 20px; border: 1px solid #CCC; margin-bottom: 5px; padding-left: 4px; }
+#clear-btn { display: none; margin-left: -20px; margin-top: 2px; float:left;; border: none!important; }
+#search-btn { border: none!important; margin-top: 2px; margin-left: 5px; float:left; }
 #description { border: 1px solid #CCC; }
 #general_panel { width: 100%; }
 #uploadbutton { margin-top: 10px; }
@@ -33,7 +35,7 @@
 .legend .current img { border: 1px solid #CCC; }
 .action-icons { float:right; margin: 2px 10px; }
 .action-icons #shortcutsicon { border: none!important; }
-.action-icons #shortcutsicon img { padding: 2px 2px 2px 3px; border: 1px solid #FFF; }
+.action-icons #shortcutsicon img { padding: 1px 3px 3px; border: 1px solid #FFF; }
 .action-icons #shortcutsicon.selected img { border: 1px solid #CCC; }
 #shortcutsview { display: none; clear: both; margin-bottom: 8px; }
 #shortcutsview .item { display: inline; margin-right: 10px; }
@@ -55,7 +57,8 @@
 .thumbnail.current:hover { background-color: #f8e694 ! important; border: 0.1em solid #daa239 ! important; }
 .thumbnail .thumb { margin: 0 auto; padding: 3px 0; position: relative; }
 .thumbnail .thumb img { display:block; bottom: 0; margin: 3px auto 0px auto; }
-
+.thumbnail.folderish img { width: 100%; }
+.list.current, .list.current:hover { background-color: #F8E694!important; }
 
 /* link plugin css */
 #linktype_panel { background: #F5F5F5; border-bottom: 1px solid #CCC; margin-bottom: 10px; padding: 5px 5px 0; }

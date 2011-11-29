@@ -104,6 +104,15 @@ BrowserDialog.prototype.init = function () {
         e.stopPropagation();
         self.checkSearch(e);
     });
+    jq('#clear-btn', document).click(function (e) {
+        e.preventDefault();
+        jq('#searchtext', document).val("");
+        self.checkSearch(e);
+    });
+    jq('#search-btn', document).click(function (e) {
+        e.preventDefault();
+        self.checkSearch(e);
+    });
     // handle different folder listing view types
     jq('#general_panel .legend a', document).click(function (e) {
         self.editing_existing_image = true;
@@ -137,6 +146,7 @@ BrowserDialog.prototype.init = function () {
         jq('.legend a', document).removeClass('current');
         jq('#listview', document).addClass('current');
         jq('.legend', document).hide();
+        jq('.action-icons', document).hide();
 
         // setup link buttons acions
         jq('#linktype a', document).click(function (e) {
@@ -576,6 +586,11 @@ BrowserDialog.prototype.checkSearch = function (e) {
     var el = jq('#searchtext', document),
         len = el.val().length;
 
+    // Show the clear button when there is text in the search field
+    if (len > 0) {
+        jq('#clear-btn', document).show();
+    }
+
     // Activate search when we have enough input and either livesearch is
     // enabled or the user explicitly pressed Enter.
     if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch === true || e.which === 13)) {
@@ -589,6 +604,7 @@ BrowserDialog.prototype.checkSearch = function (e) {
         this.is_search_activated = false;
         el.val('');
         this.getCurrentFolderListing();
+        jq('#clear-btn', document).hide();
     }
 };
 
@@ -784,7 +800,7 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                                     '<div class="width-1:' + col_items_number + ' cell position-' + item_number % col_items_number * (16 / col_items_number) + '">',
                                         '<div class="thumbnail item folderish" title="' + item.description +  '">',
                                             '<div style="width: ' + thumb_width + 'px; height: ' + thumb_height + 'px" class="thumb">',
-                                                '<img src="img/folder.png" alt="' + item.title + '" />',
+                                                '<img src="img/folder_big.png" alt="' + item.title + '" />',
                                             '</div>',
                                             '<a href="' + item.url + '">',
                                                 item.title,

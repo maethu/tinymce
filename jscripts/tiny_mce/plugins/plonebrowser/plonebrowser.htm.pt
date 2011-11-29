@@ -45,6 +45,8 @@
 				<div class="field">
 					<div class="widget">
 						<input type="text" name="searchtext" id="searchtext" title="Search Site" placeholder="Search Site" value="" i18n:attributes="placeholder, title"/>
+						<a href="" id="clear-btn"><img src="img/cancel.png" /></a>
+						<a href="" id="search-btn"><img src="img/magnifier.png" /></a>
 					</div>
 				</div>
 				<div class="legend">
@@ -52,7 +54,7 @@
 					<a id="thumbview" href="" title="Thumbnails" class="current" i18n:translate=""><img src="img/display_thumbs.png" /></a>
 				</div>
 				<div class="action-icons">
-				    <a id="shortcutsicon" href="" title="Shortcuts" i18n:translate=""><img src="img/arrow_down.png" /></a>
+				    <a id="shortcutsicon" href="" title="Shortcuts" i18n:translate=""><img src="img/star.png" /></a>
 				</div>
 				<div id="shortcutsview">
 				    <div id="item-template" class="item list shortcut"></div>
@@ -333,7 +335,7 @@
 
         <div id="footer">
             <div id="upload-button">
-                <img src="img/display_list.png" /> <a id="upload" href="" i18n:translate="">Upload image</a>
+                <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="">Upload image</a>
             </div>
             <div id="action-button">
                 <input type="submit" id="insert-selection" class="context plonebutton" name="insert-image"
