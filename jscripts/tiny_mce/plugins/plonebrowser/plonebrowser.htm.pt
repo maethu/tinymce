@@ -13,8 +13,8 @@
 <body id="plonebrowser">
   <div class="dialog-wrapper icons-on" id="content">
 
-        <div id="linktype_panel" class="row hide">
-            <div id="linktype" class="cell width-full position-0">
+        <div id="linktype_panel" class="hide">
+            <div id="linktype">
                 <div id="internal_link" class="current">
                     <img src="img/internal_link.png" />
                     <a href="#internal" i18n:translate="" i18n:domain="plone.tinymce">Internal</a>
@@ -33,12 +33,7 @@
                 </div>
             </div>
         </div>
-        
-        
-        <!-- // -------------------------------!!!!!!!!!!!!!!! -->
-        <!-- <a id="advanced_options" href="#">
-            <strong>Advanced options &raquo;</strong>
-        </a> -->
+
 
         <div id="browseimage_panel" class="row">
             <div id="general_panel" class="cell width-full position-0">
@@ -137,7 +132,7 @@
                      <div class="field">
                             <label for="uploadfile" i18n:domain="plone.tinymce" i18n:translate="">Upload File</label>
                             <div class="widget">
-                                <input type="file" name="uploadfile" id="uploadfile" />
+                                <input type="file" name="uploadfile" id="uploadfile" size="14" />
                             </div>
                      </div>
 
@@ -170,9 +165,8 @@
 
         </div>
 
-
         <!-- link panels -->
-        <div id="external_panel" class="column hide">
+        <div id="external_panel" class="hide">
             <h2 i18n:domain="plone.tinymce" i18n:translate="">External link</h2>
             <div class="field">
                 <label for="externalurl" i18n:translate="plonebrowser_dlg_url"></label>
@@ -195,7 +189,7 @@
             </div>
         </div>
 
-        <div id="email_panel" class="column hide">
+        <div id="email_panel" class="hide">
             <h2 i18n:domain="plone.tinymce" i18n:translate="">Email</h2>
             <div class="field">
                 <label for="mailaddress" i18n:domain="plone.tinymce" i18n:translate="">E-mail</label>
@@ -212,7 +206,7 @@
             </div>
         </div>
 
-        <div id="anchor_panel" class="column hide">
+        <div id="anchor_panel" class="hide">
             <h2 i18n:domain="plone.tinymce" i18n:translate="">Link to anchor</h2>
             <div class="field">
                 <label i18n:translate="plonebrowser_dlg_anchor_names"></label>
@@ -221,6 +215,15 @@
             </div>
         </div>
 
+
+
+
+
+        <!-- // -------------------------------!!!!!!!!!!!!!!! -->
+        <!-- <a id="advanced_options" href="#">
+            <strong>Advanced options &raquo;</strong>
+        </a> -->
+        
         <div id="advanced_panel" class="column hide">
             <fieldset class="formPanel">
                 <form>
@@ -335,13 +338,15 @@
             </fieldset>
         </div>
 
+
+
         <div class="visualClear"><!-- --></div>
 
-        <div id="footer">
-            <div id="upload-button" class="hide">
+        <div id="footer" class="row">
+            <div id="upload-button" class="cell width-3:4 position-0 hide">
                 <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="">Upload file</a>
             </div>
-            <div id="action-button">
+            <div id="action-button" class="cell width-1:4 position-3:4">
                 <input type="submit" id="insert-selection" class="context plonebutton" name="insert-image"
                        i18n:attributes="value" value="OK" disabled="disabled" />
             </div>

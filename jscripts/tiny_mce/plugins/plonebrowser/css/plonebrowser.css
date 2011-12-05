@@ -4,7 +4,7 @@
 #plonebrowser .formHelp { background: #F5F5F5; height: 2em; clear: both; margin: 0; padding-left: 5px; font-size: 10px; }
 #plonebrowser .formHelp img { position: absolute; margin-top: 4px; }
 #plonebrowser .formHelp #internalpath span, #plonebrowser .formHelp #internalpath a { padding-left: 13px; }
-#details_panel, #addimage_panel { border-left: 1px solid #CCC; width: 230px; margin-left: 10px; padding-left: 6px; }
+#details_panel, #addimage_panel { border-left: 1px solid #CCC; padding-left: 6px; margin-left: -24.87%; }
 #details_panel h2 { color: #CCC; line-height: 1; margin-bottom: 10px; margin-left: 4px; }
 #details_panel .field { padding-bottom: 10px; }
 #details_panel #titledetails { line-height: 1; }
@@ -21,7 +21,6 @@
 #clear-btn { display: none; margin-left: -20px; margin-top: 2px; float:left;; border: none!important; }
 #search-btn { border: none!important; margin-top: 2px; margin-left: 5px; float:left; }
 #description { border: 1px solid #CCC; }
-#general_panel { width: 100%; }
 #uploadbutton { margin-top: 10px; }
 #previewimagecontainer { text-align: center; }
 #internallinkcontainer { width: 100%; height: 370px; position: relative; }
@@ -43,8 +42,9 @@
 .browser-separator { background-color: #F6F6F6; margin-bottom: 0.5em; }
 .shortcuts strong { cursor: pointer; }
 #insert-selection { margin: 0.7em auto; display: block; width: 70%; }
-#footer #action-button { float: right; width: 230px; }
-#footer #upload-button { float: left; margin-top: 13px; }
+#footer { position: absolute; bottom: 0; width: 97.75%; }
+#footer #action-button { margin-bottom: 10px; margin-left: -24.87%; }
+#footer #upload-button { margin-top: 13px; }
 input[disabled] { background: #F6F6F6; border: 1px solid #E6E6E6; color: #B2C3D9; }
 
 /* image plugin css */
@@ -69,5 +69,3 @@ input[disabled] { background: #F6F6F6; border: 1px solid #E6E6E6; color: #B2C3D9
 #linktype div.current { background: #FFF; border: 1px solid #CCC; border-bottom: 1px solid #FFF; }
 
 #linktype .current a { font-weight: bold; color: #000; border: none; cursor: default; }
-#anchorlinkcontainer { height: 350px; }
-#external_panel, #mail_panel, #anchor_panel, #advanced_panel { width: 630px; }
