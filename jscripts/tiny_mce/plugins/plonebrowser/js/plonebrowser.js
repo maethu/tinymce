@@ -572,7 +572,7 @@ BrowserDialog.prototype.insertImage = function () {
         'url': jq('#description_href', document).val() + '/tinymce-setDescription',
         'type': 'POST',
         'data': {
-            'description': encodeURIComponent(jq('#description', document).val())
+            'description': jq('#description', document).val()
         }
     });
 
