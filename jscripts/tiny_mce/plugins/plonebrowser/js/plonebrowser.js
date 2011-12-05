@@ -151,8 +151,8 @@ BrowserDialog.prototype.init = function () {
         // setup link buttons acions
         jq('#linktype a', document).click(function (e) {
             e.preventDefault();
-            jq('#linktype_panel p', document).removeClass('current');
-            jq(this, document).parent('p').addClass('current');
+            jq('#linktype_panel div', document).removeClass('current');
+            jq(this, document).parent('div').addClass('current');
             switch (jq(this).attr('href')) {
                 case "#internal":
                     self.displayPanel('browse');
@@ -1043,11 +1043,10 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     
     // handle browse panel
     if (jq.inArray(panel, ["search", "details", "browse", "upload"]) > -1) {
-        correction_length = this.is_link_plugin ? 150 : 0;
         if (jq.inArray(panel, ["upload", "details"]) > -1) {
-            jq('#browseimage_panel', document).width(545 - correction_length);
+            jq('#browseimage_panel', document).removeClass('width-full').addClass('width-3:4');
         } else {
-            jq('#browseimage_panel', document).width(780 - correction_length);
+            jq('#browseimage_panel', document).removeClass('width-3:4').addClass('width-full');;
         }
         jq('#browseimage_panel', document).removeClass('hide');
         jq('#insert-selection', document).attr('disabled','disabled');
