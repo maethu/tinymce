@@ -143,14 +143,14 @@
 				 <div class="field">
 						 <label for="uploadtitle" i18n:domain="plone.tinymce" i18n:translate="">Title</label>
 						 <div class="widget">
-										 <input type="text" name="uploadtitle" id="uploadtitle" value="" />
+							<input type="text" name="uploadtitle" id="uploadtitle" value="" />
 						 </div>
 				 </div>
 
 				 <div class="field">
 						 <label for="uploaddescription" i18n:domain="plone.tinymce" i18n:translate="">Description</label>
 						 <div class="widget">
-										 <textarea wrap="soft" cols="10" rows="6" id="uploaddescription" name="uploaddescription"></textarea>
+							<textarea wrap="soft" cols="10" rows="6" id="uploaddescription" name="uploaddescription"></textarea>
 						 </div>
 				 </div>
 
@@ -162,7 +162,7 @@
 				 </div>
 
 				 <input type="button" id="uploadbutton" class="context plonebutton" name="uploadbutton" value="Upload"
-								 i18n:attributes="value" />
+					    i18n:attributes="value" />
 			 </form>
 			 <iframe width="0" scrolling="off" height="0" frameborder="0" id="upload_iframe" name="upload_iframe" src="javascript:"></iframe>
 		</div>
@@ -334,12 +334,12 @@
 		<div class="visualClear"><!-- --></div>
 
         <div id="footer">
-            <div id="upload-button">
-                <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="">Upload image</a>
+            <div id="upload-button" class="hide">
+                <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="">Upload file</a>
             </div>
             <div id="action-button">
                 <input type="submit" id="insert-selection" class="context plonebutton" name="insert-image"
-                       i18n:attributes="value" value="OK" />
+                       i18n:attributes="value" value="OK" disabled="disabled" />
             </div>
         </div>
 

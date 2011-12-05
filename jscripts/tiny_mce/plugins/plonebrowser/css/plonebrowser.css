@@ -45,6 +45,7 @@
 #insert-selection { margin: 0.7em auto; display: block; width: 70%; }
 #footer #action-button { float: right; width: 230px; }
 #footer #upload-button { float: left; margin-top: 13px; }
+input[disabled] { background: #F6F6F6; border: 1px solid #E6E6E6; color: #B2C3D9; }
 
 /* image plugin css */
 .thumbnail { border: 0.1em solid #fff; margin-top: 5px; overflow: hidden; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }

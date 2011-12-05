@@ -590,7 +590,7 @@ BrowserDialog.prototype.checkSearch = function (e) {
     if (len > 0) {
         jq('#clear-btn', document).show();
     }
-
+    
     // Activate search when we have enough input and either livesearch is
     // enabled or the user explicitly pressed Enter.
     if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch === true || e.which === 13)) {
@@ -604,6 +604,9 @@ BrowserDialog.prototype.checkSearch = function (e) {
         this.is_search_activated = false;
         el.val('');
         this.getCurrentFolderListing();
+    }
+    
+    if (len === 0 || e.which === 27) {
         jq('#clear-btn', document).hide();
     }
 };
@@ -1007,18 +1010,21 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handle email panel
     if (panel === "email") {
         jq('#email_panel', document).removeClass('hide');
+        jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#email_panel', document).addClass('hide');
     }
     // handle anchor panel
     if (panel === "anchor") {
         jq('#anchor_panel', document).removeClass('hide');
+        jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#anchor_panel', document).addClass('hide');
     }
     // handle external panel
     if (panel === "external") {
         jq('#external_panel', document).removeClass('hide');
+        jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#external_panel', document).addClass('hide');
     }
@@ -1034,18 +1040,7 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     if ((checkedlink.length === 1) && (panel === "browse")) {
       this.setDetails(jq(checkedlink).attr('value'));
     }
-    // handle details/preview panel
-    if (panel === 'details') {
-        jq('#details_panel', document).removeClass("hide");
-    } else {
-        jq('#details_panel', document).addClass("hide");
-    }
-    // handle upload panel
-    if (panel === "upload") {
-        jq('#addimage_panel', document).removeClass('hide');
-    } else {
-        jq('#addimage_panel', document).addClass('hide');
-    }
+    
     // handle browse panel
     if (jq.inArray(panel, ["search", "details", "browse", "upload"]) > -1) {
         correction_length = this.is_link_plugin ? 150 : 0;
@@ -1054,9 +1049,26 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
         } else {
             jq('#browseimage_panel', document).width(780 - correction_length);
         }
-        jq('#browseimage_panel', document).removeClass("hide");
+        jq('#browseimage_panel', document).removeClass('hide');
+        jq('#insert-selection', document).attr('disabled','disabled');
+        jq('#upload-button', document).removeClass('hide');
     } else {
-        jq('#browseimage_panel', document).addClass("hide");
+        jq('#browseimage_panel', document).addClass('hide');
+        jq('#upload-button', document).addClass('hide');
+    }
+    
+    // handle details/preview panel
+    if (panel === 'details') {
+        jq('#details_panel', document).removeClass('hide');
+        jq('#insert-selection', document).removeAttr('disabled');
+    } else {
+        jq('#details_panel', document).addClass('hide');
+    }
+    // handle upload panel
+    if (panel === "upload") {
+        jq('#addimage_panel', document).removeClass('hide');
+    } else {
+        jq('#addimage_panel', document).addClass('hide');
     }
 };
 
