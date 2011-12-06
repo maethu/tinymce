@@ -130,6 +130,10 @@ BrowserDialog.prototype.init = function () {
     if (this.editor.settings.rooted === true) {
         jq('#home', document).hide();
     }
+    if (!this.editor.settings.enable_external_link_preview) {
+        jq('#previewexternalurl', document).hide();
+        jq('#previewexternal', document).parents('div.field').hide();
+    }
 
     // setup UI depending on plugin type
     if (this.is_link_plugin === true) {
@@ -167,10 +171,6 @@ BrowserDialog.prototype.init = function () {
                     self.displayPanel('anchor');
                     break;
             }
-        });
-        jq('#advanced_options', document).click(function (e) {
-            self.displayPanel('advanced');
-            e.preventDefault();
         });
         jq('#externalurl', document).keyup(function (e) {
             self.checkExternalURL(this.value);
@@ -1028,12 +1028,6 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#external_panel', document).addClass('hide');
-    }
-    // handle advanced panel
-    if (panel === "advanced") {
-        jq('#advanced_panel', document).removeClass('hide');
-    } else {
-        jq('#advanced_panel', document).addClass('hide');
     }
     // show details panel, if an entry is selected and we
     // return from the advanced panel
