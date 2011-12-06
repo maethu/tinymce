@@ -130,6 +130,10 @@ BrowserDialog.prototype.init = function () {
     if (this.editor.settings.rooted === true) {
         jq('#home', document).hide();
     }
+    if (!this.editor.settings.enable_external_link_preview) {
+        jq('#previewexternalurl', document).hide();
+        jq('#previewexternal', document).parents('div.field').hide();
+    }
 
     // setup UI depending on plugin type
     if (this.is_link_plugin === true) {
