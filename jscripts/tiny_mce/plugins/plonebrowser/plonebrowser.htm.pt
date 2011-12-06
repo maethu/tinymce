@@ -64,7 +64,7 @@
             </div>
             
             <div id="details_panel" class="cell width-1:4 position-3:4 hide">
-                <h2 i18n:translate="plonebrowser_dlg_preview"></h2>
+                <h2 i18n:translate="plonebrowser_dlg_details">Details</h2>
                 <div class="widget radioscrolllist input-border">
                     <div class="field">
                         <div class="widget">
