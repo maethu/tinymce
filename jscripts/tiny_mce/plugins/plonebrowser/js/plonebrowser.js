@@ -168,10 +168,6 @@ BrowserDialog.prototype.init = function () {
                     break;
             }
         });
-        jq('#advanced_options', document).click(function (e) {
-            self.displayPanel('advanced');
-            e.preventDefault();
-        });
         jq('#externalurl', document).keyup(function (e) {
             self.checkExternalURL(this.value);
         });
@@ -1028,12 +1024,6 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#external_panel', document).addClass('hide');
-    }
-    // handle advanced panel
-    if (panel === "advanced") {
-        jq('#advanced_panel', document).removeClass('hide');
-    } else {
-        jq('#advanced_panel', document).addClass('hide');
     }
     // show details panel, if an entry is selected and we
     // return from the advanced panel
