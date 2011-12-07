@@ -113,6 +113,13 @@ BrowserDialog.prototype.init = function () {
         e.preventDefault();
         self.checkSearch(e);
     });
+    // handle shortcuts button
+    jq("#shortcutsicon", document).click(function(e) {
+        e.preventDefault();
+        jq(this).toggleClass('selected');
+        jq('#shortcutsview', document).toggle();
+    });
+    
     // handle different folder listing view types
     jq('#general_panel .legend a', document).click(function (e) {
         self.editing_existing_image = true;
@@ -852,11 +859,6 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                 jqShortcutItem = jq('#shortcutsview #item-template', document);
                 
                 jqShortcutsBtn.attr('title', self.labels.label_shortcuts);
-                jqShortcutsBtn.bind('click', function(e) {
-                    e.preventDefault();
-                    jqShortcutsBtn.toggleClass('selected');
-                    jqShortcutsView.toggle();
-                });
                 
                 jq.each(self.shortcuts_html, function () {
                     jqItem = jqShortcutItem.clone();
@@ -896,7 +898,7 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
             jq('#internalpath', document).html(html.join(''));
 
             // folder link action
-            jq('#internallinkcontainer a, #internalpath a', document).click(function(e) {
+            jq('#internallinkcontainer a, #internalpath a, #shortcutsview a', document).click(function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 self.getFolderListing(jq(this).attr('href'), self.method_folderlisting);
