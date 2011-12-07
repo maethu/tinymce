@@ -160,6 +160,7 @@ BrowserDialog.prototype.init = function () {
             switch (jq(this).attr('href')) {
                 case "#internal":
                     self.displayPanel('browse');
+                    self.getCurrentFolderListing();
                     break;
                 case "#external":
                     self.displayPanel('external');
