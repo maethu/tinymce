@@ -40,8 +40,8 @@
                 <div class="field">
                     <div class="widget">
                         <input type="text" name="searchtext" id="searchtext" title="Search Site" placeholder="Search Site" value="" i18n:attributes="placeholder, title"/>
-                        <a href="" id="clear-btn"><img src="img/cancel.png" /></a>
-                        <a href="" id="search-btn"><img src="img/magnifier.png" /></a>
+                        <a href="" id="clear-btn" title="Clear"><img src="img/cancel.png" /></a>
+                        <a href="" id="search-btn" title="Search"><img src="img/magnifier.png" /></a>
                     </div>
                 </div>
                 <div class="legend">
