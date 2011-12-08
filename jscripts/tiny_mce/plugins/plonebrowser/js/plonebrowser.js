@@ -220,6 +220,7 @@ BrowserDialog.prototype.init = function () {
             } else if ((href.indexOf(this.editor.settings.portal_url) === -1) &&
                 ((href.indexOf('http://') === 0) || (href.indexOf('https://') === 0) || (href.indexOf('ftp://') === 0))) {
                 this.checkExternalURL(href);
+                jq('#cssstyle', document).val(selected_node.attr('style'));
                 jq('#linktype a[href=#external]', document).click();
             } else {
                 if (href.indexOf('#') !== -1) {
@@ -411,7 +412,8 @@ BrowserDialog.prototype.setAnchorAttributes = function (node, link) {
     jq(node)
         .attr('title', jq('#title', document).val())
         .removeClass('internal-link external-link anchor-link mail-link')
-        .addClass(panelname.substr(1, panelname.length) + '-link');
+        .addClass(panelname.substr(1, panelname.length) + '-link')
+        .attr('style', jq('#cssstyle', document).val());
 };
 
 
