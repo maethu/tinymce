@@ -46,7 +46,7 @@
 #footer #action-button { margin-bottom: 10px; margin-left: -24.87%; }
 #footer #upload-button { margin-top: 13px; }
 input[disabled] { background: #F6F6F6; border: 1px solid #E6E6E6; color: #B2C3D9; }
-#targetlist { width: 100%; }
+.field input[type="text"][name$=".title"], input#title { width: auto!important; }
 
 /* image plugin css */
 .thumbnail { border: 0.1em solid #fff; margin-top: 5px; overflow: hidden; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
@@ -70,3 +70,7 @@ input[disabled] { background: #F6F6F6; border: 1px solid #E6E6E6; color: #B2C3D9
 #linktype div.current { background: #FFF; border: 1px solid #CCC; border-bottom: 1px solid #FFF; }
 
 #linktype .current a { font-weight: bold; color: #000; border: none; cursor: default; }
+
+#preview-wrapper { background: #F5F5F5; border: 1px solid #E5E5E5; padding: 10px; }
+#previewexternalurl { display: block; padding-left: 20px; border: none!important; }
+#previewexternal { display: none; }

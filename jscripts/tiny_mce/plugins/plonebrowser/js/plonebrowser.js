@@ -138,8 +138,7 @@ BrowserDialog.prototype.init = function () {
         jq('#home', document).hide();
     }
     if (!this.editor.settings.enable_external_link_preview) {
-        jq('#previewexternalurl', document).hide();
-        jq('#previewexternal', document).parents('div.field').hide();
+        jq('#preview-column', document).hide();
     }
 
     // setup UI depending on plugin type
@@ -186,6 +185,8 @@ BrowserDialog.prototype.init = function () {
         jq('#targetlist', document).change(this.setupPopupVisibility);
         jq('#previewexternalurl', document).click(function (e) {
             e.preventDefault();
+            jq('#previewexternal', document).show();
+            jq(this).text('Refresh Preview');
             self.previewExternalURL();
         });
 
