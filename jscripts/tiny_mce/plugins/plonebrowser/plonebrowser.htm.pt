@@ -135,6 +135,13 @@
                             </select>
                         </div>
                     </div>
+                    
+                    <div class="field">
+                        <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
+                        <div class="widget">
+                            <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -215,6 +222,13 @@
                             </select>
                         </div>
                     </div>
+                    
+                    <div class="field">
+                        <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
+                        <div class="widget">
+                            <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
+                        </div>
+                    </div>
                 </div>
                 
                 <div id="preview-column" class="cell width-8 position-8">
@@ -225,12 +239,6 @@
                             <div class="widget">
                                 <iframe id="previewexternal" width="100%" height="340" frameborder="0" wrap="soft" dir="ltr" src="" class="input-border" name="previewexternal"></iframe>
                             </div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
-                        <div class="widget">
-                            <input type="text" name="cssstyle" id="cssstyle" value="" size="20" />
                         </div>
                     </div>
                 </div>
@@ -273,6 +281,13 @@
                     </select>
                 </div>
             </div>
+            
+            <div class="field">
+                <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
+                <div class="widget">
+                    <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
+                </div>
+            </div>
         </div>
 
         <div id="anchor_panel" class="hide">
@@ -301,6 +316,13 @@
                         <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
                         <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
                     </select>
+                </div>
+            </div>
+            
+            <div class="field">
+                <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
+                <div class="widget">
+                    <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
                 </div>
             </div>
         </div>

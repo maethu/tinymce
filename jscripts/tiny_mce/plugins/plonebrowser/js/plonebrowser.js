@@ -799,7 +799,6 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                                             'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
                                             'resolveuid/' + item.uid ,
                                             '"/> ',
-                                        item.icon,
                                         '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
                                     '</div>'
                                 ]);
