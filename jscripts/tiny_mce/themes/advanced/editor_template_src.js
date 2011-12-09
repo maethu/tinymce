@@ -995,8 +995,9 @@
 			}
 
 			if (c = cm.get('unlink')) {
-				c.setDisabled(!p && co);
-				c.setActive(!!p && !p.name);
+				// plone fix: if parent is not found, p variable will be undefined
+				c.setActive(p !== undefined && !p.name);
+				c.setDisabled(p === undefined);
 			}
 
 			if (c = cm.get('anchor')) {

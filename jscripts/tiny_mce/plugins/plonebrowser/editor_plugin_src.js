@@ -55,12 +55,6 @@
             });
 
             ed.addShortcut('ctrl+k', 'advanced.link_desc', 'mcePloneLink');
-
-            // disable link plugin if not selection or anchor
-            ed.onNodeChange.add(function(ed, cm, n, co) {
-                cm.setDisabled('link', co && n.nodeName != 'A');
-                cm.setActive('link', n.nodeName == 'A' && !n.name);
-            });
         },
 
         getInfo : function () {
