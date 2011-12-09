@@ -2,9 +2,9 @@
 /*global tinymce */
 
 /**
- * Plone image plugin based on advimage plugin.
+ * Plone browser plugin based on advimage and advlink plugins.
  *
- * @author Rob Gietema
+ * @author Plone Foundation
  */
 
 (function () {
@@ -59,8 +59,8 @@
 
         getInfo : function () {
             return {
-                longname : 'Plone image',
-                author : 'Rob Gietema',
+                longname : 'Plone browser',
+                author : 'Plone Foundation',
                 authorurl : 'http://plone.org',
                 infourl : 'http://plone.org/products/tinymce',
                 version : tinymce.majorVersion + "." + tinymce.minorVersion
