@@ -65,7 +65,7 @@
             
             <div id="details_panel" class="cell width-1:4 position-3:4 hide">
                 <h2 i18n:translate="plonebrowser_dlg_details">Details</h2>
-                <div class="widget radioscrolllist input-border">
+                <div id="details-fields" class="widget radioscrolllist input-border">
                     <div class="field">
                         <div class="widget">
                             <div id="previewimagecontainer">
@@ -123,26 +123,6 @@
                         </div>
                     </div>
 
-                    <div id="linktarget" class="field">
-                        <label id="targetlistlabel" for="targetlist" i18n:translate="plonebrowser_dlg_target"></label>
-                        <div class="widget">
-                            <select id="targetlist" name="targetlist">
-                                <option value="_self" i18n:translate="plonebrowser_dlg_target_same"></option>
-                                <option value="_blank" i18n:translate="plonebrowser_dlg_target_blank"></option>
-                                <option value="_parent" i18n:translate="plonebrowser_dlg_target_parent"></option>
-                                <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
-                                <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="field">
-                        <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
-                        <div class="widget">
-                            <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
-                        </div>
-                    </div>
-
                 </div>
             </div>
 
@@ -188,7 +168,7 @@
         <!-- link panels -->
         <div id="external_panel" class="hide">
             <div class="row">
-                <div class="cell width-8 position-0">
+                <div id="external-column" class="cell width-8 position-0">
                     <h2 i18n:domain="plone.tinymce" i18n:translate="">External link</h2>
             
                     <div class="field">
@@ -202,33 +182,7 @@
                             <input type="text" name="externalurl" id="externalurl" value="" size="29"/>
                         </div>
                     </div>
-            
-                    <div class="field">
-                        <label for="title" i18n:domain="plone.tinymce" i18n:translate="">Title</label>
-                        <div class="widget">
-                            <input type="text" name="title" id="title" value="" size="40" />
-                        </div>
-                    </div>
-            
-                    <div class="field">
-                        <label id="targetlistlabel" for="targetlist" i18n:translate="plonebrowser_dlg_target"></label>
-                        <div class="widget">
-                            <select id="targetlist" name="targetlist">
-                                <option value="_self" i18n:translate="plonebrowser_dlg_target_same"></option>
-                                <option value="_blank" i18n:translate="plonebrowser_dlg_target_blank"></option>
-                                <option value="_parent" i18n:translate="plonebrowser_dlg_target_parent"></option>
-                                <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
-                                <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="field">
-                        <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
-                        <div class="widget">
-                            <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
-                        </div>
-                    </div>
+
                 </div>
                 
                 <div id="preview-column" class="cell width-8 position-8">
@@ -262,32 +216,8 @@
                 </div>
             </div>
             
-            <div class="field">
-                <label for="title" i18n:domain="plone.tinymce" i18n:translate="">Title</label>
-                <div class="widget">
-                    <input type="text" name="title" id="title" value="" size="40" />
-                </div>
-            </div>
+            <!-- TODO here -->
             
-            <div class="field">
-                <label id="targetlistlabel" for="targetlist" i18n:translate="plonebrowser_dlg_target"></label>
-                <div class="widget">
-                    <select id="targetlist" name="targetlist">
-                        <option value="_self" i18n:translate="plonebrowser_dlg_target_same"></option>
-                        <option value="_blank" i18n:translate="plonebrowser_dlg_target_blank"></option>
-                        <option value="_parent" i18n:translate="plonebrowser_dlg_target_parent"></option>
-                        <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
-                        <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
-                    </select>
-                </div>
-            </div>
-            
-            <div class="field">
-                <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
-                <div class="widget">
-                    <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
-                </div>
-            </div>
         </div>
 
         <div id="anchor_panel" class="hide">
@@ -299,32 +229,8 @@
                 </div>
             </div>
             
-            <div class="field">
-                <label for="title" i18n:domain="plone.tinymce" i18n:translate="">Title</label>
-                <div class="widget">
-                    <input type="text" name="title" id="title" value="" size="40" />
-                </div>
-            </div>
+            <!-- TODO here -->
             
-            <div class="field">
-                <label id="targetlistlabel" for="targetlist" i18n:translate="plonebrowser_dlg_target"></label>
-                <div class="widget">
-                    <select id="targetlist" name="targetlist">
-                        <option value="_self" i18n:translate="plonebrowser_dlg_target_same"></option>
-                        <option value="_blank" i18n:translate="plonebrowser_dlg_target_blank"></option>
-                        <option value="_parent" i18n:translate="plonebrowser_dlg_target_parent"></option>
-                        <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
-                        <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
-                    </select>
-                </div>
-            </div>
-            
-            <div class="field">
-                <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
-                <div class="widget">
-                    <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
-                </div>
-            </div>
         </div>
 
         <div class="visualClear"><!-- --></div>
@@ -340,6 +246,37 @@
         </div>
 
         <div class="visualClear"><!-- --></div>
+        
+        <div id="common-link-fields" class="hide">
+            
+            <div id="link-title" class="field">
+                <label for="title" i18n:domain="plone.tinymce" i18n:translate="">Link Title</label>
+                <div class="widget">
+                    <input type="text" name="title" id="title" value="" size="40" />
+                </div>
+            </div>
+    
+            <div id="link-target" class="field">
+                <label id="targetlistlabel" for="targetlist" i18n:translate="plonebrowser_dlg_target"></label>
+                <div class="widget">
+                    <select id="targetlist" name="targetlist">
+                        <option value="_self" i18n:translate="plonebrowser_dlg_target_same"></option>
+                        <option value="_blank" i18n:translate="plonebrowser_dlg_target_blank"></option>
+                        <option value="_parent" i18n:translate="plonebrowser_dlg_target_parent"></option>
+                        <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
+                        <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
+                    </select>
+                </div>
+            </div>
+            
+            <div id="link-style" class="field">
+                <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
+                <div class="widget">
+                    <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
+                </div>
+            </div>
+            
+        </div>
   </div>
 </body>
 </html>

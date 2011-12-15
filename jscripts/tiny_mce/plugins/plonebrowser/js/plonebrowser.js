@@ -202,9 +202,12 @@ BrowserDialog.prototype.init = function () {
 
             // determine link type
             if (href.indexOf('#') === 0) {
+                // anchor
                 jq('input:radio[value=' + href + ']', document).click();
                 jq('#linktype a[href=#anchor]', document).click();
+                jq('#cssstyle', document).val(selected_node.attr('style'));
             } else if (href.indexOf('mailto:') > -1) {
+                // email
                 href = href.split('mailto:')[1].split('?subject=');
                 if (href.length === 2) {
                     mailaddress = href[0];
@@ -216,13 +219,16 @@ BrowserDialog.prototype.init = function () {
 
                 jq('#mailaddress', document).val(mailaddress);
                 jq('#mailsubject', document).val(mailsubject);
+                jq('#cssstyle', document).val(selected_node.attr('style'));
                 jq('#linktype a[href=#email]', document).click();
             } else if ((href.indexOf(this.editor.settings.portal_url) === -1) &&
                 ((href.indexOf('http://') === 0) || (href.indexOf('https://') === 0) || (href.indexOf('ftp://') === 0))) {
+                // external
                 this.checkExternalURL(href);
                 jq('#cssstyle', document).val(selected_node.attr('style'));
                 jq('#linktype a[href=#external]', document).click();
             } else {
+                // internal
                 if (href.indexOf('#') !== -1) {
                     href = href.split('#')[0];
                 }
@@ -245,9 +251,11 @@ BrowserDialog.prototype.init = function () {
                     this.current_link = this.getAbsoluteUrl(this.editor.settings.document_base_url, href);
                     this.getFolderListing(this.getParentUrl(this.current_link), 'tinymce-jsonlinkablefolderlisting');
                 }
+                jq('#cssstyle', document).val(selected_node.attr('style'));
             }
 
             jq('#targetlist', document).val(selected_node.attr('target'));
+            // TODO: set the rest of the "advanced" fields that are in common for all of them
         } else {
             // plain text selection
             href = jq.trim(this.editor.selection.getContent());
@@ -401,19 +409,17 @@ BrowserDialog.prototype.parseImageScale = function (url) {
 /**
  * Given DOM node and href value, setup all node attributes/properies
  */
-BrowserDialog.prototype.setAnchorAttributes = function (node, link) {
-    var target = jq('#targetlist', document).val(),
-        panelname = jq('#linktype .current a', document).attr('href');
-
-    jq(node).attr('href', link);
-    jq(node).attr('data-mce-href', link);
-    jq(node).attr('target', target);
+BrowserDialog.prototype.setLinkAttributes = function (node, link) {
+    var panelname = jq('#linktype .current a', document).attr('href');
 
     jq(node)
+        .attr('href', link)
+        .attr('data-mce-href', link)
         .attr('title', jq('#title', document).val())
+        .attr('target', jq('#targetlist', document).val())
+        .attr('style', jq('#cssstyle', document).val())
         .removeClass('internal-link external-link anchor-link mail-link')
-        .addClass(panelname.substr(1, panelname.length) + '-link')
-        .attr('style', jq('#cssstyle', document).val());
+        .addClass(panelname.substr(1, panelname.length) + '-link');
 };
 
 
@@ -506,11 +512,11 @@ BrowserDialog.prototype.insertLink = function () {
             return self.editor.dom.getAttrib(n, 'href') === '#mce_temp_url#';
         });
         for (i = 0; i < elementArray.length; i++) {
-            this.setAnchorAttributes(selected_node = elementArray[i], link);
+            this.setLinkAttributes(selected_node = elementArray[i], link);
         }
     } else {
         // Update attributes
-        this.setAnchorAttributes(selected_node, link);
+        this.setLinkAttributes(selected_node, link);
     }
 
     // Don't move caret if selection was image
@@ -1016,6 +1022,8 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handle email panel
     if (panel === "email") {
         jq('#email_panel', document).removeClass('hide');
+        // move the common link fileds to appropriate location
+        jq('#email_panel', document).append(jq('#common-link-fields', document).removeClass('hide'));
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#email_panel', document).addClass('hide');
@@ -1023,6 +1031,8 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handle anchor panel
     if (panel === "anchor") {
         jq('#anchor_panel', document).removeClass('hide');
+        // move the common link fileds to appropriate location
+        jq('#anchorlinkcontainer', document).append(jq('#common-link-fields', document).removeClass('hide'));
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#anchor_panel', document).addClass('hide');
@@ -1030,12 +1040,13 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handle external panel
     if (panel === "external") {
         jq('#external_panel', document).removeClass('hide');
+        // move the common link fileds to appropriate location
+        jq('#external-column', document).append(jq('#common-link-fields', document).removeClass('hide'));
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#external_panel', document).addClass('hide');
     }
-    // show details panel, if an entry is selected and we
-    // return from the advanced panel
+    // show details panel, if an entry is selected
     checkedlink = jq("input:radio[name=internallink]:checked", document);
     if ((checkedlink.length === 1) && (panel === "browse")) {
       this.setDetails(jq(checkedlink).attr('value'));
@@ -1059,6 +1070,8 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handle details/preview panel
     if (panel === 'details') {
         jq('#details_panel', document).removeClass('hide');
+        // move the common link fileds to appropriate location
+        jq('#details-fields', document).append(jq('#common-link-fields', document).removeClass('hide'));
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#details_panel', document).addClass('hide');

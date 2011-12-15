@@ -15,7 +15,8 @@
 #details_panel div.radioscrolllist { height: 388px; padding: 4px; }
 #details_panel div.radioscrolllist #titledetails { overflow: hidden; text-overflow: ellipsis; white-space:nowrap; }
 #details_panel div.radioscrolllist #targetlist { width: 100%; }
-#details_panel div.radioscrolllist #cssstyle { width: 100%; border: 1px solid #CCCCCC; font-size: 1.25em; }
+#details_panel div.radioscrolllist #cssstyle,
+#details_panel div.radioscrolllist #title { width: 100% !important; border: 1px solid #CCCCCC; font-size: 1.25em; }
 #details_panel #description { width: 100%; }
 #addimage_panel input, #addimage_panel textarea { width: 100%; }
 #addimage_panel #upload_iframe { display: none; }
@@ -78,4 +79,4 @@ input[disabled] { background: #F6F6F6; border: 1px solid #E6E6E6; color: #B2C3D9
 #previewexternalurl { display: block; padding-left: 20px; border: none!important; }
 #previewexternal { display: none; }
 
-.contenttype-image { display: block; line-height: 2em; padding-left: 20px !important; background: url("contenttypes-sprite.png") no-repeat scroll 0 -860px transparent;}
+.contenttype-image { line-height: 2em; padding-left: 20px !important; background: url("contenttypes-sprite.png") no-repeat scroll 0 -860px transparent;}
