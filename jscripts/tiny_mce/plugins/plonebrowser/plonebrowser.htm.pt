@@ -59,7 +59,7 @@
 			</div>
 		</div>
 		<div id="details_panel" class="column hide">
-			<h2 i18n:translate="plonebrowser_dlg_preview"></h2>
+			<h2 i18n:translate="plonebrowser_dlg_details">Details</h2>
 			<div class="widget radioscrolllist input-border">
 				<div class="field">
 					<div class="widget">
