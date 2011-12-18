@@ -45,7 +45,7 @@
 			<div id="general_panel" class="column">
 				<div class="field">
 					<div class="widget">
-						<input type="text" name="searchtext" id="searchtext" title="Search Site" placeholder="Search Site" value="" i18n:attributes="placeholder, title"/>
+						<input type="text" name="searchtext" id="searchtext" title="Search Site" placeholder="Search Site" value="" i18n:attributes="placeholder; title"/>
 					</div>
 				</div>
 				<div id="internallinkcontainer" class="widget radioscrolllist input-border"></div>
