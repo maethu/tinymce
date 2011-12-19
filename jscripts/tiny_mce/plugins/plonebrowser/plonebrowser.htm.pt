@@ -158,7 +158,7 @@
                      </div>
 
                      <input type="button" id="uploadbutton" class="context plonebutton" name="uploadbutton" value="Upload"
-                            i18n:attributes="value" />
+                            i18n:attributes="value" i18n:domain="plone.tinymce" />
                  </form>
                  <iframe width="0" scrolling="off" height="0" frameborder="0" id="upload_iframe" name="upload_iframe" src="javascript:"></iframe>
             </div>
@@ -237,7 +237,7 @@
 
         <div id="footer" class="row">
             <div id="upload-button" class="cell width-3:4 position-0 hide">
-                <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="">Upload file</a>
+                <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="" i18n:domain="plone.tinymce">Upload</a>
             </div>
             <div id="action-button" class="cell width-1:4 position-3:4">
                 <input type="submit" id="insert-selection" class="context plonebutton" name="insert-image"
