@@ -39,7 +39,7 @@
             <div id="general_panel" class="cell width-full position-0">
                 <div class="field">
                     <div class="widget">
-                        <input type="text" name="searchtext" id="searchtext" title="Search Site" placeholder="Search Site" value="" i18n:attributes="placeholder; title"/>
+                        <input type="text" name="searchtext" id="searchtext" title="text_search" placeholder="text_search" value="" i18n:attributes="placeholder; title" i18n:domain="plone"/>
                         <a href="" id="clear-btn" title="Clear"><img src="img/cancel.png" /></a>
                         <a href="" id="search-btn" title="Search"><img src="img/magnifier.png" /></a>
                     </div>
