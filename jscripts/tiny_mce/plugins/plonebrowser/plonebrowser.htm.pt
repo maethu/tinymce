@@ -241,7 +241,7 @@
             </div>
             <div id="action-button" class="cell width-1:4 position-3:4">
                 <input type="submit" id="insert-selection" class="context plonebutton" name="insert-image"
-                       i18n:attributes="value" value="OK" disabled="disabled" />
+                       i18n:attributes="value" i18n:domain="plone.tinymce" value="OK" disabled="disabled" />
             </div>
         </div>
 
