@@ -189,7 +189,8 @@
                     <div class="field">
                         <label for="preview" i18n:translate="preview_preview_desc"></label>
                         <div id="preview-wrapper">
-                            <a href="#" id="previewexternalurl" name="previewexternalurl" i18n:translate="">Preview URL</a>
+                            <a href="#" id="previewexternalurl" name="previewexternalurl" i18n:translate="" i18n:domain="plone.tinymce">Preview URL</a>
+                             <div class="widget">
                             <div class="widget">
                                 <iframe id="previewexternal" width="100%" height="340" frameborder="0" wrap="soft" dir="ltr" src="" class="input-border" name="previewexternal"></iframe>
                             </div>
