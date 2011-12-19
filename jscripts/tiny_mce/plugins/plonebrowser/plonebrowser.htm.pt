@@ -260,10 +260,10 @@
                 <label id="targetlistlabel" for="targetlist" i18n:translate="plonebrowser_dlg_target"></label>
                 <div class="widget">
                     <select id="targetlist" name="targetlist">
-                        <option value="_self" i18n:translate="plonebrowser_dlg_target_same"></option>
-                        <option value="_blank" i18n:translate="plonebrowser_dlg_target_blank"></option>
-                        <option value="_parent" i18n:translate="plonebrowser_dlg_target_parent"></option>
-                        <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
+                        <option value="_self" i18n:translate="advlink_dlg_target_same"></option>
+                        <option value="_blank" i18n:translate="advlink_dlg_target_blank"></option>
+                        <option value="_parent" i18n:translate="advlink_dlg_target_parent"></option>
+                        <option value="_top" i18n:translate="advlink_dlg_target_top"></option>
                         <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
                     </select>
                 </div>
