@@ -667,7 +667,7 @@ BrowserDialog.prototype.setDetails = function (url) {
             if (data.thumb !== "") {
                 jq('#previewimagecontainer', document)
                     .empty()
-                    .append(jq('<img/>').attr({'src': data.thumb}));
+                    .append(jq('<img/>', document).attr({'src': data.thumb}));
                 // Save the thumbnail URL for later use.
                 self.thumb_url = data.thumb;
             } else {
@@ -684,7 +684,7 @@ BrowserDialog.prototype.setDetails = function (url) {
 
                 jq.each(data.scales, function () {
                     var scale = this,
-                        option = jq('<option/>')
+                        option = jq('<option/>', document)
                             .attr({'value': scale.value})
                             .text(scale_title(scale));
 
