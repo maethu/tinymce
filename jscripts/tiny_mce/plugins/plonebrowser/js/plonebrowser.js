@@ -1070,8 +1070,11 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handle details/preview panel
     if (panel === 'details') {
         jq('#details_panel', document).removeClass('hide');
-        // move the common link fileds to appropriate location
-        jq('#details-fields', document).append(jq('#common-link-fields', document).removeClass('hide'));
+        // move the common link fileds to appropriate location but only for the
+        // internal link panel
+        if( jq('#internal_link:visible', document).length > 0) {
+            jq('#details-fields', document).append(jq('#common-link-fields', document).removeClass('hide'));            
+        }
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
         jq('#details_panel', document).addClass('hide');
