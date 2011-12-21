@@ -39,14 +39,14 @@
             <div id="general_panel" class="cell width-full position-0">
                 <div class="field">
                     <div class="widget">
-                        <input type="text" name="searchtext" id="searchtext" title="Search Site" placeholder="Search Site" value="" i18n:attributes="placeholder; title"/>
-                        <a href="" id="clear-btn" title="Clear"><img src="img/cancel.png" /></a>
-                        <a href="" id="search-btn" title="Search"><img src="img/magnifier.png" /></a>
+                        <input type="text" name="searchtext" id="searchtext" title="Search site" placeholder="Search site" value="" i18n:attributes="placeholder; title" i18n:domain="plone.tinymce"/>
+                        <a href="" id="clear-btn" title="Clear" i18n:attributes="title" i18n:domain="plone.tinymce"><img src="img/cancel.png" /></a>
+                        <a href="" id="search-btn" title="Search" i18n:attributes="title" i18n:domain="plone.tinymce"><img src="img/magnifier.png" /></a>
                     </div>
                 </div>
                 <div class="legend">
-                    <a id="listview" href="" title="List" i18n:translate=""><img src="img/display_list.png" /></a>
-                    <a id="thumbview" href="" title="Thumbnails" class="current" i18n:translate=""><img src="img/display_thumbs.png" /></a>
+                    <a id="listview" href="" title="List view" i18n:attributes="title" i18n:domain="plone.tinymce"><img src="img/display_list.png" /></a>
+                    <a id="thumbview" href="" title="Thumbnail view" class="current" i18n:attributes="title" i18n:domain="plone"><img src="img/display_thumbs.png" /></a>
                 </div>
                 <div class="action-icons">
                     <a id="shortcutsicon" href="" title="Shortcuts" i18n:translate=""><img src="img/star.png" /></a>
@@ -58,13 +58,13 @@
                     <strong i18n:domain="plone.tinymce" i18n:translate="">You are here:</strong>
                     <span id="internalpath"></span>
                 </div>
-                
+
                 <div id="internallinkcontainer" class="widget radioscrolllist input-border"></div>
-                
+
             </div>
-            
+
             <div id="details_panel" class="cell width-1:4 position-3:4 hide">
-                <h2 i18n:translate="plonebrowser_dlg_details">Details</h2>
+                <h2 i18n:translate="" i18n:domain="plone.tinymce">Details</h2>
                 <div id="details-fields" class="widget radioscrolllist input-border">
                     <div class="field">
                         <div class="widget">
@@ -98,8 +98,8 @@
                         <div class="widget">
                             <select id="classes" name="classes">
                                 <option value="image-inline" i18n:domain="plone.tinymce" i18n:translate="">Inline</option>
-                                <option value="image-left" i18n:translate="plonebrowser_dlg_align_left"></option>
-                                <option value="image-right" i18n:translate="plonebrowser_dlg_align_right"></option>
+                                <option value="image-left" i18n:translate="advimage_dlg_align_left"></option>
+                                <option value="image-right" i18n:translate="advimage_dlg_align_right"></option>
                             </select>
                         </div>
                     </div>
@@ -158,7 +158,7 @@
                      </div>
 
                      <input type="button" id="uploadbutton" class="context plonebutton" name="uploadbutton" value="Upload"
-                            i18n:attributes="value" />
+                            i18n:attributes="value" i18n:domain="plone.tinymce" />
                  </form>
                  <iframe width="0" scrolling="off" height="0" frameborder="0" id="upload_iframe" name="upload_iframe" src="javascript:"></iframe>
             </div>
@@ -170,7 +170,7 @@
             <div class="row">
                 <div id="external-column" class="cell width-8 position-0">
                     <h2 i18n:domain="plone.tinymce" i18n:translate="">External link</h2>
-            
+
                     <div class="field">
                         <label for="externalurl" i18n:translate="plonebrowser_dlg_url"></label>
                         <div class="widget">
@@ -184,12 +184,12 @@
                     </div>
 
                 </div>
-                
+
                 <div id="preview-column" class="cell width-8 position-8">
                     <div class="field">
                         <label for="preview" i18n:translate="preview_preview_desc"></label>
                         <div id="preview-wrapper">
-                            <a href="#" id="previewexternalurl" name="previewexternalurl" i18n:translate="">Preview URL</a>
+                            <a href="#" id="previewexternalurl" name="previewexternalurl" i18n:translate="" i18n:domain="plone.tinymce">Preview URL</a>
                             <div class="widget">
                                 <iframe id="previewexternal" width="100%" height="340" frameborder="0" wrap="soft" dir="ltr" src="" class="input-border" name="previewexternal"></iframe>
                             </div>
@@ -201,81 +201,77 @@
 
         <div id="email_panel" class="hide">
             <h2 i18n:domain="plone.tinymce" i18n:translate="">Email</h2>
-            
+
             <div class="field">
                 <label for="mailaddress" i18n:domain="plone.tinymce" i18n:translate="">E-mail</label>
                 <div class="widget">
                     <input type="text" name="mailaddress" id="mailaddress" value="" size="40" />
                 </div>
             </div>
-            
+
             <div class="field">
                 <label for="mailsubject" i18n:domain="plone.tinymce" i18n:translate="">Subject</label>
                 <div class="widget">
                     <input type="text" name="mailsubject" id="mailsubject" value="" size="40" />
                 </div>
             </div>
-            
-            <!-- TODO here -->
-            
+
         </div>
 
         <div id="anchor_panel" class="hide">
             <h2 i18n:domain="plone.tinymce" i18n:translate="">Link to anchor</h2>
-            
+
             <div class="field">
                 <label i18n:translate="plonebrowser_dlg_anchor_names"></label>
                 <div id="anchorlinkcontainer" class="widget radioscrolllist input-border">
                 </div>
             </div>
-            
-            <!-- TODO here -->
-            
+
         </div>
 
         <div class="visualClear"><!-- --></div>
 
         <div id="footer" class="row">
             <div id="upload-button" class="cell width-3:4 position-0 hide">
-                <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="">Upload file</a>
+                <img src="img/application_get.png" /> <a id="upload" href="" i18n:translate="" i18n:domain="plone.tinymce">Upload</a>
             </div>
             <div id="action-button" class="cell width-1:4 position-3:4">
                 <input type="submit" id="insert-selection" class="context plonebutton" name="insert-image"
-                       i18n:attributes="value" value="OK" disabled="disabled" />
+                       i18n:attributes="value" i18n:domain="plone.tinymce" value="OK" disabled="disabled" />
             </div>
         </div>
 
         <div class="visualClear"><!-- --></div>
-        
+
         <div id="common-link-fields" class="hide">
-            
+
             <div id="link-title" class="field">
                 <label for="title" i18n:domain="plone.tinymce" i18n:translate="">Link Title</label>
                 <div class="widget">
                     <input type="text" name="title" id="title" value="" size="40" />
                 </div>
             </div>
-    
+
             <div id="link-target" class="field">
                 <label id="targetlistlabel" for="targetlist" i18n:translate="plonebrowser_dlg_target"></label>
                 <div class="widget">
                     <select id="targetlist" name="targetlist">
-                        <option value="_self" i18n:translate="plonebrowser_dlg_target_same"></option>
-                        <option value="_blank" i18n:translate="plonebrowser_dlg_target_blank"></option>
-                        <option value="_parent" i18n:translate="plonebrowser_dlg_target_parent"></option>
-                        <option value="_top" i18n:translate="plonebrowser_dlg_target_top"></option>
+                        <option value="_self" i18n:translate="advlink_dlg_target_same"></option>
+                        <option value="_blank" i18n:translate="advlink_dlg_target_blank"></option>
+                        <option value="_parent" i18n:translate="advlink_dlg_target_parent"></option>
+                        <option value="_top" i18n:translate="advlink_dlg_target_top"></option>
                         <!--option value="popup" i18n:translate="plonebrowser_dlg_popup"></option-->
                     </select>
                 </div>
             </div>
-            
+
             <div id="link-style" class="field">
                 <label for="cssstyle" i18n:domain="plone.tinymce" i18n:translate="">CSS Style</label>
                 <div class="widget">
                     <input type="text" name="cssstyle" id="cssstyle" value="" size="40" />
                 </div>
             </div>
-            
+
         </div>
   </div>
 </body>
