@@ -506,7 +506,14 @@ BrowserDialog.prototype.insertLink = function () {
         // Create new anchor elements
         // no idea what this does, yet.
         this.editor.getDoc().execCommand("unlink", false, null);
-        this.tinyMCEPopup.execCommand("CreateLink", false, "#mce_temp_url#", {skip_undo : 1});
+
+        if (tinymce.isWebKit) {
+            // https://github.com/tinymce/tinymce/pull/57#issuecomment-1771936
+            img = this.editor.dom.getParent(this.editor.selection.getNode(), 'img');
+            this.editor.getDoc().execCommand("insertHTML",false,"<a href='#mce_temp_url#'>"+img.outerHTML+"</a>");
+        } else {
+            this.tinyMCEPopup.execCommand("CreateLink", false, "#mce_temp_url#", {skip_undo : 1});
+        }
 
         elementArray = tinymce.grep(this.editor.dom.select("a"), function(n) {
             return self.editor.dom.getAttrib(n, 'href') === '#mce_temp_url#';
