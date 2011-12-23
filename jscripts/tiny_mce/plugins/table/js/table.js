@@ -348,6 +348,10 @@ function init() {
 	addClassesToList('class', "table_styles");
 	TinyMCE_EditableSelects.init();
 
+	if (action == "insert") {
+		className = "plain";
+	}
+
 	// Update form
 	selectByValue(formObj, 'align', align);
 	selectByValue(formObj, 'frame', frame);
