@@ -510,7 +510,11 @@ BrowserDialog.prototype.insertLink = function () {
         if (tinymce.isWebKit) {
             // https://github.com/tinymce/tinymce/pull/57#issuecomment-1771936
             img = this.editor.dom.getParent(this.editor.selection.getNode(), 'img');
-            this.editor.getDoc().execCommand("insertHTML",false,"<a href='#mce_temp_url#'>"+img.outerHTML+"</a>");
+            if (img !== null) {
+                this.editor.getDoc().execCommand("insertHTML", false, "<a href='#mce_temp_url#'>"+img.outerHTML+"</a>");
+            } else {
+                this.tinyMCEPopup.execCommand("CreateLink", false, "#mce_temp_url#", {skip_undo : 1});
+            }
         } else {
             this.tinyMCEPopup.execCommand("CreateLink", false, "#mce_temp_url#", {skip_undo : 1});
         }
