@@ -889,16 +889,22 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
 
             }
 
+            // Each time this function is called, a new event handler is created,
+            // so we need to unbind all of them before continueing.
+            // Namespace the events so we can unbind them easily
+
             // make rows clickable
-            jq('#internallinkcontainer div.item', document).click(function() {
-                var el = jq(this),
-                    checkbox = el.find('input');
-                if (checkbox.length > 0) {
-                    checkbox.click();
-                } else {
-                    el.find('a').click();
-                }
-            });
+            jq('#internallinkcontainer div.item', document)
+                .unbind('.imagebrowser')
+                .bind('click.imagebrowser', function() {
+                    var el = jq(this),
+                        checkbox = el.find('input');
+                    if (checkbox.length > 0) {
+                        checkbox.click();
+                    } else {
+                        el.find('a').click();
+                    }
+                });
 
             // breadcrumbs
             html = [];
@@ -917,17 +923,21 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
             jq('#internalpath', document).html(html.join(''));
 
             // folder link action
-            jq('#internallinkcontainer a, #internalpath a, #shortcutsview a', document).click(function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                self.getFolderListing(jq(this).attr('href'), self.method_folderlisting);
-            });
+            jq('#internallinkcontainer a, #internalpath a, #shortcutsview a', document)
+                .unbind('.imagebrowser')
+                .bind('click.imagebrowser', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    self.getFolderListing(jq(this).attr('href'), self.method_folderlisting);
+                });
             // item link action
-            jq('#internallinkcontainer input:radio', document).click(function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                self.setDetails(jq(this).attr('href'));
-            });
+            jq('#internallinkcontainer input:radio', document)
+                .unbind('.imagebrowser')
+                .bind('click.imagebrowser', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    self.setDetails(jq(this).attr('href'));
+                });
 
             // Make the image upload form upload the image into the current container.
             jq('#upload_form', document).attr('action', context_url + '/tinymce-upload');

@@ -52,7 +52,7 @@
                     <a id="shortcutsicon" href="" title="Shortcuts" i18n:translate=""><img src="img/star.png" /></a>
                 </div>
                 <div id="shortcutsview">
-                    <div id="item-template" class="item list shortcut"></div>
+                    <div id="item-template" class="shortcut"></div>
                 </div>
                 <div class="formHelp">
                     <strong i18n:domain="plone.tinymce" i18n:translate="">You are here:</strong>
