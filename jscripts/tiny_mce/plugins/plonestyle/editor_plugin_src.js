@@ -129,7 +129,11 @@
                         }
                         break;
                     case "Selection":
-                        ed.execCommand('mceSetCSSClass', false, className);
+                        if ((tag == "") && (className == "")) {
+                            ed.execCommand("RemoveFormat", false, null);
+                        } else {
+                            ed.formatter.apply(styles[parseInt(v)].title);
+                        }
                         break;
                 }
                 ed.nodeChanged();
@@ -178,6 +182,21 @@
             }
         },
 
+        _registerFormats: function(ed, styles) {
+            var i, s, format, tagParam;
+            for (i = 0; i < styles.length; i++) {
+                s = styles[i];
+                // Format form: http://www.tinymce.com/wiki.php/Configuration:formats
+                format = {
+                    classes: (s.className || ''),
+                    wrapper: (s.tag === 'blockquote' || s.tag === 'div')
+                };
+                tagParam = s.type === 'Selection' ? 'inline' : 'block';
+                format[tagParam] = s.tag;
+                ed.formatter.register(s.title, format);
+            }
+        },
+
         _rebuildListBox : function(ed, n) {
             if (this._control == null)
                 return;
@@ -190,6 +209,9 @@
                     return -1;
                 }
             }
+            
+            // Set up formats
+            this._registerFormats(ed, this._styles);
 
             // Remove existing items
             this._control.items = [];
