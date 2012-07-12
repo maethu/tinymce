@@ -820,7 +820,10 @@
 
 				// Compatiblity with 2.x
 				if (n == 'tablecontrols') {
-					each(["table","|","row_props","cell_props","|","row_before","row_after","delete_row","|","col_before","col_after","delete_col","|","split_cells","merge_cells"], function(n) {
+
+					// remove a separator before row_props and cell_props so we
+					// don't have a double separator when we hide these two buttons
+					each(["table","row_props","cell_props","|","row_before","row_after","delete_row","|","col_before","col_after","delete_col","|","split_cells","merge_cells"], function(n) {
 						n = t.createControl(n, cf);
 
 						if (n)

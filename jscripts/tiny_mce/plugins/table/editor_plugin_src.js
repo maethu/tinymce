@@ -781,8 +781,8 @@
 				['col_before', 'table.col_before_desc', 'mceTableInsertColBefore'],
 				['row_after', 'table.row_after_desc', 'mceTableInsertRowAfter'],
 				['row_before', 'table.row_before_desc', 'mceTableInsertRowBefore'],
-				['row_props', 'table.row_desc', 'mceTableRowProps', true],
-				['cell_props', 'table.cell_desc', 'mceTableCellProps', true],
+//				['row_props', 'table.row_desc', 'mceTableRowProps', true],
+//				['cell_props', 'table.cell_desc', 'mceTableCellProps', true],
 				['split_cells', 'table.split_cells_desc', 'mceTableSplitCells', true],
 				['merge_cells', 'table.merge_cells_desc', 'mceTableMergeCells', true]
 			], function(c) {
@@ -1045,13 +1045,13 @@
 
 							// Cell menu
 							sm = m.addMenu({title : 'table.cell'});
-							sm.add({title : 'table.cell_desc', icon : 'cell_props', cmd : 'mceTableCellProps'});
+							//sm.add({title : 'table.cell_desc', icon : 'cell_props', cmd : 'mceTableCellProps'});
 							sm.add({title : 'table.split_cells_desc', icon : 'split_cells', cmd : 'mceTableSplitCells'});
 							sm.add({title : 'table.merge_cells_desc', icon : 'merge_cells', cmd : 'mceTableMergeCells'});
 
 							// Row menu
 							sm = m.addMenu({title : 'table.row'});
-							sm.add({title : 'table.row_desc', icon : 'row_props', cmd : 'mceTableRowProps'});
+							//sm.add({title : 'table.row_desc', icon : 'row_props', cmd : 'mceTableRowProps'});
 							sm.add({title : 'table.row_before_desc', icon : 'row_before', cmd : 'mceTableInsertRowBefore'});
 							sm.add({title : 'table.row_after_desc', icon : 'row_after', cmd : 'mceTableInsertRowAfter'});
 							sm.add({title : 'table.delete_row_desc', icon : 'delete_row', cmd : 'mceTableDeleteRow'});
