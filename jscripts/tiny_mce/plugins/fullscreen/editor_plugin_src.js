@@ -28,8 +28,6 @@
 						DOM.win.setTimeout(function() {
 							tinymce.dom.Event.remove(DOM.win, 'resize', t.resizeFunc);
 							tinyMCE.get(ed.getParam('fullscreen_editor_id')).setContent(ed.getContent());
-							// plone fix: rerender editor to correctly display uuid images
-							tinyMCE.get(ed.getParam('fullscreen_editor_id')).render();
 							tinyMCE.remove(ed);
 							DOM.remove('mce_fullscreen_container');
 							de.style.overflow = ed.getParam('fullscreen_html_overflow');
