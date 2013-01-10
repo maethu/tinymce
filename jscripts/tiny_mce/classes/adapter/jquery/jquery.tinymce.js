@@ -268,7 +268,7 @@
 					(textProc ? self : self.eq(0)).each(function(i, node) {
 						var ed = tinyMCEInstance(node);
 
-						ret += ed ? (textProc ? ed.getContent().replace(/<(?:"[^"]*"|'[^']*'|[^'">])*>/g, "") : ed.getContent()) : origFn.apply($(node), args);
+						ret += ed ? (textProc ? ed.getContent().replace(/<(?:"[^"]*"|'[^']*'|[^'">])*>/g, "") : ed.getContent({save: true})) : origFn.apply($(node), args);
 					});
 
 					return ret;
@@ -316,20 +316,20 @@
 
 		// Makes sure that $('#tinymce_id').attr('value') gets the editors current HTML contents
 		$.fn.attr = function(name, value, type) {
-			var self = this;
+			var self = this, args = arguments;
 
 			if ((!name) || (name !== "value") || (!containsTinyMCE(self)))
-				return jQueryFn.attr.call(self, name, value, type);
+				return jQueryFn.attr.apply(self, args);
 
 			if (value !== undefined) {
 				loadOrSave.call(self.filter(":tinymce"), value);
-				jQueryFn.attr.call(self.not(":tinymce"), name, value, type);
+				jQueryFn.attr.apply(self.not(":tinymce"), args);
 
 				return self; // return original set for chaining
 			} else {
 				var node = self[0], ed = tinyMCEInstance(node);
 
-				return ed ? ed.getContent() : jQueryFn.attr.call($(node), name, value, type);
+				return ed ? ed.getContent({save: true}) : jQueryFn.attr.apply($(node), args);
 			}
 		};
 	}
