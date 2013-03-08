@@ -301,9 +301,10 @@ function addKeyboardNavigation(){
 
 function renderCharMapHTML() {
 	var charsPerRow = 20, tdWidth=20, tdHeight=20, i;
-	var html = '<div id="charmapgroup" aria-labelledby="charmap_label" tabindex="0" role="listbox">'+
-	'<table role="presentation" border="0" cellspacing="1" cellpadding="0" width="' + (tdWidth*charsPerRow) + 
-	'"><tr height="' + tdHeight + '">';
+    var html = '<div id="charmapgroup" aria-labelledby="charmap_label" tabindex="0" role="listbox">';
+	html += '<table role="presentation" class="listing"' + (tdWidth*charsPerRow) +  '>';
+	html += '<tr ><th colspan="' + (charsPerRow + 1) + '">' + tinyMCEPopup.editor.getLang("advanced_dlg.charmap_title") + '</th>';
+	html += '<tr class="odd" height="' + tdHeight + '">';
 	var cols=-1;
 
 	for (i=0; i<charmap.length; i++) {
@@ -317,15 +318,26 @@ function renderCharMapHTML() {
 				+ '<a class="charmaplink" role="button" onmouseover="'+previewCharFn+'" onfocus="'+previewCharFn+'" href="javascript:void(0)" onclick="insertChar(\'' + charmap[i][1].substring(2,charmap[i][1].length-1) + '\');" onclick="return false;" onmousedown="return false;" title="' + charmap[i][3] + ' '+ tinyMCEPopup.editor.translate("advanced_dlg.charmap_usage")+'">'
 				+ charmap[i][1]
 				+ '</a></td>';
-			if ((cols+1) % charsPerRow == 0)
-				html += '</tr><tr height="' + tdHeight + '">';
+			if ((cols+1) % charsPerRow == 0) {
+				if ((cols+1) == charsPerRow) {
+					html += '<td rowspan="10">';
+					html += '<div style="width: 110px; height: 55px; font-size: 400%;" id="codeV">&nbsp</div>';
+					html += '<div style="height: 50px;" id="codeN">&nbsp</div>';
+					html += '<label>HTML-Code</label>';
+					html += '<div style="height: 30px;" id="codeA">&nbsp</div>';
+					html += '<label>NUM-Code</label>';
+					html += '<div style="height: 30px;" id="codeB">&nbsp</div>';
+					html += '</td>';
+				}
+				html += '</tr><tr class="' + (((cols+1) / charsPerRow) % 2 == 0 ? 'odd' : 'even') + '" height="' + tdHeight + '">';
+			}
 		}
 	 }
 
 	if (cols % charsPerRow > 0) {
 		var padd = charsPerRow - (cols % charsPerRow);
 		for (var i=0; i<padd-1; i++)
-			html += '<td width="' + tdWidth + '" height="' + tdHeight + '" class="charmap">&nbsp;</td>';
+			html += '<td width="' + tdWidth + '">&nbsp;</td>';
 	}
 
 	html += '</tr></table></div>';

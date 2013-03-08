@@ -1818,7 +1818,8 @@
 							node.parentNode.insertBefore(children[0], node);
 
 						// Keep non empty elements or img, hr etc
-						if (children.length || /^(br|hr|input|img)$/i.test(node.nodeName))
+                        // Plone fix:
+						if (children.length || /(br|hr|input|img)/i.test(node.nodeName))
 							return;
 					}
 

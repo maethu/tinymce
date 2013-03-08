@@ -455,10 +455,13 @@
 					});
 
 					// Resize editor
-					DOM.setStyles(o.sizeContainer || o.editorContainer, {
-						width : w,
-						height : h
-					});
+                    // P lone fix: external toolbar support
+                    if (s.theme_advanced_toolbar_location != 'external') {
+                        DOM.setStyles(o.sizeContainer || o.editorContainer, {
+                            width : w,
+                            height : h
+                        });
+                    }
 
 					h = (o.iframeHeight || h) + (typeof(h) == 'number' ? (o.deltaHeight || 0) : '');
 					if (h < mh)
@@ -518,8 +521,9 @@
 
 			// We only need to override paths if we have to
 			// IE has a bug where it remove site absolute urls to relative ones if this is specified
-			if (s.document_base_url != tinymce.documentBaseURL)
-				t.iframeHTML += '<base href="' + t.documentBaseURI.getURI() + '" />';
+            // Plone fix:
+			//if (s.document_base_url != tinymce.documentBaseURL)
+			t.iframeHTML += '<base href="' + t.documentBaseURI.getURI() + '" />';
 
 			// IE8 doesn't support carets behind images setting ie7_compat would force IE8+ to run in IE7 compat mode.
 			if (tinymce.isIE8) {
@@ -874,6 +878,14 @@
 				}, 100);
 			}
 
+            // Plone fix: Changed behavior of the blur and focus event so it matches the api docs :XXX doesn't fully work yet
+            Event.add(!isGecko ? t.getWin() : t.getDoc(), 'blur', function(e) {
+                      t.onDeactivate.dispatch(t, e);
+            });
+            Event.add(!isGecko ? t.getWin() : t.getDoc(), 'focus', function(e) {
+                      t.onActivate.dispatch(t, e);
+            });
+
 			// Clean up references for IE
 			targetElm = doc = body = null;
 		},
@@ -932,12 +944,15 @@
 				}
 			}
 
+            // Plone fix: Changed behavior of the blur and focus event so it matches the api docs
+            /*
 			if (tinymce.activeEditor != self) {
 				if ((oed = tinymce.activeEditor) != null)
 					oed.onDeactivate.dispatch(oed, self);
 
 				self.onActivate.dispatch(self, oed);
 			}
+            */
 
 			tinymce._setActive(self);
 		},

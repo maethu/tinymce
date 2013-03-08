@@ -20,10 +20,10 @@
 		explode = tinymce.explode,
 		Dispatcher = tinymce.util.Dispatcher, undef, instanceCounter = 0;
 
-	// Setup some URLs where the editor API is located and where the document is
-	tinymce.documentBaseURL = window.location.href.replace(/[\?#].*$/, '').replace(/[\/\\][^\/]+$/, '');
-	if (!/[\/\\]$/.test(tinymce.documentBaseURL))
-		tinymce.documentBaseURL += '/';
+    // Setup some URLs where the editor API is located and where the document is
+    tinymce.documentBaseURL = window.location.href.replace(/[\?#].*$/, '').replace(/[\/\\][^\/]+$/, '');
+    if (!/[\/\\]$/.test(tinymce.documentBaseURL))
+        tinymce.documentBaseURL += '/';
 
 	tinymce.baseURL = new tinymce.util.URI(tinymce.documentBaseURL).toAbsolute(tinymce.baseURL);
 

@@ -366,7 +366,13 @@
 		renderNode : function() {
 			var t = this, s = t.settings, n, tb, co, w;
 
-			w = DOM.create('div', {role: 'listbox', id : 'menu_' + t.id, 'class' : s['class'], 'style' : 'position:absolute;left:0;top:0;z-index:200000;outline:0'});
+			// Plone fix: external toolbar support
+			if (s['class'].indexOf ('mceListBoxMenu') != -1 && tinymce.EditorManager.settings.theme_advanced_toolbar_location == 'external') {
+				w = DOM.create('div', {role: 'listbox', id : 'menu_' + t.id, 'class' : s['class'], 'style' : 'position:fixed;_position:absolute;left:0;top:0;z-index:200000;outline:0'});
+			} else {
+                w = DOM.create('div', {role: 'listbox', id : 'menu_' + t.id, 'class' : s['class'], 'style' : 'position:absolute;left:0;top:0;z-index:200000;outline:0'});
+			}
+
 			if (t.settings.parent) {
 				DOM.setAttrib(w, 'aria-parent', 'menu_' + t.settings.parent.id);
 			}
