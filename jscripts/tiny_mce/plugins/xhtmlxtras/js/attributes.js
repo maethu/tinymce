@@ -28,7 +28,6 @@ function setFormValue(name, value) {
 }
 
 function insertAction() {
-	tinyMCEPopup.restoreSelection();
 	var inst = tinyMCEPopup.editor;
 	var elm = inst.selection.getNode();
 
