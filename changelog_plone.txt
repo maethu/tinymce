@@ -2,6 +2,13 @@
 HISTORY
 =======
 
+3.4.7-plone
+-----------
+- Fix for missing popups when zoom is applied in Chrome.
+  Problem comes from inlinepopups plugin. Solution found by
+  raekjaer originally merged by jaroel in Products.TinyMCE
+  [ichim-david]
+
 3.4.3-plone
 -----------
 
