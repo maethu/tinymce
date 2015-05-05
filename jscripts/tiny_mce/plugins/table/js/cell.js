@@ -233,7 +233,7 @@ function updateCell(td, skip_id) {
 	else
 		td.style.backgroundImage = '';
 
-	if (curCellType != celltype) {
+  if (celltype !== "" && curCellType != celltype) {
 		// changing to a different node type
 		var newCell = doc.createElement(celltype);
 
