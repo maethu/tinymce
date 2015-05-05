@@ -885,11 +885,11 @@
 			}
 
             // Plone fix: Changed behavior of the blur and focus event so it matches the api docs :XXX doesn't fully work yet
-            Event.add(!isGecko ? t.getWin() : t.getDoc(), 'blur', function(e) {
-                      t.onDeactivate.dispatch(t, e);
+            Event.add(!isGecko ? self.getWin() : self.getDoc(), 'blur', function(e) {
+                      self.onDeactivate.dispatch(self, e);
             });
-            Event.add(!isGecko ? t.getWin() : t.getDoc(), 'focus', function(e) {
-                      t.onActivate.dispatch(t, e);
+            Event.add(!isGecko ? self.getWin() : self.getDoc(), 'focus', function(e) {
+                      self.onActivate.dispatch(self, e);
             });
 
 			// Clean up references for IE
