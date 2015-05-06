@@ -13,6 +13,7 @@
  */
 var BrowserDialog = function (mcePopup) {
     var image_list_url, link_list_url;
+    var jq = top.jQuery;
 
     this.tinyMCEPopup = mcePopup;
     this.editor = mcePopup.editor;
@@ -61,6 +62,7 @@ var BrowserDialog = function (mcePopup) {
  */
 BrowserDialog.prototype.init = function () {
     var self = this,
+        jq = top.jQuery,
         selected_node = jq(this.editor.selection.getNode(), document),
         scaled_image,
         mailaddress,
@@ -77,7 +79,7 @@ BrowserDialog.prototype.init = function () {
     this.shortcuts_html = this.is_link_plugin ? self.editor.settings.link_shortcuts_html : self.editor.settings.image_shortcuts_html;
 
     // Setup events
-    jq('#insert-selection', document).click( function (e) {
+    jq('#insert-selection', document).click(function (e) {
         e.preventDefault();
         if (self.is_link_plugin === true) {
             self.insertLink();
@@ -114,12 +116,12 @@ BrowserDialog.prototype.init = function () {
         self.checkSearch(e);
     });
     // handle shortcuts button
-    jq("#shortcutsicon", document).click(function(e) {
+    jq("#shortcutsicon", document).click(function (e) {
         e.preventDefault();
         jq(this).toggleClass('selected');
         jq('#shortcutsview', document).toggle();
     });
-    
+
     // handle different folder listing view types
     jq('#general_panel .legend a', document).click(function (e) {
         self.editing_existing_image = true;
@@ -147,7 +149,6 @@ BrowserDialog.prototype.init = function () {
         selected_node = selected_node.closest('a');
         jq('#browseimage_panel h2', document).text(this.labels.label_browselink);
         jq('#addimage_panel h2', document).text(this.labels.label_addnewfile);
-        jq('#linktype_panel', document).removeClass('hide');
         jq('#plonebrowser', document).removeClass('image-browser').addClass('link-browser');
 
         this.populateAnchorList();
@@ -240,7 +241,7 @@ BrowserDialog.prototype.init = function () {
                         url: this.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
                         dataType: 'text',
                         type: 'GET',
-                        success: function(text) {
+                        success: function (text) {
                             self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
                             self.current_link = self.editor.settings.link_using_uids ? href : self.current_url;
                             self.getFolderListing(self.getParentUrl(self.current_url), 'tinymce-jsonlinkablefolderlisting');
@@ -272,6 +273,29 @@ BrowserDialog.prototype.init = function () {
         jq('#addimage_panel h2', document).text(this.labels.label_addnewimage);
         jq('#plonebrowser', document).removeClass('link-browser').addClass('image-browser');
         jq('#linktarget', document).hide();
+
+        // setup panel buttons acions
+        jq('#email_link, #anchor_link', document).hide();
+        jq('#linktype a', document).click(function (e) {
+            e.preventDefault();
+            jq('#linktype_panel div', document).removeClass('current');
+            jq(this, document).parent('div').addClass('current');
+            switch (jq(this).attr('href')) {
+                case "#internal":
+                    self.displayPanel('browse');
+                    self.getCurrentFolderListing();
+                    break;
+                case "#external":
+                    self.displayPanel('externalimage');
+                    break;
+            }
+        });
+
+        jq('#previewimagebutton', document).click(function (e) {
+            var url = jq('#imageurl', document).val();
+            e.preventDefault();
+            jq('#imgpreview', document).html('<img src="' + url + '" />');
+        });
 
         if (selected_node.get(0).tagName && selected_node.get(0).tagName.toUpperCase() === 'IMG') {
             /** The image dialog was opened to edit an existing image element. **/
@@ -309,34 +333,49 @@ BrowserDialog.prototype.init = function () {
                 }
             });
 
-            scaled_image = this.parseImageScale(selected_node.attr("src"));
-
-            // Update the dimensions <select> with the corresponding value.
-            jq('#dimensions', document).val(scaled_image.scale);
-
-            if (scaled_image.url.indexOf('resolveuid/') > -1) {
-                /** Handle UID linked image **/
-
-                current_uid = scaled_image.url.split('resolveuid/')[1];
-
-                // Fetch the information about the UID linked image.
-                jq.ajax({
-                    'url': this.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
-                    'dataType': 'text',
-                    'type': 'GET',
-                    'success': function (text) {
-                        // Store the absolute URL to the UID referenced image
-                        self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
-                        // Store the image link as UID or full URL based on policy
-                        self.current_link = self.editor.settings.link_using_uids ? scaled_image.url : self.current_url;
-
-                        self.getFolderListing(self.getParentUrl(self.current_url), 'tinymce-jsonimagefolderlisting');
-                    }
-                });
+            if (selected_node.get(0).classList) {
+                var is_external = selected_node.get(0).classList.contains('external-image');
+            }
+            else {
+                // Needed for IE8 and IE9, which do not have 'classList'.
+                var is_external = (' ' + selected_node.get(0).className + ' ').indexOf('external-image') > -1;
+            }
+            if (is_external) {
+                self.displayPanel('externalimage');
+                jq('#linktype_panel div', document).removeClass('current');
+                jq('#external_link', document).addClass('current');
+                jq('#imagetitle', document).val(selected_node.get(0).alt);
+                jq('#imageurl', document).val(selected_node.get(0).src);
             } else {
-                /** Handle directly linked image **/
-                this.current_link = this.getAbsoluteUrl(this.editor.settings.document_base_url, scaled_image.url);
-                this.getFolderListing(this.getParentUrl(this.current_link), 'tinymce-jsonimagefolderlisting');
+                scaled_image = this.parseImageScale(selected_node.attr("src"));
+
+                // Update the dimensions <select> with the corresponding value.
+                jq('#dimensions', document).val(scaled_image.scale);
+
+                if (scaled_image.url.indexOf('resolveuid/') > -1) {
+                    /** Handle UID linked image **/
+
+                    current_uid = scaled_image.url.split('resolveuid/')[1];
+
+                    // Fetch the information about the UID linked image.
+                    jq.ajax({
+                        'url': this.editor.settings.portal_url + '/portal_tinymce/tinymce-getpathbyuid?uid=' + current_uid,
+                        'dataType': 'text',
+                        'type': 'GET',
+                        'success': function (text) {
+                            // Store the absolute URL to the UID referenced image
+                            self.current_url = self.getAbsoluteUrl(self.editor.settings.document_base_url, text);
+                            // Store the image link as UID or full URL based on policy
+                            self.current_link = self.editor.settings.link_using_uids ? scaled_image.url : self.current_url;
+
+                            self.getFolderListing(self.getParentUrl(self.current_url), 'tinymce-jsonimagefolderlisting');
+                        }
+                    });
+                } else {
+                    /** Handle directly linked image **/
+                    this.current_link = this.getAbsoluteUrl(this.editor.settings.document_base_url, scaled_image.url);
+                    this.getFolderListing(this.getParentUrl(this.current_link), 'tinymce-jsonimagefolderlisting');
+                }
             }
         } else {
             /** The image dialog was opened to add a new image. **/
@@ -409,6 +448,7 @@ BrowserDialog.prototype.parseImageScale = function (url) {
  * Given DOM node and href value, setup all node attributes/properies
  */
 BrowserDialog.prototype.setLinkAttributes = function (node, link) {
+    var jq = top.jQuery;
     var panelname = jq('#linktype .current a', document).attr('href');
 
     jq(node)
@@ -427,6 +467,7 @@ BrowserDialog.prototype.setLinkAttributes = function (node, link) {
  *
  */
 BrowserDialog.prototype.insertLink = function () {
+    var jq = top.jQuery;
     var selected_node = jq(this.editor.selection.getNode(), document),
         active_panel = jq('#linktype .current a', document).attr('href'),
         self = this,
@@ -451,7 +492,8 @@ BrowserDialog.prototype.insertLink = function () {
 
     switch (active_panel) {
         case "#internal":
-            link = this.current_link;
+            link = this.editor.convertURL(this.current_link);
+
             anchor = jq('#pageanchor', document).val();
             if (anchor) {
                 link += '#' + anchor;
@@ -475,10 +517,11 @@ BrowserDialog.prototype.insertLink = function () {
             url_match = link.match(/^#mce-new-anchor-(.*)$/);
             if (url_match !== null) {
                 // create anchor link
-                nodes = this.editor.dom.select('h2,h3');
+                nodes = this.editor.dom.select(this.editor.settings.anchor_selector);
                 for (i = 0; i < nodes.length; i++) {
-                    name = nodes[i].innerHTML.toLowerCase();
-                    name = name.replace(/[^a-z0-9]/g, '-');
+                    name = jq(nodes[i]).text().replace(/^\s+|\s+$/g, '');
+                    name = name.toLowerCase().substring(0, 1024).replace(/[^a-z0-9]/g, '-');
+
                     if (name === url_match[1]) {
                         nodes[i].innerHTML = '<a name="' + name + '" class="mceItemAnchor"></a>' + nodes[i].innerHTML;
                     }
@@ -546,43 +589,64 @@ BrowserDialog.prototype.insertLink = function () {
  *
  */
 BrowserDialog.prototype.insertImage = function () {
-    var attrs,
+    var attrs = {},
+        jq = top.jQuery,
         selected_node = this.editor.selection.getNode(),
-        href = this.current_link,
+        href = this.editor.convertURL(this.current_link),
+        active_panel = jq('#linktype .current a', document).attr('href'),
         dimension,
         classes;
-
-    // if we have absolute url, make sure it's relative
-    if (href.indexOf('resolveuid/') > -1) {
-        href = 'resolveuid/' + href.split('resolveuid/')[1];
-    }
-
-    this.tinyMCEPopup.restoreSelection();
-
-    // Fixes crash in Safari
-    if (tinymce.isWebKit) {
-        this.editor.getWin().focus();
-    }
-
-    // Append the image scale to the URL if a valid selection exists.
-    dimension = jq('#dimensions', document).val();
-    if (dimension !== "") {
-        href += '/' + dimension;
-    }
 
     // Pass-through classes
     classes = [].concat(this.current_classes);
     // Alignment class
     classes.push(jq.trim(jq('#classes', document).val()));
-    // Image captioning
-    if (this.editor.settings.allow_captioned_images && jq('#caption', document).is(':checked')) {
-        classes.push('captioned');
+
+    if (active_panel === "#external") {
+        href = jq('#imageurl', document).val();
+        if (jq.inArray('external-image', classes) === -1) {
+            classes.push('external-image');
+        }
+        jq.extend(attrs, {
+            alt: jq('#imagetitle', document).val(),
+            title: jq('#imagetitle', document).val()
+        });
+    } else {
+        // we have internal image panel
+
+        // remove external-image if present
+        if (jq.inArray('external-image', classes) > -1) {
+            classes.splice(jq.inArray('external-image', classes), 1);
+        }
+
+        // Image captioning
+        if (this.editor.settings.allow_captioned_images && jq('#caption', document).is(':checked')) {
+            classes.push('captioned');
+        }
+
+        // if we have absolute url, make sure it's relative
+        if (href.indexOf('resolveuid/') > -1) {
+            href = 'resolveuid/' + href.split('resolveuid/')[1];
+        }
+
+        this.tinyMCEPopup.restoreSelection();
+
+        // Fixes crash in Safari
+        if (tinymce.isWebKit) {
+            this.editor.getWin().focus();
+        }
+
+        // Append the image scale to the URL if a valid selection exists.
+        dimension = jq('#dimensions', document).val();
+        if (dimension !== "") {
+            href += '/' + dimension;
+        }
     }
 
-    attrs = {
+    jq.extend(attrs, {
         'src' : href,
         'class' : classes.join(' ')
-    };
+    });
 
     if (selected_node && selected_node.nodeName.toUpperCase() === 'IMG') {
         // Update an existing <img/> element
@@ -596,13 +660,15 @@ BrowserDialog.prototype.insertImage = function () {
     }
 
     // Update the Description of the image
-    jq.ajax({
-        'url': jq('#description_href', document).val() + '/tinymce-setDescription',
-        'type': 'POST',
-        'data': {
-            'description': jq('#description', document).val()
-        }
-    });
+    if (active_panel === "#internal") {
+        jq.ajax({
+            'url': jq('#description_href', document).val() + '/tinymce-setDescription',
+            'type': 'POST',
+            'data': {
+                'description': jq('#description', document).val()
+            }
+        });
+    }
 
     this.tinyMCEPopup.close();
 };
@@ -611,6 +677,7 @@ BrowserDialog.prototype.insertImage = function () {
  * Activates and disables the search feature based on user input.
  */
 BrowserDialog.prototype.checkSearch = function (e) {
+    var jq = top.jQuery;
     var el = jq('#searchtext', document),
         len = el.val().length;
 
@@ -618,10 +685,12 @@ BrowserDialog.prototype.checkSearch = function (e) {
     if (len > 0) {
         jq('#clear-btn', document).show();
     }
-    
+
     // Activate search when we have enough input and either livesearch is
-    // enabled or the user explicitly pressed Enter.
-    if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch === true || e.which === 13)) {
+    // enabled or the user explicitly pressed Enter (which === 13), or the user 
+    // clicks (which === 1) on the search icon 
+    if (len >= 3 && (this.tinyMCEPopup.editor.settings.livesearch === true 
+                    || e.which === 13 || e.which === 1)) {
         this.is_search_activated = true;
         this.getFolderListing(this.tinyMCEPopup.editor.settings.navigation_root_url, this.method_search);
     }
@@ -633,7 +702,7 @@ BrowserDialog.prototype.checkSearch = function (e) {
         el.val('');
         this.getCurrentFolderListing();
     }
-    
+
     if (len === 0 || e.which === 27) {
         jq('#clear-btn', document).hide();
     }
@@ -650,6 +719,7 @@ BrowserDialog.prototype.checkSearch = function (e) {
  * @param url URL of the object to fetch.
  */
 BrowserDialog.prototype.setDetails = function (url) {
+    var jq = top.jQuery;
     var self = this,
         /**
          * Pretty-prints a human readable title for a image scale.
@@ -707,10 +777,10 @@ BrowserDialog.prototype.setDetails = function (url) {
             self.displayPanel('details');
 
             // select radio button in folder listing and mark selected image
-            jq('input:radio[name=internallink][value!=' + data.uid_relative_url + ']', document)
+            jq('input:radio[name=internallink][value!="' + data.uid_relative_url + '"]', document)
                 .parent('.item')
                 .removeClass('current');
-            jq('input:radio[name=internallink][value=' + data.uid_relative_url + ']', document)
+            jq('input:radio[name=internallink][value="' + data.uid_relative_url + '"]', document)
                 .attr('checked', 'checked')
                 .parent('.item')
                 .addClass('current');
@@ -753,6 +823,7 @@ BrowserDialog.prototype.getCurrentFolderListing = function () {
  */
 BrowserDialog.prototype.getFolderListing = function (context_url, method) {
     var self = this;
+    var jq = top.jQuery;
 
     // store this for view type refreshing
     this.folderlisting_context_url = context_url;
@@ -803,7 +874,7 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                                 }
                                 jq.merge(folder_html, [
                                         item.icon,
-                                        '<a href="' + item.url + '" class="folderlink contenttype-' + item.normalized_type + '">',
+                                        '<a href="' + item.url + '" class="folderlink contenttype-' + item.normalized_type + ' state-' + item.review_state + '">',
                                             item.title,
                                         '</a>',
                                     '</div>'
@@ -815,7 +886,7 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                                             'type="radio" class="noborder" style="margin: 0; width: 16px" name="internallink" value="',
                                             'resolveuid/' + item.uid ,
                                             '"/> ',
-                                        '<span class="contenttype-' + item.normalized_type + '">' + item.title + '</span>',
+                                        '<span class="contenttype-' + item.normalized_type + ' state-' + item.review_state + '">' + item.title + '</span>',
                                     '</div>'
                                 ]);
                             }
@@ -854,14 +925,14 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
                                     '</div>'
                                 ]);
                             }
-                        
+
                             if (item_number % col_items_number === col_items_number - 1) {
                                 item_html.push('</div>');
                             }
                             item_number++;
                             break;
                     }
-                    
+
 
                 });
             }
@@ -871,13 +942,13 @@ BrowserDialog.prototype.getFolderListing = function (context_url, method) {
 
             // display shortcuts
             if (self.is_search_activated === false && self.shortcuts_html.length) {
-                
+
                 jqShortcutsBtn = jq('#shortcutsicon', document);
                 jqShortcutsView = jq('#shortcutsview', document);
                 jqShortcutItem = jq('#shortcutsview #item-template', document);
-                
+
                 jqShortcutsBtn.attr('title', self.labels.label_shortcuts);
-                
+
                 jq.each(self.shortcuts_html, function () {
                     jqItem = jqShortcutItem.clone();
                     jqItem.append(''+this);
@@ -994,7 +1065,9 @@ BrowserDialog.prototype.getParentUrl = function (url) {
 BrowserDialog.prototype.getAbsoluteUrl = function (base, link) {
     var base_array,
         link_array,
+        jq = top.jQuery,
         item;
+
 
     if ((link.indexOf('http://') > -1) || (link.indexOf('https://') > -1) || (link.indexOf('ftp://') > -1)) {
         return link;
@@ -1031,6 +1104,7 @@ BrowserDialog.prototype.getAbsoluteUrl = function (base, link) {
 BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     // handles: details, browse, search, external, email, anchor, upload, advanced
     var correction_length;
+    var jq = top.jQuery;
 
     // handle upload button
     if ((upload_allowed === true || upload_allowed === undefined) && ((panel === "browse" || panel === "details") && this.is_search_activated === false)) {
@@ -1071,7 +1145,7 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     if ((checkedlink.length === 1) && (panel === "browse")) {
       this.setDetails(jq(checkedlink).attr('value'));
     }
-    
+
     // handle browse panel
     if (jq.inArray(panel, ["search", "details", "browse", "upload"]) > -1) {
         if (jq.inArray(panel, ["upload", "details"]) > -1) {
@@ -1086,14 +1160,14 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
         jq('#browseimage_panel', document).removeClass('row').addClass('hide');
         jq('#upload-button', document).addClass('hide');
     }
-    
+
     // handle details/preview panel
     if (panel === 'details') {
         jq('#details_panel', document).removeClass('hide');
         // move the common link fileds to appropriate location but only for the
         // internal link panel
         if( jq('#internal_link:visible', document).length > 0) {
-            jq('#details-fields', document).append(jq('#common-link-fields', document).removeClass('hide'));            
+            jq('#details-fields', document).append(jq('#common-link-fields', document).removeClass('hide'));
         }
         jq('#insert-selection', document).removeAttr('disabled');
     } else {
@@ -1105,6 +1179,16 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
     } else {
         jq('#addimage_panel', document).addClass('hide');
     }
+
+    // handle external image
+    if (panel === "externalimage") {
+        jq('#externalimage_panel', document).removeClass('hide');
+        jq('#insert-selection', document).removeAttr('disabled');
+        jq('#imagetitle', document).parents('.field').after(jq('#classes', document).parents('.field'));
+    } else {
+        jq('#externalimage_panel', document).addClass('hide');
+        jq('#caption', document).parents('.field').after(jq('#classes', document).parents('.field'));
+    }
 };
 
 // Link type methods
@@ -1114,6 +1198,7 @@ BrowserDialog.prototype.displayPanel = function(panel, upload_allowed) {
  */
 BrowserDialog.prototype.populateAnchorList = function () {
     var nodes,
+        jq = top.jQuery,
         html = "",
         divclass = "even",
         name,
@@ -1131,7 +1216,7 @@ BrowserDialog.prototype.populateAnchorList = function () {
         }
     }
 
-    nodes = this.editor.dom.select('h2,h3');
+    nodes = this.editor.dom.select(this.editor.settings.anchor_selector);
     nodes_length = nodes.length;
     if (nodes.length > 0) {
         for (i = 0; i < nodes_length; i++) {
@@ -1141,7 +1226,7 @@ BrowserDialog.prototype.populateAnchorList = function () {
             }
             title_match = title.match(/mceItemAnchor/);
             if (title_match === null) {
-                name = title.toLowerCase();
+                name = title.toLowerCase().substring(0,1024);
                 name = name.replace(/[^a-z0-9]/g, '-');
                 html += '<div class="' + divclass + '"><input type="radio" class="noborder" name="anchorlink" id="#mce-new-anchor-' + name + '" value="#mce-new-anchor-' + name + '"/><label for="#mce-new-anchor-' + name + '"> ' + title + '</label></div>';
                 divclass = divclass === "even" ? "odd" : "even";
@@ -1160,6 +1245,7 @@ BrowserDialog.prototype.populateAnchorList = function () {
  * Strip HTTP scheme from URL and set prefix accordingly
  */
 BrowserDialog.prototype.checkExternalURL = function (href) {
+    var jq = top.jQuery;
     var el = jq('#externalurl', document),
         scheme = href.split('://')[0];
 
@@ -1177,6 +1263,7 @@ BrowserDialog.prototype.checkExternalURL = function (href) {
  * Preview webpage if url is set
  */
 BrowserDialog.prototype.previewExternalURL = function () {
+    var jq = top.jQuery;
     var url = jq('#externalurl', document).val(),
         urlprefix = jq('#externalurlprefix', document).val();
 
@@ -1196,6 +1283,7 @@ tinyMCEPopup.onInit.add(bwrdialog.init, bwrdialog);
  * after uploadbutton was pressed
  */
 var uploadOk = function uploadOk(current_link, folder) {
+    var jq = top.jQuery;
     var filefield = jq('#uploadfile', document).parent();
 
     // redraw input selection for better UX feeling after successful upload
